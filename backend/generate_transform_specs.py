@@ -1,5 +1,8 @@
 import re, os
 
+Rscript_path = "Rscript"  # Rscript执行路径
+
+
 def deleteMatchFiles(directory, starts="", ends=""):
     '''
     按特定要求删除某路径下的匹配文件，如果starts和ends都不填写，则默认删除该目录下所有文件
@@ -10,7 +13,7 @@ def deleteMatchFiles(directory, starts="", ends=""):
                 os.remove(os.path.join(directory, fi))
 
 
-def execScript(data_path, script_name, Rscript_path = "Rscript"):
+def execScript(script_name):
     '''
     执行数据清洗脚本，对于每一步清洗操作，都会保存这一个状态下的table，同时保存所有清洗过程的列在一个文件内
     Return:
@@ -18,15 +21,13 @@ def execScript(data_path, script_name, Rscript_path = "Rscript"):
         col_states：字典：key为行号，value为列；如果该行结果为table，则记录table的所有列
         group_states: 字典：key为行号，value为分组的列：如果该行结果存在分组，则记录分组的列
     '''
-    original_cwd = os.getcwd() # 查看当前工作目录
-    os.chdir(os.path.join(os.getcwd(), data_path)) # 修改当前工作目录  os.path.join(os.getcwd(),script_name)
     
     script_base_name = os.path.splitext(script_name)[0]
     script_exec_name = script_base_name + "_exec.txt"
     
     original_codes = []  # 源脚本代码, 每个元素对应一行代码，行号从1开始
     codes = ""
-    p = re.compile("^\s*([\w\.]+?)\s*(=|<-)\s*[\w\.]+?\s*[(]") # 设置函数名和outputname必须是以 A-Za-z0-9_. 这些符号组成的，其他符号将不会匹配，因此可以做到过滤注释
+    p = re.compile("^\s*([\w\.]+?)\s*(=|<-)\s*[\w\.:]+?\s*[(]") # 设置函数名和outputname必须是以 A-Za-z0-9_. 这些符号组成的，其他符号将不会匹配，因此可以做到过滤注释
     
     deleteMatchFiles("./", starts="table", ends=".csv")
     deleteMatchFiles("./", ends="_exec.txt")
@@ -60,7 +61,6 @@ def execScript(data_path, script_name, Rscript_path = "Rscript"):
         
     if(os.system(Rscript_path + " " + script_exec_name)):
         # 0表示执行成功，否则表示执行失败
-        os.chdir(original_cwd) # 修改回原来的工作目录
         raise Exception("Failed to execute the current script!")  # 如果执行失败，抛出异常
     
     col_states = {}  # key对应代码的行号，value对应此行代码执行完之后的table中的列
@@ -75,7 +75,6 @@ def execScript(data_path, script_name, Rscript_path = "Rscript"):
                 else:
                     col_states[int(states[0])] = states[1:]
     
-    os.chdir(original_cwd) # 修改回原来的工作目录
     return original_codes, col_states, group_states
 
 
@@ -169,7 +168,7 @@ def remove_quote(params):
     return param_list_new
 
 
-def generate_transform_specs(data_path, script_name):
+def generate_transform_specs(script_name):
     # 以下是测试：
     original_codes = [
         '''A = read.table(file = "sd.csv", "sdf.sss")''',
@@ -198,9 +197,9 @@ def generate_transform_specs(data_path, script_name):
     
     group_states = {4: 'T'}
     
-    original_codes, col_states, group_states = execScript(data_path, script_name)
+    original_codes, col_states, group_states = execScript(script_name)
 
-    p = re.compile("^\s*([\w\.]+?)\s*(=|<-)\s*([\w\.]+?)\s*[(](.+)[)]")  # 设置函数名和outputname必须是以 A-Za-z0-9_. 这些符号组成的
+    p = re.compile("^\s*([\w\.]+?)\s*(=|<-)\s*([\w\.:]+?)\s*[(](.+)[)]")  # 设置函数名和outputname必须是以 A-Za-z0-9_. 这些符号组成的
     p_match_num = re.compile("table(.+)\.csv")
     p_match_c = re.compile("c\s*\((.+)\)")
 
@@ -227,14 +226,16 @@ def generate_transform_specs(data_path, script_name):
             continue
         
         output_tbl = r[0]
-        func = r[2]
+        func = r[2].split("::")[-1]  # 能够适配 dplyr:: 的情况
         params = parseArgs(r[3])  # 得到无名参数none和有名参数的dict
 
+        specs_before = {}
         specs = {}
+        specs_after = {}
 
         print(params)
         
-        if func == 'read.table':
+        if func in ('read.table', 'read.csv', 'read.csv2', 'read.delim', 'read.delim2'):
             specs["type"] = 'create_tables'
             specs["output_table_name"] = output_tbl
             specs["output_table_file"] = "table%d.csv" % line_num
@@ -245,7 +246,7 @@ def generate_transform_specs(data_path, script_name):
             specs["operation_rule"] = 'Load: ' + file
             
             var2table[output_tbl] = specs["output_table_file"]
-            
+
         elif func in ('data.frame', 'tibble'):
             specs["type"] = 'create_tables'
             specs["output_table_name"] = output_tbl
@@ -444,6 +445,61 @@ def generate_transform_specs(data_path, script_name):
                 specs["operation_rule"] = "Summarize:" + ",".join(rule)
                  
             var2table[output_tbl] = specs["output_table_file"]
+
+        elif func == 'count':
+            specs["type"] = "combine_rows_summarize"
+            specs["output_table_name"] = output_tbl
+            specs["output_table_file"] = "table%d.csv" % line_num
+            if params.get('x'):
+                specs["input_table_name"] = params['x']
+                specs["input_explict_col"] = remove_quote(params['none'])
+            else:
+                specs["input_table_name"] = params['none'][0]
+                specs["input_explict_col"] = remove_quote(params['none'][1:])
+            specs["input_table_file"] = var2table[specs["input_table_name"]]
+            if params.get('name'):
+                specs["output_explict_col"] = [remove_quote(params.get('name'))]
+            else:
+                specs["output_explict_col"] = ['n']
+
+            specs["operation_rule"] = "Group:%s, and Count" % (','.join(specs["input_explict_col"]))
+            var2table[output_tbl] = specs["output_table_file"]
+
+            if params.get('sort') and params['sort'] in ('T', 'TRUE'):  # 涉及到排序，因此需要做separation，即拆成两步
+                # print(original_codes[line_num-1])
+                # 生成中间table
+                p_sort = re.compile("sort\s*=\s*"+params['sort'])
+                code1 = p_sort.sub('', original_codes[line_num-1])
+                script_code = original_codes[:line_num-1]
+                script_code.append(code1)  # 将原先的那一行代码替换掉
+                output_t1 = "table%s_1.csv" % line_num
+                script_code.append('''write.table({input_t}, file="{output_t1}", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)'''\
+                    .format(code1 = code1, input_t = specs["output_table_name"], output_t1=output_t1))
+                
+                script_exec_name = "sort_exec.txt"
+                with open(script_exec_name, "w", encoding='utf-8') as fp:
+                    fp.write("\n".join(script_code))
+                    
+                if(os.system(Rscript_path + " " + script_exec_name)):
+                    # 0表示执行成功，否则表示执行失败
+                    raise Exception("Failed to execute the %s script!" % script_exec_name)  # 如果执行失败，抛出异常
+                
+                os.rename(specs["output_table_file"], "table%d_2.csv" % line_num) # 重命名文件
+
+                specs["output_table_name"] = output_tbl + "_1"
+                specs["output_table_file"] = output_t1
+
+                specs_after = {
+                    "type": 'transform_tables_sort',
+                    "input_table_name": specs["output_table_name"],
+                    "input_table_file": specs["output_table_file"],
+                    "output_table_name": output_tbl,
+                    "output_table_file": "table%d_2.csv" % line_num,
+                    "input_explict_col": specs["output_explict_col"],
+                    "operation_rule": "Sort: desc(%s)" % specs["output_explict_col"][0]
+                }
+                var2table[output_tbl] = specs_after["output_table_file"]
+
         
         elif func == "unite":
             specs["type"] = "combine_columns_merge"
@@ -546,7 +602,6 @@ def generate_transform_specs(data_path, script_name):
             var2table[output_tbl] = specs["output_table_file"]
             
         elif func == 'arrange':
-            print(params)
 
             # 暂时先做单列排序
             specs["type"] = 'transform_tables_sort'
@@ -625,6 +680,7 @@ def generate_transform_specs(data_path, script_name):
             else:
                 specs["input_table_name"] = params['none'][pi]
                 pi += 1
+            print(var2table)
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             specs["output_table_name"] = output_tbl
             specs["output_table_file"] = "table%d.csv" % line_num
@@ -722,8 +778,12 @@ def generate_transform_specs(data_path, script_name):
             var2table[output_tbl] = "table%d.csv" % line_num
             
         # print(func, specs)
+        if specs_before:
+            transform_specs.append(specs_before)
         if specs:
             transform_specs.append(specs)
+        if specs_after:
+            transform_specs.append(specs_after)
         
     return transform_specs
  
