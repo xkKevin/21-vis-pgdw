@@ -627,9 +627,11 @@ def generate_transform_specs(script_name):
                             specs["type"] = 'transform_columns_mutate'   
                 else:
                     if not params.get(".keep") or remove_quote(params.get(".keep")) == "all":
-                        print(params.get(".keep"))
                         # 新增的列，且保留所有的列：create
                         specs["type"] = 'create_columns_mutate'
+                        if group_states.get(input_line_num):
+                            specs["input_implict_col"] = [group_states[input_line_num][-1]]
+                            specs["operation_rule"] = "Group: %s, %s" % (specs["input_implict_col"][0], specs["operation_rule"])
                     if remove_quote(params.get(".keep")) == "unused":
                         # 新增的列，且删除使用的列：transform
                         if len(specs["input_explict_col"]) > 1:
@@ -652,9 +654,13 @@ def generate_transform_specs(script_name):
             specs["output_table_file"] = "table%d.csv" % line_num
             if params['none'][1].startswith("desc"):
                 specs["input_explict_col"] = [remove_quote(params['none'][1][5:-1])]
+                specs["operation_rule"] = "Sort: desc(%s)" % specs["input_explict_col"][0]
+            elif params['none'][1].startswith("-"):
+                specs["input_explict_col"] = [remove_quote(params['none'][1][1:])]
+                specs["operation_rule"] = "Sort: desc(%s)" % specs["input_explict_col"][0]
             else:
                 specs["input_explict_col"] = [remove_quote(params['none'][1])]
-            specs["operation_rule"] = "Sort: " + params['none'][1]
+                specs["operation_rule"] = "Sort: " + params['none'][1]
             
             var2table[output_tbl] = specs["output_table_file"]
 
@@ -673,11 +679,14 @@ def generate_transform_specs(script_name):
                 specs["input_table_name"].append(params['none'][pi])
                 pi += 1
             ######################################################
-            if params.get("by.x"):
-                specs["input_explict_col"] = []
-                specs["input_explict_col"].append(remove_quote(params["by.x"]))
-            if params.get("by.y"):
-                specs["input_explict_col"].append(remove_quote(params["by.y"]))
+            specs["input_explict_col"] = []
+            if params.get("by"):
+                specs["input_explict_col"].extend(remove_quote([params["by"]]))
+            else:
+                if params.get("by.x"):
+                    specs["input_explict_col"].append(remove_quote(params["by.x"]))
+                if params.get("by.y"):
+                    specs["input_explict_col"].append(remove_quote(params["by.y"]))
             ######################################################
             specs["input_table_file"] = [var2table[specs["input_table_name"][0]], var2table[specs["input_table_name"][1]]]
             specs["output_table_name"] = output_tbl
@@ -805,7 +814,8 @@ def generate_transform_specs(script_name):
                 specs["output_table_name"] = output_tbl
                 specs["output_table_file"] = "table%d.csv" % line_num 
                 specs["type"] = 'identical_operation'
-                specs["operation_rule"] = "%s(%s)" % (func, r[3])  # 函数名加参数
+                # specs["operation_rule"] = "%s(%s)" % (func, r[3])  # 函数名加参数
+                specs["operation_rule"] = func
                 var2table[output_tbl] = specs["output_table_file"]
         
         elif func == 'rename':
@@ -830,7 +840,11 @@ def generate_transform_specs(script_name):
             specs["output_table_name"] = output_tbl
             specs["output_table_file"] = "table%d.csv" % line_num 
             specs["type"] = 'identical_operation'
-            specs["operation_rule"] = "%s(%s)" % (func, r[3])  # 函数名加参数
+            if len(params['none'])>1:
+                specs["operation_rule"] = "%s: %s" % (func, ",".join(params['none'][1:]))
+            else:
+                specs["operation_rule"] = func  # 函数名加参数
+            # specs["operation_rule"] = "%s(%s)" % (func, r[3])  # 函数名加参数
             var2table[output_tbl] = "table%d.csv" % line_num
 
         else: # default, could also just omit condition or 'if True'
