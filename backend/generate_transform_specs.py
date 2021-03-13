@@ -386,6 +386,7 @@ def generate_transform_specs(script_name):
             var2table[output_tbl] = specs["output_table_file"]
             
         elif func == "select":
+            # 目前select可以支持数字，重命名，但不支持 1:3, A:C 这样的形式
             specs["input_table_name"] = params['none'][0]
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             specs["output_table_name"] = output_tbl
@@ -405,6 +406,7 @@ def generate_transform_specs(script_name):
                     keep_col.append(col)
             remove_col = remove_quote(remove_col)
             keep_col = remove_quote(keep_col)
+            var2table[output_tbl] = specs["output_table_file"]
             if remove_col:
                 specs["type"] = 'delete_columns_select_remove'
                 specs["input_explict_col"] = remove_col
@@ -413,12 +415,51 @@ def generate_transform_specs(script_name):
                 specs["type"] = 'delete_columns_select_keep'
                 specs["input_explict_col"] = keep_col
                 specs["operation_rule"] = 'Keep Columns: ' + ','.join(keep_col)
+
+                rename_cols = []
+                for pk, pv in params.items():
+                    if pk in ('none'):
+                        continue
+                    pv = remove_quote(pv)
+                    specs["input_explict_col"].append(pv)
+                    rename_cols.append(pv)
+                if rename_cols:
+                    code1 = "%s=select(%s,%s)" % (specs["output_table_name"], specs["input_table_name"], '`%s`' % "`,`".join(specs["input_explict_col"]))
+                    script_code = original_codes[:line_num-1]
+                    script_code.append(code1)  # 将原先的那一行代码替换掉
+                    output_t1 = "table%s_1.csv" % line_num
+                    script_code.append('''write.table({input_t}, file="{output_t1}", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)'''\
+                        .format(input_t = specs["output_table_name"], output_t1=output_t1))
+                    
+                    script_exec_name = "rename_exec.txt"
+                    with open(script_exec_name, "w", encoding='utf-8') as fp:
+                        fp.write("\n".join(script_code))
+                        
+                    if(os.system(Rscript_path + " " + script_exec_name)):
+                        # 0表示执行成功，否则表示执行失败
+                        raise Exception("Failed to execute the %s script!" % script_exec_name)  # 如果执行失败，抛出异常
+                    
+                    os.rename(specs["output_table_file"], "table%d_2.csv" % line_num) # 重命名文件
+
+                    specs["output_table_name"] = output_tbl + "_1"
+                    specs["output_table_file"] = output_t1
+
+                    specs_after = {
+                        "type": 'transform_columns_rename',
+                        "input_table_name": specs["output_table_name"],
+                        "input_table_file": specs["output_table_file"],
+                        "output_table_name": output_tbl,
+                        "output_table_file": "table%d_2.csv" % line_num,
+                        "input_explict_col": rename_cols,
+                        "operation_rule": "Rename"
+                    }
+                    var2table[output_tbl] = specs_after["output_table_file"]
+
             else:
                 specs["type"] = 'transform_tables_rearrange'
                 specs["input_explict_col"] = keep_col
                 specs["operation_rule"] = 'Rearrange Columns'
                 
-            var2table[output_tbl] = specs["output_table_file"]
         
         elif func in ("summarise", "summarize"):
             specs["type"] = "combine_rows_summarize"
@@ -474,7 +515,7 @@ def generate_transform_specs(script_name):
                 script_code.append(code1)  # 将原先的那一行代码替换掉
                 output_t1 = "table%s_1.csv" % line_num
                 script_code.append('''write.table({input_t}, file="{output_t1}", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)'''\
-                    .format(code1 = code1, input_t = specs["output_table_name"], output_t1=output_t1))
+                    .format(input_t = specs["output_table_name"], output_t1=output_t1))
                 
                 script_exec_name = "sort_exec.txt"
                 with open(script_exec_name, "w", encoding='utf-8') as fp:
@@ -631,6 +672,13 @@ def generate_transform_specs(script_name):
             else:
                 specs["input_table_name"].append(params['none'][pi])
                 pi += 1
+            ######################################################
+            if params.get("by.x"):
+                specs["input_explict_col"] = []
+                specs["input_explict_col"].append(remove_quote(params["by.x"]))
+            if params.get("by.y"):
+                specs["input_explict_col"].append(remove_quote(params["by.y"]))
+            ######################################################
             specs["input_table_file"] = [var2table[specs["input_table_name"][0]], var2table[specs["input_table_name"][1]]]
             specs["output_table_name"] = output_tbl
             specs["output_table_file"] = "table%d.csv" % line_num
@@ -752,7 +800,13 @@ def generate_transform_specs(script_name):
                 specs["operation_rule"] = 'Create Manually'
                 var2table[output_tbl] = specs["output_table_file"]
             else:  # 如果第一个无名参数本身就是table，那就不算是 create_tables
-                var2table[output_tbl] = "table%d.csv" % line_num 
+                specs["input_table_name"] = remove_quote(params['none'][0])
+                specs["input_table_file"] = var2table[specs["input_table_name"]]
+                specs["output_table_name"] = output_tbl
+                specs["output_table_file"] = "table%d.csv" % line_num 
+                specs["type"] = 'identical_operation'
+                specs["operation_rule"] = "%s(%s)" % (func, r[3])  # 函数名加参数
+                var2table[output_tbl] = specs["output_table_file"]
         
         elif func == 'rename':
             specs["output_table_name"] = output_tbl
@@ -771,6 +825,12 @@ def generate_transform_specs(script_name):
             var2table[output_tbl] = specs["output_table_file"]
 
         elif func in ("ungroup", "group_by"):
+            specs["input_table_name"] = remove_quote(params['none'][0])
+            specs["input_table_file"] = var2table[specs["input_table_name"]]
+            specs["output_table_name"] = output_tbl
+            specs["output_table_file"] = "table%d.csv" % line_num 
+            specs["type"] = 'identical_operation'
+            specs["operation_rule"] = "%s(%s)" % (func, r[3])  # 函数名加参数
             var2table[output_tbl] = "table%d.csv" % line_num
 
         else: # default, could also just omit condition or 'if True'

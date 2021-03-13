@@ -230,6 +230,7 @@ import {
   generateDataForInnerJoin,
   generateDataForLeftJoin_2,
   generateDataForTablesExtend,
+  generateDataForTablesExtend_withExplicitCol
 } from "@/assets/js/utils/genDataForCombineTables";
 import { getCsv } from "@/assets/js/utils/common/getCsv";
 import {getGraphs} from '@/assets/js/utils/renderTree/getLayout'
@@ -378,9 +379,8 @@ export default {
             })
 
             let {groups,edges} = getComponents(specsToHandle)
-            console.log("groups and edges: ",groups,edges)
+            
             let graphs = getGraphs(groups,edges)
-            console.log("graphs: ",graphs)
 
             let svgWidth = 0,svgHeight = 0
 
@@ -420,6 +420,7 @@ export default {
               this.$store.commit("setG",g)
     
               this.preparation(specsToHandle,nodePos)
+
             })
           }
         })
@@ -431,6 +432,7 @@ export default {
       this.show_table_name = state;
     },
     async preparation(transform_specs,nodePos) {
+      console.log("spces: ",transform_specs)
 
       let tableInf = {}
 
@@ -438,11 +440,13 @@ export default {
         let pos = []
         if(typeof(transform_specs[i].input_table_file) === 'string' 
           && typeof(transform_specs[i].output_table_file) === 'string'){
+            let dy = Math.abs(nodePos[transform_specs[i].input_table_file][1] - nodePos[transform_specs[i].output_table_file][1])
+               > svgSize.height / 2 ? svgSize.height / 2 : 0
             pos = [
               (nodePos[transform_specs[i].input_table_file][0] + nodeSize.width 
               + nodePos[transform_specs[i].output_table_file][0]) / 2 - svgSize.width / 2,
               (nodePos[transform_specs[i].input_table_file][1] + nodeSize.height 
-              + nodePos[transform_specs[i].output_table_file][1]) / 2 - svgSize.height - 10
+              + nodePos[transform_specs[i].output_table_file][1]) / 2 - svgSize.height + dy - 10
             ]
         }else if(typeof(transform_specs[i].input_table_file) === 'string'){
           let meetingPosY = nodePos[transform_specs[i].input_table_file][1] + nodeSize.height / 2
@@ -604,7 +608,8 @@ export default {
         switch (transform_specs[i].type) {
           case "create_tables":
             res = generateDataForCreateTable(dataOut1_csv);
-            create_table(res, rule, output_table_name, i, this.show_table_name,pos);
+            create_table(res, rule, output_table_name, i, this.show_table_name,pos,
+              res[0].length / dataOut1_csv[0].length,res.length / dataOut1_csv.length);
             break;
           case "create_columns_merge":
             res = generateDataForCreateColumns(
@@ -622,7 +627,9 @@ export default {
               input_explict_col,
               i,
               this.show_table_name,
-              pos
+              pos,
+              [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "create_columns_extract":
@@ -641,7 +648,9 @@ export default {
               input_explict_col,
               i,
               this.show_table_name,
-              pos
+              pos,
+              [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "create_columns_mutate":
@@ -661,7 +670,9 @@ export default {
               res.outExp,
               i,
               this.show_table_name,
-              pos
+              pos,
+               [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "create_columns_create":
@@ -678,18 +689,22 @@ export default {
               output_table_name,
               i,
               this.show_table_name,
-              pos
+              pos,
+               [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "create_rows_create":
-            let m1 = [],
-              m2 = [];
-            dataIn1_csv.forEach((d) => {
-              if (m1.length <= 3) m1.push(d);
-            });
-            dataOut1_csv.forEach((d) => {
-              if (m2.length <= 4) m2.push(d);
-            });
+            let m1 = [],m2 = [];
+            for(let row = 0;row <= Math.min(2,dataIn1_csv.length - 1) ;row++){
+              let tempRow = []
+              for(let col = 0;col < Math.min(3,dataIn1_csv[0].length);col++){
+                tempRow.push("")
+              }
+              m1.push(tempRow)
+              m2.push(tempRow)
+            }
+            m2.push(dataOut1_csv[dataOut1_csv.length - 1])
             create_row(
               m1,
               m2,
@@ -699,8 +714,11 @@ export default {
               1,
               i,
               this.show_table_name,
-              pos
+              pos,
+              [m1[0].length / dataIn1_csv[0].length,m2[0].length / dataOut1_csv[0].length],
+              [m1.length / dataIn1_csv.length, m2.length / dataOut1_csv.length]
             );
+           
             break;
           case "create_rows_insert":
             res = generateDataForInsertRows(
@@ -720,7 +738,9 @@ export default {
               res.outIdx,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "delete_tables":
@@ -731,7 +751,9 @@ export default {
               input_table_name,
               i,
               this.show_table_name,
-              pos
+              pos,
+              [res.m1[0].length / dataIn1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length]
             );
             break;
           case "delete_columns_select_keep":
@@ -740,6 +762,7 @@ export default {
               dataOut1_csv,
               input_explict_col
             );
+
             delete_column(
               res.m1,
               res.m2,
@@ -749,7 +772,9 @@ export default {
               res.outColors,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "delete_columns_select_remove":
@@ -767,7 +792,9 @@ export default {
               res.outColors,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "delete_columns_duplicate":
@@ -788,7 +815,9 @@ export default {
               output_table_name,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "delete_columns_dropna":
@@ -804,7 +833,9 @@ export default {
               [res.Row, res.Col],
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "delete_rows_filter":
@@ -822,7 +853,9 @@ export default {
               res.outColors,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           // case 'delete_rows_filter_keep':
@@ -841,6 +874,7 @@ export default {
               dataOut1_csv,
               input_explict_col
             );
+            console.log(res)
             delete_duplicate_row_partColumn(
               res.m1,
               res.m2,
@@ -851,7 +885,9 @@ export default {
               res.outColors,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "delete_rows_slice":
@@ -869,7 +905,9 @@ export default {
               res.outColors,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "transform_tables_rearrange":
@@ -888,7 +926,9 @@ export default {
               res.outColors,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "transform_tables_sort":
@@ -899,6 +939,7 @@ export default {
               input_explict_col,
               rule
             );
+            console.log("sort res: ",res)
             transform_tables_sort(
               res.m1,
               res.m2,
@@ -908,7 +949,9 @@ export default {
               res.outColor,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "transform_columns_replace_na":
@@ -927,7 +970,9 @@ export default {
               res.naRow,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "transform_columns_replace":
@@ -948,7 +993,9 @@ export default {
               res.naRow,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "transform_columns_mutate":
@@ -968,7 +1015,9 @@ export default {
               output_explict_col,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "transform_columns_extract":
@@ -988,7 +1037,9 @@ export default {
               input_explict_col,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "transform_columns_merge":
@@ -1008,7 +1059,9 @@ export default {
               output_explict_col,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "transform_columns_rename":
@@ -1027,7 +1080,9 @@ export default {
               res.expAfter,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "combine_columns_merge":
@@ -1048,7 +1103,9 @@ export default {
               res.outColors,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "combine_columns_mutate":
@@ -1058,6 +1115,9 @@ export default {
               input_explict_col,
               output_explict_col
             );
+
+            console.log("res: ",res)
+
             combine_columns_merge(
               res.m1,
               res.m2,
@@ -1069,7 +1129,9 @@ export default {
               res.outColors,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           // case 'combine_rows_sum':
@@ -1078,18 +1140,12 @@ export default {
           //   break
           case "combine_rows_summarize":
             //这个操作再看看
-            if (input_explict_col.length === 0) {
-              input_explict_col = Array.from(
-                new Array(dataIn1_csv[0].length),
-                (x, i) => i
-              );
-            }
             res = generateDataForGroupSummarize(
               dataIn1_csv,
               dataOut1_csv,
               input_explict_col,
               output_explict_col,
-              input_implict_col
+              // input_implict_col
             );
             combine_rows_sum(
               res.m1,
@@ -1099,7 +1155,9 @@ export default {
               output_table_name,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "combine_rows_interpolate":
@@ -1117,7 +1175,9 @@ export default {
               res.naPos,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "transform_rows_edit":
@@ -1135,7 +1195,9 @@ export default {
               res.rowIndex,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "separate_tables_subset":
@@ -1156,7 +1218,9 @@ export default {
               res.outColor2,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataIn2_csv[0].length,res.m3[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataIn2_csv,res.m3.length / dataOut1_csv.length]
             );
             break;
           case "separate_tables_decompose":
@@ -1164,6 +1228,13 @@ export default {
               dataIn1_csv,
               input_explict_col
             );
+            let xPercents = [res.m1[0].length / dataIn1_csv[0]]
+            let yPercents = [res.m1.length / dataIn1_csv.length]
+            for(let idx = 0;idx < res.tables.length;idx++){
+              xPercents.push(1)
+              yPercents.push(1)
+            }
+
             separate_tables_decompose(
               res.m1,
               res.tables,
@@ -1171,7 +1242,9 @@ export default {
               input_table_name,
               i,
               this.show_table_name,
-              pos
+              pos,
+              xPercents,
+              yPercents
             );
             break;
           case "separate_tables_decompose_q":
@@ -1193,7 +1266,10 @@ export default {
               res.outColor2,
               i,
               this.show_table_name,
-              pos
+              pos,
+              [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOu1_csv[0].length,res.m3[0].length / dataOut2_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOu1_csv,res.m3.length / dataOut2_csv.length]
+            
             );
             break;
           case "separate_tables_split":
@@ -1214,7 +1290,10 @@ export default {
               res.colors2,
               i,
               this.show_table_name,
-              pos
+              pos,
+              [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOu1_csv[0].length,res.m3[0].length / dataOut2_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOu1_csv,res.m3.length / dataOut2_csv.length]
+            
             );
             break;
           case "separate_columns":
@@ -1234,7 +1313,9 @@ export default {
               res.outExp,
               i,
               this.show_table_name,
-              pos
+              pos,
+              [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "separate_rows":
@@ -1252,15 +1333,41 @@ export default {
               res.outColors,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "combine_tables_extend":
-            res = generateDataForTablesExtend(
-              dataIn1_csv,
-              dataIn2_csv,
-              dataOut1_csv
-            );
+            res = {}
+            if(!transform_specs[i].input_explict_col){
+              res = generateDataForTablesExtend(
+                dataIn1_csv,
+                dataIn2_csv,
+                dataOut1_csv
+              );
+              let sameColName = ""
+              for(let col = 0;col < dataIn1_csv[0].length;col++){
+                if(dataIn2_csv[0].indexOf(dataIn1_csv[0][col]) !== -1){         
+                  sameColName = dataIn1_csv[0][col]
+                  res = generateDataForTablesExtend_withExplicitCol(
+                          dataIn1_csv,
+                          dataIn2_csv,
+                          dataOut1_csv,
+                          [sameColName,sameColName]
+                        );
+                  break
+                }
+              }
+            }else{
+              res = generateDataForTablesExtend_withExplicitCol(
+                dataIn1_csv,
+                dataIn2_csv,
+                dataOut1_csv,
+                transform_specs[i].input_explict_col
+              );
+            }
+            console.log("res: ",res)
             combine_tables_extend(
               res.m1,
               res.m2,
@@ -1269,10 +1376,14 @@ export default {
               input_table_name,
               input_table_name2,
               output_table_name,
+              res.inColors1,
+              res.inColors2,
               res.outColors,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length, res.m2[0].length / dataIn2_csv[0].length, res.m3[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataIn2_csv.length, res.m3.length / dataOut1_csv.length]
             );
             break;
           case "combine_tables_left_join":
@@ -1299,7 +1410,10 @@ export default {
               res.outColor,
               i,
               this.show_table_name,
-              pos
+              pos,
+               [res.m1[0].length / dataIn1_csv[0].length, res.m2[0].length / dataIn2_csv[0].length, res.m3[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataIn2_csv.length, res.m3.length / dataOut1_csv.length]
+            
             );
             break;
           case "combine_tables_full_join":
@@ -1325,7 +1439,10 @@ export default {
               res.outColor,
               i,
               this.show_table_name,
-              pos
+              pos,
+               [res.m1[0].length / dataIn1_csv[0].length, res.m2[0].length / dataIn2_csv[0].length, res.m3[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataIn2_csv.length, res.m3.length / dataOut1_csv.length]
+            
             ),
               this.show_table_name;
             break;
@@ -1349,7 +1466,10 @@ export default {
               res.outColor,
               i,
               this.show_table_name,
-              pos
+              pos,
+               [res.m1[0].length / dataIn1_csv[0].length, res.m2[0].length / dataIn2_csv[0].length, res.m3[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataIn2_csv.length, res.m3.length / dataOut1_csv.length]
+            
             );
             break;
           case "transform_tables_fold":
@@ -1368,7 +1488,10 @@ export default {
               input_explict_col.length,
               i,
               this.show_table_name,
-              pos
+              pos,
+               [res.m1[0].length / dataIn1_csv[0].length, res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
+            
             );
             break;
           case "transform_tables_unfold":
@@ -1397,7 +1520,9 @@ export default {
               diffVals.size,
               i,
               this.show_table_name,
-              pos
+              pos,
+              [res.m1[0].length / dataIn1_csv[0].length, res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
         }
@@ -1405,8 +1530,6 @@ export default {
 
       drawNode(this.$store.state.g,transform_specs,nodePos,tableInf,this.getTableData)
       var panZoomTiger = svgPanZoom('#mainsvg');
-      console.log("pan-zoom: ",panZoomTiger)
-
     },
   },
   mounted() {
