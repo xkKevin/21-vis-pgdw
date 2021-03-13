@@ -40,6 +40,9 @@ build:
   - docker build $(docker inspect --type=image $IMAGE >/dev/null 2>&1 && echo "--cache-from $IMAGE") -t $IMAGE .
   # and then push
   - docker push $IMAGE
+  only:
+    - dev
+
 
 # deploy the built image to K8s
 deploy:
@@ -56,3 +59,5 @@ deploy:
   - kubectl -n $KUBE_NAMESPACE create secret docker-registry ${CI_PROJECT_NAME}-pull-secret --docker-server="$CI_REGISTRY" --docker-username="$GITLAB_DEPLOY_USER" --docker-password="$GITLAB_DEPLOY_TOKEN" --docker-email="$GITLAB_USER_EMAIL" -o yaml --dry-run | kubectl apply -f -
   # deploy to K8s
   - envsubst < deployment.yaml | kubectl apply -f -
+  only:
+    - dev

@@ -52,23 +52,22 @@ def generate_transform_specs():
             f.write(script_content)
         
         # -------- 以下代码是用来调试的 -------- # 
-        os.chdir(os.path.join(os.getcwd(), data_path)) # 修改当前工作目录  os.path.join(os.getcwd(),script_name)
-        transform_specs = gts.generate_transform_specs(script_file)
-        import json
-        with open("transform_specs.json", "w") as fp:
-            json.dump(transform_specs, fp, indent=2)
+        # os.chdir(os.path.join(os.getcwd(), data_path)) # 修改当前工作目录  os.path.join(os.getcwd(),script_name)
+        # transform_specs = gts.generate_transform_specs(script_file)
+        # import json
+        # with open("transform_specs.json", "w") as fp:
+        #     json.dump(transform_specs, fp, indent=2)
         # ------------------------------------ # 
         try:
             os.chdir(os.path.join(os.getcwd(), data_path)) # 修改当前工作目录  os.path.join(os.getcwd(),script_name)
             transform_specs = gts.generate_transform_specs(script_file)  # 判断是否有异常发生
         except Exception as e:
-            # return jsonify({'error_info': str(e)})   # 如果有异常的话，将异常信息返回给前端
-            pass
+            return jsonify({'error_info': str(e)})   # 如果有异常的话，将异常信息返回给前端
         finally:
             os.chdir(original_cwd) # 修改回原来的工作目录
 
-    # return jsonify({'transform_specs': transform_specs})
-    return jsonify({'transform_specs': {}})
+    return jsonify({'transform_specs': transform_specs})
+    # return jsonify({'transform_specs': {}})
     
 
 
