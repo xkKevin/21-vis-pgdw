@@ -8,14 +8,33 @@ export function drawTable(g,matrix,expOrImpCols,pos,colWidth,colHeight,table_nam
     // let maxCharsPerCol = Math.floor(colWidth / colFontSize)
     // let maxCharsPerCell = Math.floor(colWidth / cellFontSize)
     let colors = tableRender.colors
+    // g.append('text')
+    //     .attr('x',pos[0])
+    //     .attr('y',pos[1] - colHeight)
+    //     .attr('dy',colHeight / 3 * 2)
+    //     .attr('text-anchor', 'start')
+    //     .text(table_name)
+    //     .attr('fill','black')
+    //     .attr('font-size',`${colWidth / 4}px`)
+    let showText = ''
+    if(16 >= table_name.length){
+        showText = table_name
+    }else{
+        showText = table_name.slice(0,15)
+        showText += '…'
+    }
+
     g.append('text')
-        .attr('x',pos[0])
-        .attr('y',pos[1] - colHeight)
-        .attr('dy',colHeight / 3 * 2)
-        .attr('text-anchor', 'start')
-        .text(table_name)
-        .attr('fill','black')
-        .attr('font-size',`${colFontSize}px`)
+    .attr('x',pos[0])
+    .attr('y',pos[1] - colHeight)
+    .attr('dy',colHeight / 3 * 2)
+    .attr('text-anchor', 'start')
+    .attr('fill','balck')
+    .attr('font-size',`${colWidth / 4}px`)
+    .text(showText)
+    .append("svg:title")
+    .text(table_name)
+
     for(let row = 0; row < matrix.length; row++){
         //dCol表示删除列时，output glyph中当前列需要左移的位置
         if(row === 0){
@@ -31,7 +50,7 @@ export function drawTable(g,matrix,expOrImpCols,pos,colWidth,colHeight,table_nam
                     .attr('fill',tableRender.firstRowColor)
                     .attr('opacity',tableRender.opacity)
                     .attr('stroke-width','1px')
-                    .attr('stroke','black')
+                    .attr('stroke',tableRender.strokeColor)
                     .attr('x',pos[0] + (col -dCol)* colWidth)
                     .attr('y',pos[1] + row * colHeight)
                 if(expOrImpCols.indexOf(col) !== -1){
@@ -82,7 +101,7 @@ export function drawTable(g,matrix,expOrImpCols,pos,colWidth,colHeight,table_nam
                     .attr('height',colHeight)
                     .attr('fill',color)
                     .attr('stroke-width','1px')
-                    .attr('stroke','black')
+                    .attr('stroke',tableRender.strokeColor)
                     .attr('x',pos[0] + (col - dCol)* colWidth)
                     .attr('y',pos[1] + row * colHeight)
                     // .attr('opacity',0.8)

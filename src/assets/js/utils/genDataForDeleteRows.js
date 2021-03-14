@@ -11,6 +11,7 @@ function cmpRows(r1,r2,inExpCols) {
 }
 function generateDataForRows(dataIn1_csv, dataOut1_csv,inExpCols){
     let contextualCols = extractCols(Array.from(dataIn1_csv[0]),inExpCols,inExpCols)
+
     let m1 = [[]],m2 = [[]]
     let outColors = []
 
@@ -89,6 +90,9 @@ function generateDataForRows(dataIn1_csv, dataOut1_csv,inExpCols){
                     tempRow.push('')
             }
         }
+        
+        console.log("len: ",dataIn1_csv[0].length)
+        console.log("tempRow: ",tempRow)
         m1.push(tempRow)
         if(diffRow.indexOf(rows[row]) === -1)m2.push(tempRow)
     }
@@ -215,6 +219,24 @@ function generateDataForDeleteDuplicateRows(dataIn1_csv, dataOut1_csv, inExpCols
         if(duplicated_rows.length !== 0)break
     }
 
+    if(duplicated_rows.length === 0){
+        let rows = Array.from(new Array(Math.min(3,dataIn1_csv.length)),(v,k) => k + 1)
+        for(let row = 0;row < rows.length;row++){
+            let tempRow = []
+            for(let col = 0;col < dataIn1_csv[0].length;col++){
+                if(m1[0].indexOf(dataIn1_csv[0][col]) !== -1){
+                    tempRow.push('')
+                }
+            }
+            m1.push(tempRow)
+            m2.push(tempRow)
+            inColors = Array.from(new Array(Math.min(3,dataIn1_csv.length)),(v,k) => k)
+            outColors = Array.from(new Array(Math.min(3,dataIn1_csv.length)),(v,k) => k)
+            return {m1,m2,inColors,outColors}
+        }
+    }
+        
+    
     if(duplicated_rows[0] > 1){
         let rows = [1,duplicated_rows[0],duplicated_rows[1]]
         for(let row = 0;row < rows.length;row++){
@@ -230,8 +252,14 @@ function generateDataForDeleteDuplicateRows(dataIn1_csv, dataOut1_csv, inExpCols
             m1.push(tempRow)
             if(row !== rows.length - 1)m2.push(tempRow)
         }
-        outColors = [0,1]
-        if(dataIn1_csv[0].length === inExpCols.length)inColors = [0,1,1]
+        
+        if(dataIn1_csv[0].length === inExpCols.length){
+            outColors = [0,1]
+            inColors = [0,1,1]
+        }else{
+            inColors = [0,1,2]
+            outColors = [0,1]
+        }
     }else if(duplicated_rows[1] < dataIn1_csv.length - 1){
         let rows = [duplicated_rows[0],duplicated_rows[1],dataIn1_csv.length - 1]
         for(let row = 0;row < rows.length;row++){
@@ -247,8 +275,14 @@ function generateDataForDeleteDuplicateRows(dataIn1_csv, dataOut1_csv, inExpCols
             m1.push(tempRow)
             if(row !== 0)m2.push(tempRow)
         }
-        outColors = [0,1]
-        if(dataIn1_csv[0].length === inExpCols.length)inColors = [0,0,1]
+        
+        if(dataIn1_csv[0].length === inExpCols.length){
+            outColors = [0,1]
+            inColors = [0,0,1]
+        }else{
+            inColors = [0,1,2]
+            outColors = [0,2]
+        }
     }else{
         let rows = [duplicated_rows[0],duplicated_rows[1]]
         for(let row = 0;row < rows.length;row++) {

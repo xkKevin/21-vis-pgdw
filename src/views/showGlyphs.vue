@@ -229,9 +229,9 @@ import {
   generateDataForFullJoin_2,
   generateDataForInnerJoin,
   generateDataForLeftJoin_2,
-  generateDataForTablesExtend,
   generateDataForTablesExtend_withExplicitCol
 } from "@/assets/js/utils/genDataForCombineTables";
+import {identical_operation} from '@/assets/js/glyph/identicalOperation'
 import { getCsv } from "@/assets/js/utils/common/getCsv";
 import {getGraphs} from '@/assets/js/utils/renderTree/getLayout'
 import {drawSvgAndEdge} from '@/assets/js/utils/renderTree/renderNodeAndEdge'
@@ -844,6 +844,7 @@ export default {
               dataOut1_csv,
               input_explict_col
             );
+            console.log("delete row: ",res)
             delete_row(
               res.m1,
               res.m2,
@@ -932,13 +933,14 @@ export default {
             );
             break;
           case "transform_tables_sort":
-            //暂定为只对数值类型进行排序
+            // 暂定为只对数值类型进行排序
             res = generateDataForTableSort(
               dataIn1_csv,
               dataOut1_csv,
               input_explict_col,
               rule
             );
+            
             console.log("sort res: ",res)
             transform_tables_sort(
               res.m1,
@@ -1115,9 +1117,6 @@ export default {
               input_explict_col,
               output_explict_col
             );
-
-            console.log("res: ",res)
-
             combine_columns_merge(
               res.m1,
               res.m2,
@@ -1140,6 +1139,10 @@ export default {
           //   break
           case "combine_rows_summarize":
             //这个操作再看看
+            console.log(dataIn1_csv)
+            console.log(dataOut1_csv)
+            console.log(input_explict_col)
+            console.log(output_explict_col)
             res = generateDataForGroupSummarize(
               dataIn1_csv,
               dataOut1_csv,
@@ -1147,6 +1150,8 @@ export default {
               output_explict_col,
               // input_implict_col
             );
+            console.log("res: ",res)
+
             combine_rows_sum(
               res.m1,
               res.m2,
@@ -1156,7 +1161,7 @@ export default {
               i,
               this.show_table_name,
               pos,
-                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
               [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
@@ -1341,11 +1346,13 @@ export default {
           case "combine_tables_extend":
             res = {}
             if(!transform_specs[i].input_explict_col){
-              res = generateDataForTablesExtend(
-                dataIn1_csv,
-                dataIn2_csv,
-                dataOut1_csv
-              );
+              // res = generateDataForTablesExtend(
+              //   dataIn1_csv,
+              //   dataIn2_csv,
+              //   dataOut1_csv
+              // );
+              // console.log("res: ",res)
+
               let sameColName = ""
               for(let col = 0;col < dataIn1_csv[0].length;col++){
                 if(dataIn2_csv[0].indexOf(dataIn1_csv[0][col]) !== -1){         
@@ -1359,6 +1366,7 @@ export default {
                   break
                 }
               }
+              console.log("res2: ",res)
             }else{
               res = generateDataForTablesExtend_withExplicitCol(
                 dataIn1_csv,
@@ -1395,6 +1403,7 @@ export default {
               input_explict_col,
               'NA'
             );
+            console.log("left_join: ",res)
             combine_tables_left_join(
               res.m1,
               res.m2,
@@ -1525,6 +1534,9 @@ export default {
               [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
+            case "identical_operation":
+              identical_operation(pos,i)
+            break
         }
       }
 

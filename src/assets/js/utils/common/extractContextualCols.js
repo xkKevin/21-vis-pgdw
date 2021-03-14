@@ -18,6 +18,14 @@ export function extractCols(inputCols,inExpOrImpCols,outExpOrImpCols){
     let contextualLen = inputCols.length - inExpOrImpCols.length
     if(contextualLen === 0)return []
 
+    if(inputCols.length === 2){
+        return inputCols[0] === inExpOrImpCols[0] ? [inputCols[1]] : [inputCols[0]]
+    }
+
+    if(inputCols.length === 1){
+        return [inputCols[0]]
+    }
+
     while(inStart <= inEnd && inEnd < inputCols.length){
         if(inEnd === inExpOrImpCols[inPos]){
             if(inStart !== inEnd)inGroups.push(inputCols.slice(inStart,inEnd))

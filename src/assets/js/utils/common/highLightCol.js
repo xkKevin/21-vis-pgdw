@@ -1,4 +1,5 @@
 //参数：g、explicit\implicit列、单元格的长和宽
+import {tableRender} from '@/assets/js/config/config'
 export function drawHighLightCol(g,matrix,expOrImpCols,pos,colWidth,colHeight,borderColor='#92D882') {
     expOrImpCols = Array.from(new Set(expOrImpCols))
     let highlightCols = []
@@ -19,21 +20,21 @@ export function drawHighLightCol(g,matrix,expOrImpCols,pos,colWidth,colHeight,bo
     for(let group = 0; group < highlightCols.length; group++){
         //高亮框
         g.append('rect')
-            .attr('width',(highlightCols[group][1] - highlightCols[group][0] + 1) * colWidth)
-            .attr('height',colHeight * matrix.length)
-            .attr('stroke-width','4px')
+            .attr('width',(highlightCols[group][1] - highlightCols[group][0] + 1) * colWidth - 3)
+            .attr('height',colHeight * matrix.length - 3)
+            .attr('stroke-width','3px')
             .attr('stroke',borderColor)
             .attr('fill','none')
-            .attr('x',pos[0] + highlightCols[group][0] * colWidth)
-            .attr('y',pos[1])
+            .attr('x',pos[0] + highlightCols[group][0] * colWidth + 1.5)
+            .attr('y',pos[1] + 1.5)
 
         //每个组的竖线
         g.append("line")
             .attr("x1", pos[0] + (highlightCols[group][1] + highlightCols[group][0] + 1) / 2 * colWidth)
-            .attr("y1", pos[1] + colHeight * matrix.length)
+            .attr("y1", pos[1] + colHeight * matrix.length + 3)
             .attr("x2", pos[0] + (highlightCols[group][1] + highlightCols[group][0] + 1) / 2 * colWidth)
             .attr("y2", pos[1] + colHeight * matrix.length + colHeight)
-            .attr("stroke", "black")
+            .attr("stroke", tableRender.strokeColor)
             .attr("stroke-width", "1px")
             .style("stroke-dasharray","4,4")
     }
@@ -47,7 +48,7 @@ export function drawHighLightCol(g,matrix,expOrImpCols,pos,colWidth,colHeight,bo
             .attr("y1", pos[1] + colHeight * matrix.length + colHeight)
             .attr("x2", pos[0] + (highlightCols[highlightCols.length - 1][1] + highlightCols[highlightCols.length - 1][0] + 1) / 2 * colWidth)
             .attr("y2", pos[1] + colHeight * matrix.length + colHeight)
-            .attr("stroke", "black")
+            .attr("stroke", tableRender.strokeColor)
             .attr("stroke-width", "1px")
             .style("stroke-dasharray","4,4")
         let start = pos[0] + (highlightCols[0][1] + highlightCols[0][0] + 1) / 2 * colWidth
@@ -59,7 +60,7 @@ export function drawHighLightCol(g,matrix,expOrImpCols,pos,colWidth,colHeight,bo
             .attr("y1", pos[1] + colHeight * matrix.length + colHeight)
             .attr("x2", midPoint)
             .attr("y2", pos[1] + colHeight * matrix.length + 2 * colHeight)
-            .attr("stroke", "black")
+            .attr("stroke", tableRender.strokeColor)
             .attr("stroke-width", "1px")
             .style("stroke-dasharray","4,4")
     }

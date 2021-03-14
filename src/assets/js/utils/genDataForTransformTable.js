@@ -53,7 +53,9 @@ function generateDataForColumnRearrange(dataIn1_csv,dataOut1_csv,colsAfterArrang
 function generateDataForTableSort(dataIn1_csv,dataOut1_csv,sortedCol,order) {
     //暂定以索引方式传入列
     //sortedCol是一个数组
+
     let contextualCols = extractCols(Array.from(dataIn1_csv[0]),sortedCol,sortedCol)
+
     let m1 = [[]],m2 = [[]]
     sortedCol.forEach(idx => {
         m1[0].push(dataIn1_csv[0][idx])
@@ -110,11 +112,11 @@ function generateDataForTableSort(dataIn1_csv,dataOut1_csv,sortedCol,order) {
     if(order.indexOf("desc") === -1){
         //暂定为只对数值类型进行排序
         colVal = colVal.sort(function(a,b){
-            return parseInt(a) - parseInt(b)
+            return parseFloat(a) - parseFloat(b)
         })
     }else{
         colVal = colVal.sort(function(a,b){
-            return parseInt(b) - parseInt(a)
+            return parseFloat(b) - parseFloat(a)
         })
     }
 

@@ -1,20 +1,9 @@
 import {extractCols} from "./common/extractContextualCols";
 
-function cmpRow(row1,row2){
-    let flag = true
-    for(let col = 0;col < row1.length;col++){
-        if(row1[col] !== row2[col]){
-            flag = false
-            break
-        }
-    }
-    return flag
-}
 function generateDataForGroupSummarize(dataIn1_csv, dataOut1_csv, inExpOrImpCol, outExpOrImpCol){
 
     let contextualCols = extractCols(Array.from(dataIn1_csv[0]),inExpOrImpCol,inExpOrImpCol)
 
-    // let allExpOrImp = Array.from(new Set(inExpOrImpCol.concat(outExpOrImpCol)))
     let m1 = [[]],m2 = [[]]
 
     inExpOrImpCol.forEach(idx => {
@@ -22,8 +11,6 @@ function generateDataForGroupSummarize(dataIn1_csv, dataOut1_csv, inExpOrImpCol,
         // m2[0].push(dataOut1_csv[0][idx])
     })
     
-    // m1[0] = Array.from(new Set(m1[0]))
-    // m2[0] = Array.from(new Set(m2[0]))
     outExpOrImpCol.forEach(idx => {
         m2[0].push(dataOut1_csv[0][idx])
     })
@@ -42,7 +29,7 @@ function generateDataForGroupSummarize(dataIn1_csv, dataOut1_csv, inExpOrImpCol,
 
     for(let row = 1;row < Math.min(dataIn1_csv.length,4);row++){
         let tempRow = []
-        for(let col = 0;col < m1[0].length;col++){
+        for(let col = 0;col < dataIn1_csv[0].length;col++){
             if(m1[0].indexOf(dataIn1_csv[0][col]) !== -1){
                 if(inExpOrImpCol.indexOf(col) !== -1)tempRow.push(dataIn1_csv[row][col])
                 else{
@@ -54,7 +41,7 @@ function generateDataForGroupSummarize(dataIn1_csv, dataOut1_csv, inExpOrImpCol,
     }
     for(let row = 1;row < Math.min(dataOut1_csv.length,4);row++){
         let tempRow = []
-        for(let col = 0;col < m2[0].length;col++){
+        for(let col = 0;col < dataOut1_csv[0].length;col++){
             if(m2[0].indexOf(dataOut1_csv[0][col]) !== -1){
                 if(outExpOrImpCol.indexOf(col) !== -1)tempRow.push(dataOut1_csv[row][col])
                 else{

@@ -3,7 +3,7 @@ import {drawDashRect} from "../utils/common/dashedRect";
 import {drawIcon} from "../utils/common/icon";
 import {drawOperationName} from "../utils/common/operationName";
 import {drawTableForColumn} from "../utils/common/createTableForColumn";
-import {fontSize, svgSize} from "../config/config";
+import {fontSize, svgSize,showOperation} from "../config/config";
 import {drawTable} from "../utils/common/createTable";
 import {drawHighLightCol} from "../utils/common/highLightCol";
 import {drawLine} from "../utils/common/dashedLine";
@@ -17,48 +17,42 @@ function delete_column(m1,m2,rule,t1_name,t2_name,outColors,name,showTableName,p
         t1_name = ''
         t2_name = ''
     }
-    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute('id', `mainsvg${name}`);
-    svg.setAttribute('width', svgSize.width);
-    svg.setAttribute('height', svgSize.height);
-    svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
-    document.getElementById('glyphs').appendChild(svg)
 
     let width = svgSize.width
     let height = svgSize.height
-    let colWidth =  width / (m1[0].length + m2[0].length + 2)
-    let colHeight = height / (m1.length + 3)
+    let colWidth = width / (m1[0].length + m2[0].length + 2) 
+    let colHeight = showOperation ? height / (m1.length + 3) : height / (m1.length + 2.5)
     let colFontSize = fontSize.colFontSize
     let cellFontSize = fontSize.cellFontSize
 
     const g = d3.select(`#mainsvg`).append('g')
         .attr('transform',`translate(${pos[0]},${pos[1]})`)
         .attr("id",`glyph${name}`)
-        g.append('rect')
-        .attr('x',-10)
-        .attr('y',0)
-        .attr('width',parseInt(width) + 20)
-        .attr('height',parseInt(height))
-        .attr('stroke','gray')
-        .attr('fill','transparent')
-        g.append("path")
-        .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
-        .attr('fill','none')
-        .attr('stroke','white')
-        .attr('stroke-width',"1px")
-        g.append("path")
-        .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2},${parseInt(height) + 4} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
-        // .attr('d',"M0,0 L8,4 L0,8 L4,4 L0,0")
-        .attr('fill','white')
-        .attr('stroke','gray')
-        .attr('stroke-width',"1px")
-        .style("stroke-linecap", "round")
+    g.append('rect')
+    .attr('x',-10)
+    .attr('y',0)
+    .attr('width',parseInt(width) + 20)
+    .attr('height',parseInt(height))
+    .attr('stroke','gray')
+    .attr('fill','transparent')
+    g.append("path")
+    .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
+    .attr('fill','none')
+    .attr('stroke','white')
+    .attr('stroke-width',"1px")
+    g.append("path")
+    .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2},${parseInt(height) + 4} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
+    // .attr('d',"M0,0 L8,4 L0,8 L4,4 L0,0")
+    .attr('fill','white')
+    .attr('stroke','gray')
+    .attr('stroke-width',"1px")
+    .style("stroke-linecap", "round")
     // drawTable(g,m1,expOrImpCols,[0,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize,'col')
     drawTableForColumn(g,m1,[0,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
     drawPcentBar(g,[0,colHeight],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])
     // 添加加号和箭头
     let arrowUrl = require('../../images/arrow.png')
-    drawIcon(g,[(m1[0].length + 0.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
+    drawIcon(g,[(m1[0].length + 0.2) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
 
     // drawTable(g,m2,expOrImpCols,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,'col')
     drawTableForColumn(g,m2,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,outColors)
@@ -68,7 +62,7 @@ function delete_column(m1,m2,rule,t1_name,t2_name,outColors,name,showTableName,p
 
     let yOfLine = (m1.length + 2) * colHeight
 
-    drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
+    if(showOperation)drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
 }
 
 function delete_duplicate(m1,m2,oriExpOrImpCols,rule,t1_name,t2_name,name,showTableName,pos,xPercents,yPercents) {
@@ -83,33 +77,33 @@ function delete_duplicate(m1,m2,oriExpOrImpCols,rule,t1_name,t2_name,name,showTa
 
     let width = svgSize.width
     let height = svgSize.height
-    let colWidth =  width / (2 * m1[0].length + 1)
-    let colHeight = height / (m1.length + 3)
+    let colWidth = width / (2 * m1[0].length + 1) 
+    let colHeight = showOperation ? height / (m1.length + 3) : height / (m1.length + 2.5)
     let colFontSize = fontSize.colFontSize
     let cellFontSize = fontSize.cellFontSize
 
     const g = d3.select(`#mainsvg`).append('g')
         .attr('transform',`translate(${pos[0]},${pos[1]})`)
         .attr("id",`glyph${name}`)
-        g.append('rect')
-        .attr('x',-10)
-        .attr('y',0)
-        .attr('width',parseInt(width) + 20)
-        .attr('height',parseInt(height))
-        .attr('stroke','gray')
-        .attr('fill','transparent')
-        g.append("path")
-        .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
-        .attr('fill','none')
-        .attr('stroke','white')
-        .attr('stroke-width',"1px")
-        g.append("path")
-        .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2},${parseInt(height) + 4} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
-        // .attr('d',"M0,0 L8,4 L0,8 L4,4 L0,0")
-        .attr('fill','white')
-        .attr('stroke','gray')
-        .attr('stroke-width',"1px")
-        .style("stroke-linecap", "round")
+    g.append('rect')
+    .attr('x',-10)
+    .attr('y',0)
+    .attr('width',parseInt(width) + 20)
+    .attr('height',parseInt(height))
+    .attr('stroke','gray')
+    .attr('fill','transparent')
+    g.append("path")
+    .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
+    .attr('fill','none')
+    .attr('stroke','white')
+    .attr('stroke-width',"1px")
+    g.append("path")
+    .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2},${parseInt(height) + 4} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
+    // .attr('d',"M0,0 L8,4 L0,8 L4,4 L0,0")
+    .attr('fill','white')
+    .attr('stroke','gray')
+    .attr('stroke-width',"1px")
+    .style("stroke-linecap", "round")
     //找出每一个重复值的下标
     let duplicatedVal = m2[0][oriExpOrImpCols[0]]
     let expOrImpCols = []
@@ -144,7 +138,7 @@ function delete_duplicate(m1,m2,oriExpOrImpCols,rule,t1_name,t2_name,name,showTa
             drawLine(g,[outColLenAndMid.midPoint,yOfLine],[outColLenAndMid.midPoint,yOfLine - colHeight],true)
         }
     }
-    drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
+    if(showOperation)drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
 }
 
 function delete_dropna(m1,m2,rule,t1_name,t2_name,inColors,outColors,naPos,name,showTableName,pos,xPercents,yPercents) {
@@ -155,8 +149,8 @@ function delete_dropna(m1,m2,rule,t1_name,t2_name,inColors,outColors,naPos,name,
 
     let width = svgSize.width
     let height = svgSize.height
-    let colWidth =  width / (m1[0].length + m2[0].length + 2)
-    let colHeight = height / (m1.length + 3)
+    let colWidth = width / (m1[0].length + m2[0].length + 2) 
+    let colHeight = showOperation ? height / (m1.length + 3) : height / (m1.length + 2.5)
     let colFontSize = fontSize.colFontSize
     let cellFontSize = fontSize.cellFontSize
 
@@ -200,7 +194,7 @@ function delete_dropna(m1,m2,rule,t1_name,t2_name,inColors,outColors,naPos,name,
 
     let yOfLine = (m1.length + 2) * colHeight
 
-    drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
+    if(showOperation)drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
 }
 
 export {delete_column,delete_dropna,delete_duplicate}

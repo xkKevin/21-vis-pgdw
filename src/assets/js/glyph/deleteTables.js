@@ -3,7 +3,7 @@ import {drawTable} from "../utils/common/createTable";
 import {drawDashRect} from "../utils/common/dashedRect";
 import {drawIcon} from "../utils/common/icon";
 import {drawOperationName} from "../utils/common/operationName";
-import {fontSize, svgSize} from "../config/config";
+import {fontSize, svgSize,showOperation} from "../config/config";
 import {drawPcentBar} from "../utils/common/pcentBar"
 
 export function delete_table(matrix,rule,t1_name,name,showTableName,pos,xPercents,yPercents) {
@@ -16,8 +16,8 @@ export function delete_table(matrix,rule,t1_name,name,showTableName,pos,xPercent
 
     let width = svgSize.width
     let height = svgSize.height
-    let colWidth =  width / (2 * matrix[0].length + 1)
-    let colHeight = height / (matrix.length + 3)
+    let colWidth = width / (2 * matrix[0].length + 1)
+    let colHeight = showOperation ? height / (matrix.length + 3) : height / (matrix.length + 2.5)
     let colFontSize = fontSize.colFontSize
     let cellFontSize = fontSize.cellFontSize
 
@@ -61,5 +61,5 @@ export function delete_table(matrix,rule,t1_name,name,showTableName,pos,xPercent
 
     let yOfLine = (matrix.length + 2) * colHeight
 
-    drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
+    if(showOperation)drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
 }

@@ -3,7 +3,7 @@ import {drawIcon} from "../utils/common/icon";
 import {drawIndex} from "../utils/common/setIndex";
 import {drawOperationName} from "../utils/common/operationName";
 import {drawTableForRow} from "../utils/common/createTableForRow";
-import {fontSize, svgSize} from "../config/config";
+import {fontSize, svgSize,showOperation} from "../config/config";
 import {drawPcentBar} from "../utils/common/pcentBar"
 
 export function transform_rows_edit(m1,m2,rule,t1_name,t2_name,idx,name,showTableName,pos,xPercents,yPercents) {
@@ -14,8 +14,8 @@ export function transform_rows_edit(m1,m2,rule,t1_name,t2_name,idx,name,showTabl
 
     let width = svgSize.width
     let height = svgSize.height
-    let colWidth = width / (m1[0].length + m2[0].length + 2)
-    let colHeight =  height / (m1.length + 3)
+    let colWidth = width / (m1[0].length + m2[0].length + 2) 
+    let colHeight = showOperation ? height / (m1.length + 3) : height / (m1.length + 2.5)
     let colFontSize = fontSize.colFontSize
     let cellFontSize = fontSize.cellFontSize
 
@@ -62,5 +62,5 @@ export function transform_rows_edit(m1,m2,rule,t1_name,t2_name,idx,name,showTabl
     drawIndex(g,[0,colHeight * 2],idx,colWidth / 2,colHeight,cellFontSize)
     drawIndex(g,[(m1[0].length + 1.2) * colWidth,colHeight * 2],idx,colWidth,colHeight,cellFontSize)
 
-    drawOperationName(g,[width / 2, (m1.length + 2) * colHeight],rule,'1.2em',colFontSize)
+    if(showOperation)drawOperationName(g,[width / 2, (m1.length + 2) * colHeight],rule,'1.2em',colFontSize)
 }

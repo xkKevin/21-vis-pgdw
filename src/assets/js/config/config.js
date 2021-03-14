@@ -24,8 +24,11 @@ const lineAttr = {
 }
 
 const tableRender = {
-    'firstRowColor':'black',
+    'firstRowColor':'#43504F',
+    'strokeColor':'#767979',
     'colors':['#5AABAC','#F07A66','#F8BA4B','#AAA1CC','#445050','#C9C9C9'],
     'opacity':1
 }
-export {svgSize,fontSize,nodeSize,lineAttr,nodeColor,tableRender}
+
+const showOperation = false
+export {svgSize,fontSize,nodeSize,lineAttr,nodeColor,tableRender,showOperation}

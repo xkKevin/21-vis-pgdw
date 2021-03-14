@@ -218,11 +218,13 @@ function generateDataForLeftJoin_2(dataIn1_csv,dataIn2_csv,dataOut1_csv,inExpCol
         if(sameRows.length === 2 && diffRow !== -1)break
     }
 
+    console.log("diff row: ",diffRow)
+    console.log("same row: ",sameRows)
     let rows1 = [],rows2 = [],rows3 = []
     if(sameRows.length === 0){
-        rows1 = Array.from(new Array(Math.max(2,dataIn1_csv.length - 1)),(x,i) => i + 1)
-        rows2 = Array.from(new Array(Math.max(2,dataIn2_csv.length - 1)),(x,i) => i + 1)
-        rows3 = Array.from(new Array(Math.max(2,dataIn1_csv.length - 1)),(x,i) => i + 1)
+        rows1 = Array.from(new Array(Math.min(2,dataIn1_csv.length - 1)),(x,i) => i + 1)
+        rows2 = Array.from(new Array(Math.min(2,dataIn2_csv.length - 1)),(x,i) => i + 1)
+        rows3 = Array.from(new Array(Math.min(2,dataIn1_csv.length - 1)),(x,i) => i + 1)
     }else if(diffRow === -1){
         rows1 = [1],rows3 = [1],rows2 = [sameRows[1]]
         
@@ -256,6 +258,8 @@ function generateDataForLeftJoin_2(dataIn1_csv,dataIn2_csv,dataOut1_csv,inExpCol
                     rows3 = [1]
                 }
             }
+        }else{
+            rows3 = rows1
         }
     }else{
         rows1 = [sameRows[0],diffRow]
@@ -863,18 +867,40 @@ function generateDataForTablesExtend_withExplicitCol(dataIn1_csv, dataIn2_csv, d
     let contextualCols1 = extractCols(Array.from(dataIn1_csv[0]),[dataIn1_csv[0].indexOf(inExpOrImpCol[0])],[1,2,3])
     let contextualCols2 = extractCols(Array.from(dataIn2_csv[0]),[dataIn2_csv[0].indexOf(inExpOrImpCol[1])],[1,2,3])
     let m1 = [[]],m2 = [[]],m3 = [[]]
+
+    console.log("contextual1: ",contextualCols1)
+    console.log("contextual2: ",contextualCols2)
+
     m1[0].push(inExpOrImpCol[0])
     m2[0].push(inExpOrImpCol[1])
     m3[0].push(inExpOrImpCol[0])
     contextualCols1.forEach(val =>{
         m1[0].push(val)
-        m3[0].push(val)
     })
 
     contextualCols2.forEach(val => {
         m2[0].push(val)
-        m3[0].push(val)
     })
+    for(let col = 0;col < m1[0].length;col++){
+        if(m3[0].indexOf(m1[0][col]) === -1){
+            if(m2[0].indexOf(m1[0][col]) !== -1){
+                m3[0].push(m1[0][col] + '.x')
+            }else{
+                m3[0].push(m1[0][col])
+            }
+        }
+    }
+    for(let col = 0;col < m2[0].length;col++){
+        if(m3[0].indexOf(m2[0][col]) === -1){
+            if(m1[0].indexOf(m2[0][col]) !== -1){
+                m3[0].push(m2[0][col] + '.y')
+            }else{
+                m3[0].push(m2[0][col])
+            }
+        }
+    }
+    console.log("m3[0]: ",m3[0])
+    // m3[0] = Array.from(new Set(m3[0]))
 
     m1[0].sort(function(a,b){
         return dataIn1_csv[0].indexOf(a) - dataIn1_csv[0].indexOf(b)

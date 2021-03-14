@@ -4,7 +4,7 @@ import {drawLine} from "../utils/common/dashedLine"
 import {drawIcon} from "../utils/common/icon"
 import {drawOperationName} from "../utils/common/operationName";
 import {drawTableForColumn} from "../utils/common/createTableForColumn";
-import {fontSize, svgSize} from "../config/config";
+import {fontSize, svgSize,showOperation} from "../config/config";
 import { drawPcentBar } from '../utils/common/pcentBar';
 
 export function separate_columns(m1, m2, rule, t1_name, t2_name, inExpOrImp, outExpOrImp,name,showTableName,pos,xPercents,yPercents){
@@ -19,7 +19,7 @@ export function separate_columns(m1, m2, rule, t1_name, t2_name, inExpOrImp, out
     let width = svgSize.width
     let height = svgSize.height
     let colWidth = width / (m1[0].length + m2[0].length + 1)
-    let colHeight =  height / (m1.length + 3)
+    let colHeight = showOperation ? height / (m1.length + 3) : height / (m1.length + 2.5)
     let colFontSize = fontSize.colFontSize
     let cellFontSize = fontSize.cellFontSize
 
@@ -73,5 +73,5 @@ export function separate_columns(m1, m2, rule, t1_name, t2_name, inExpOrImp, out
             drawLine(g,[outColLenAndMid.midPoint,yOfLine],[outColLenAndMid.midPoint,yOfLine - colHeight],true)
         }
     }
-    drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
+    if(showOperation)drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
 }

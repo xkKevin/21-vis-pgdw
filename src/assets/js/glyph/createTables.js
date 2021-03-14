@@ -3,7 +3,7 @@ import {drawDashRect} from "../utils/common/dashedRect"
 import {drawIcon} from "../utils/common/icon"
 import {drawOperationName} from "../utils/common/operationName";
 import {drawTableForColumn} from "../utils/common/createTableForColumn";
-import {fontSize, svgSize} from "../config/config";
+import {fontSize, svgSize,showOperation} from "../config/config";
 import {drawPcentBar} from '../utils/common/pcentBar'
 
 export function create_table(matrix,rule,t1_name,name,showTableName,pos,xPercent,yPercent){
@@ -13,7 +13,7 @@ export function create_table(matrix,rule,t1_name,name,showTableName,pos,xPercent
     let width = svgSize.width
     let height = svgSize.height
     let colWidth = width / (matrix[0].length * 2 + 1)
-    let colHeight = height / (matrix.length + 3)
+    let colHeight = showOperation ? height / (matrix.length + 3) : height / (matrix.length + 2.5)
     let colFontSize = fontSize.colFontSize
     const g = d3.select(`#mainsvg`).append('g')
         .attr('transform',`translate(${pos[0]},${pos[1]})`)
@@ -54,5 +54,5 @@ export function create_table(matrix,rule,t1_name,name,showTableName,pos,xPercent
     drawTableForColumn(g,matrix,[(matrix[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t1_name,colFontSize)
     drawPcentBar(g,[(matrix[0].length + 1) * colWidth,colHeight],matrix[0].length * colWidth,matrix.length * colHeight,colHeight,xPercent,yPercent)
     let yOfLine = (matrix.length + 2) * colHeight
-    drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
+    if(showOperation)drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
 }

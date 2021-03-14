@@ -1,5 +1,4 @@
 import {nodeSize,lineAttr} from '@/assets/js/config/config'
-import * as d3 from 'd3'
 function drawNode(g,specs,nodePos,specsInf,showTableFunc){
     let nodeName = []
     for(let idx = 0;idx < specs.length;idx++){
@@ -54,14 +53,14 @@ function drawNode(g,specs,nodePos,specsInf,showTableFunc){
             .on('click',function(event){
                 showTableFunc(nodeName[idx])
             })
-            //最多显示六个字符
-            let letters = 6
+            //最多显示四个字符
+            let letters = 5
             let showText = ''
             if(letters >= specsInf[nodeName[idx]][0].length){
                 showText = specsInf[nodeName[idx]][0]
             }else{
-                showText = specsInf[nodeName[idx]][0].slice(0,letters - 3)
-                showText += '...'
+                showText = specsInf[nodeName[idx]][0].slice(0,4)
+                showText += '…'
             }
      
             g.append('text')
@@ -69,40 +68,70 @@ function drawNode(g,specs,nodePos,specsInf,showTableFunc){
             .attr('y',nodePos[nodeName[idx]][1] + nodeSize.height / 2 - 5)
             .attr('text-anchor', 'start')
             .attr('fill','balck')
-            .attr('font-size',`${nodeSize.width / (letters + 2)}px`)
+            .attr('font-size',`${nodeSize.width / 1.7 /letters}px`)
             .text(showText)
-            .on("mouseover",function(event){
-                if(d3.select(`#table_name_${specsInf[nodeName[idx]][0]}`)['_groups'][0][0] === null){
-                    g.append('text')
-                    .attr('x',nodePos[nodeName[idx]][0])
-                    .attr('y',nodePos[nodeName[idx]][1])
-                    .attr('dx',1.1 * nodeSize.width)
-                    .attr('dy',1.1 * nodeSize.height)
-                    .attr('text-anchor', 'start')
-                    .attr('fill','balck')
-                    .attr('font-size',`${2 * nodeSize.width / letters}px`)
-                    .text(specsInf[nodeName[idx]][0])
-                    .attr("id",`table_name_${specsInf[nodeName[idx]][0]}`)
-                }
-                console.log("event",event)
-            })
-            .on("mouseout",function(event){
-                g.select(`#table_name_${specsInf[nodeName[idx]][0]}`).remove()
-            })
+            .append("svg:title")
+            .text(specsInf[nodeName[idx]][0])
+            // .on("mouseover",function(event){
+            //     if(d3.select(`#table_name_${specsInf[nodeName[idx]][0]}`)['_groups'][0][0] === null){
+            //         g.append('text')
+            //         .attr('x',nodePos[nodeName[idx]][0])
+            //         .attr('y',nodePos[nodeName[idx]][1])
+            //         .attr('dx',1.1 * nodeSize.width)
+            //         .attr('dy',1.1 * nodeSize.height)
+            //         .attr('text-anchor', 'start')
+            //         .attr('fill','balck')
+            //         .attr('font-size',`${2 * nodeSize.width / letters}px`)
+            //         .text(specsInf[nodeName[idx]][0])
+            //         .attr("id",`table_name_${specsInf[nodeName[idx]][0]}`)
+            //     }
+            //     console.log("event",event)
+            // })
+            // .on("mouseout",function(event){
+            //     g.select(`#table_name_${specsInf[nodeName[idx]][0]}`).remove()
+            // })
             .on('click',function(event){
                 showTableFunc(nodeName[idx])
             })
            
+            let rowsAndCols = `${specsInf[nodeName[idx]][1] - 1}R*${specsInf[nodeName[idx]][2]}C`
+            let showRowsAndCols = ''
+            if(letters >= rowsAndCols.length){
+                showRowsAndCols = rowsAndCols
+            }else{
+                showRowsAndCols = rowsAndCols.slice(0,4)
+                showRowsAndCols += '…'
+            }
             g.append('text')
             .attr('x',nodePos[nodeName[idx]][0] + nodeSize.width / 2)
             .attr('y',nodePos[nodeName[idx]][1] + nodeSize.height - 5)
             .attr('text-anchor', 'start')
             .attr('fill','gray')
-            .attr('font-size',`${nodeSize.width / (letters + 2)}px`)
-            .text(`${specsInf[nodeName[idx]][1] - 1}R*${specsInf[nodeName[idx]][2]}C`)
+            .attr('font-size',`${nodeSize.width / 1.7 / (letters)}px`)
+            .text(showRowsAndCols)
             .on('click',function(event){
                 showTableFunc(nodeName[idx])
             })
+            .append("svg:title")
+            .text(rowsAndCols)
+            // .on("mouseover",function(event){
+            //     if(d3.select(`#table_name_${specsInf[nodeName[idx]][0]}`)['_groups'][0][0] === null){
+            //         g.append('text')
+            //         .attr('x',nodePos[nodeName[idx]][0])
+            //         .attr('y',nodePos[nodeName[idx]][1])
+            //         .attr('dx',1.1 * nodeSize.width)
+            //         .attr('dy',1.1 * nodeSize.height)
+            //         .attr('text-anchor', 'start')
+            //         .attr('fill','balck')
+            //         .attr('font-size',`${2 * nodeSize.width / letters}px`)
+            //         .text(specsInf[nodeName[idx]][0])
+            //         .attr("id",`table_name_${specsInf[nodeName[idx]][0]}_show`)
+            //     }
+            //     console.log("event",event)
+            // })
+            // .on("mouseout",function(event){
+            //     g.select(`#table_name_${specsInf[nodeName[idx]][0]}`).remove()
+            // })
         }else{
             nodeRect.style('stroke-dasharray', '5,5');
             g.append('text')
