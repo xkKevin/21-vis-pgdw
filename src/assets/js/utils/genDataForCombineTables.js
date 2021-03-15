@@ -864,41 +864,45 @@ function generateDataForInnerJoin(dataIn1_csv, dataIn2_csv, dataOut1_csv,inExpOr
 
 function generateDataForTablesExtend_withExplicitCol(dataIn1_csv, dataIn2_csv, dataOut1_csv,inExpOrImpCol){
     // inExpOrImpCol保存的是值，不是下标
+    console.log("inexp or imp cols: ",inExpOrImpCol)
     let contextualCols1 = extractCols(Array.from(dataIn1_csv[0]),[dataIn1_csv[0].indexOf(inExpOrImpCol[0])],[1,2,3])
-    let contextualCols2 = extractCols(Array.from(dataIn2_csv[0]),[dataIn2_csv[0].indexOf(inExpOrImpCol[1])],[1,2,3])
+    let contextualCols2 = extractCols(Array.from(dataIn2_csv[0]),[dataIn2_csv[0].indexOf(inExpOrImpCol[0])],[1,2,3])
     let m1 = [[]],m2 = [[]],m3 = [[]]
 
     console.log("contextual1: ",contextualCols1)
     console.log("contextual2: ",contextualCols2)
 
     m1[0].push(inExpOrImpCol[0])
-    m2[0].push(inExpOrImpCol[1])
+    m2[0].push(inExpOrImpCol[0])
     m3[0].push(inExpOrImpCol[0])
     contextualCols1.forEach(val =>{
         m1[0].push(val)
+        m3[0].push(val)
     })
 
     contextualCols2.forEach(val => {
         m2[0].push(val)
+        m3[0].push(val + '.x')
+        m3[0].push(val + '.y')
     })
-    for(let col = 0;col < m1[0].length;col++){
-        if(m3[0].indexOf(m1[0][col]) === -1){
-            if(m2[0].indexOf(m1[0][col]) !== -1){
-                m3[0].push(m1[0][col] + '.x')
-            }else{
-                m3[0].push(m1[0][col])
-            }
-        }
-    }
-    for(let col = 0;col < m2[0].length;col++){
-        if(m3[0].indexOf(m2[0][col]) === -1){
-            if(m1[0].indexOf(m2[0][col]) !== -1){
-                m3[0].push(m2[0][col] + '.y')
-            }else{
-                m3[0].push(m2[0][col])
-            }
-        }
-    }
+    // for(let col = 0;col < m1[0].length;col++){
+    //     if(m3[0].indexOf(m1[0][col]) === -1){
+    //         if(m2[0].indexOf(m1[0][col]) !== -1){
+    //             m3[0].push(m1[0][col] + '.x')
+    //         }else{
+    //             m3[0].push(m1[0][col])
+    //         }
+    //     }
+    // }
+    // for(let col = 0;col < m2[0].length;col++){
+    //     if(m3[0].indexOf(m2[0][col]) === -1){
+    //         if(m1[0].indexOf(m2[0][col]) !== -1){
+    //             m3[0].push(m2[0][col] + '.y')
+    //         }else{
+    //             m3[0].push(m2[0][col])
+    //         }
+    //     }
+    // }
     console.log("m3[0]: ",m3[0])
     // m3[0] = Array.from(new Set(m3[0]))
 
@@ -912,9 +916,10 @@ function generateDataForTablesExtend_withExplicitCol(dataIn1_csv, dataIn2_csv, d
         return dataOut1_csv[0].indexOf(a) - dataOut1_csv[0].indexOf(b)
     })
 
+    
     let publicVals = {}
     let inExp1 = dataIn1_csv[0].indexOf(inExpOrImpCol[0])
-    let inExp2 = dataIn2_csv[0].indexOf(inExpOrImpCol[1])
+    let inExp2 = dataIn2_csv[0].indexOf(inExpOrImpCol[0])
     let outExp = dataOut1_csv[0].indexOf(inExpOrImpCol[0])
     let valuesToShow = []
     for(let row = 1;row < dataIn1_csv.length;row++){
@@ -1005,7 +1010,7 @@ function generateDataForTablesExtend_withExplicitCol(dataIn1_csv, dataIn2_csv, d
         if(m1[0][col] !== inExpOrImpCol[0])m1[0][col] = ''
     }
     for(let col = 0;col < m2[0].length;col++){
-        if(m2[0][col] !== inExpOrImpCol[1])m2[0][col] = ''
+        if(m2[0][col] !== inExpOrImpCol[0])m2[0][col] = ''
     }
     for(let col = 0;col < m3[0].length;col++){
         if(m3[0][col] !== inExpOrImpCol[0])m3[0][col] = ''

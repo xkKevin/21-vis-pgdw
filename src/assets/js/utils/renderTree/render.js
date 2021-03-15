@@ -38,7 +38,17 @@ function drawNode(g,specs,nodePos,specsInf,showTableFunc){
                 showTableFunc(nodeName[idx])
             })
 
-            let lineNum = nodeName[idx].replace(/[^0-9]/ig,"")
+            let firstIdx = 0
+            for(let s = 0;s < nodeName[idx].length;s++){
+                if(nodeName[idx][s] >= '0' && nodeName[idx][s] <= '9'){
+                    firstIdx = s
+                    break
+                }
+            }
+            let lastIdx = nodeName[idx].indexOf(".")
+
+            let lineNum = nodeName[idx].substring(firstIdx,lastIdx)
+            console.log(lineNum)
             let letterWidth = nodeSize.width / (lineNum.length + 2)
             let midInY = (nodeSize.height - letterWidth) / 2 + letterWidth
             g.append('text')
@@ -49,12 +59,12 @@ function drawNode(g,specs,nodePos,specsInf,showTableFunc){
             .attr('text-anchor', 'middle')
             .attr('fill','balck')
             .attr('font-size',`${letterWidth}px`)
-            .text(`L${parseInt(lineNum,10)}`)
+            .text(`L${lineNum}`)
             .on('click',function(event){
                 showTableFunc(nodeName[idx])
             })
             //最多显示四个字符
-            let letters = 5
+            let letters = 6
             let showText = ''
             if(letters >= specsInf[nodeName[idx]][0].length){
                 showText = specsInf[nodeName[idx]][0]

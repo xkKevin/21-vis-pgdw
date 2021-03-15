@@ -70,7 +70,12 @@ function generateData(dataIn1_csv, dataOut1_csv, inExpOrImpCol, outExpOrImpCol){
     for(let row = 1;row <= Math.min(3,dataIn1_csv.length - 1);row ++){
         let tempRow = []
         for(let col = 0;col < dataIn1_csv[0].length;col++){
-            if(m1[0].indexOf(dataIn1_csv[0][col]) !== -1)tempRow.push(dataIn1_csv[row][col])
+            if(m1[0].indexOf(dataIn1_csv[0][col]) !== -1){
+                if(inExpOrImpCol.indexOf(col) !== -1)tempRow.push(dataIn1_csv[row][col])
+                else{
+                    tempRow.push('')
+                }
+            }
         }
         m1.push(tempRow)
     }
@@ -78,11 +83,21 @@ function generateData(dataIn1_csv, dataOut1_csv, inExpOrImpCol, outExpOrImpCol){
     for(let row = 1;row <= Math.min(3,dataOut1_csv.length - 1);row ++){
         let tempRow = []
         for(let col = 0;col < dataOut1_csv[0].length;col++){
-            if(m2[0].indexOf(dataOut1_csv[0][col]) !== -1)tempRow.push(dataOut1_csv[row][col])
+            if(m2[0].indexOf(dataOut1_csv[0][col]) !== -1){
+                if(inExpOrImpCol.indexOf(col) !== -1 || outExpOrImpCol.indexOf(col) !== -1)tempRow.push(dataOut1_csv[row][col])
+                else{
+                    tempRow.push('')
+                }
+            }
         }
         m2.push(tempRow)
     }
-
+    for(let col = 0;col < m1[0].length;col++){
+        if(inExpOrImpCol.indexOf(dataIn1_csv[0].indexOf(m1[0][col])) === -1){
+            m1[0][col] = ''
+            m2[0][col] = ''
+        }
+    }
     for(let col = 0;col < inExpOrImpCol.length;col++){
         inExp.push(m1[0].indexOf(dataIn1_csv[0][inExpOrImpCol[col]]))
     }

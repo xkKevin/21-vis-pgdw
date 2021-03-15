@@ -170,7 +170,7 @@ function combine_tables_left_join(m1,m2,m3,rule,t1_name,t2_name,t3_name,naCol,na
     let width = svgSize.width
     let height = svgSize.height
     let colWidth = width / (Math.max(m1[0].length,m2[0].length) + m3[0].length + 1) 
-    let colHeight = showOperation ? height / (m1.length + m2.length + 4) : (m1.length + m2.length + 3.5)
+    let colHeight = showOperation ? height / (m1.length + m2.length + 4) : height / (m1.length + m2.length + 3.5)
     let colFontSize = fontSize.colFontSize
     let cellFontSize = fontSize.cellFontSize
 

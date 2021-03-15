@@ -19,7 +19,8 @@ export function extractCols(inputCols,inExpOrImpCols,outExpOrImpCols){
     if(contextualLen === 0)return []
 
     if(inputCols.length === 2){
-        return inputCols[0] === inExpOrImpCols[0] ? [inputCols[1]] : [inputCols[0]]
+        console.log("length equals to 2")
+        return inExpOrImpCols[0] === 0 ? [inputCols[1]] : [inputCols[0]]
     }
 
     if(inputCols.length === 1){

@@ -1,15 +1,22 @@
 import {extractCols} from "./common/extractContextualCols";
 
-function generateDataForGroupSummarize(dataIn1_csv, dataOut1_csv, inExpOrImpCol, outExpOrImpCol){
+function generateDataForGroupSummarize(dataIn1_csv, dataOut1_csv, inExpCol, inImpCol,outExpOrImpCol){
 
-    let contextualCols = extractCols(Array.from(dataIn1_csv[0]),inExpOrImpCol,inExpOrImpCol)
-
+    let contextualCols = extractCols(Array.from(dataIn1_csv[0]),inExpCol.concat(inImpCol),inExpCol.concat(inImpCol))
+    let allCols = inExpCol.concat(inImpCol)
     let m1 = [[]],m2 = [[]]
 
-    inExpOrImpCol.forEach(idx => {
+    inExpCol.forEach(idx => {
         m1[0].push(dataIn1_csv[0][idx])
-        // m2[0].push(dataOut1_csv[0][idx])
     })
+    inImpCol.forEach(idx => {
+        m1[0].push(dataIn1_csv[0][idx])
+    })
+    if(inImpCol.length === 0){
+        m2[0].push(dataIn1_csv[0][inExpCol[0]])
+    }else{
+        m2[0].push(dataIn1_csv[0][inImpCol[0]])
+    }
     
     outExpOrImpCol.forEach(idx => {
         m2[0].push(dataOut1_csv[0][idx])
@@ -31,7 +38,8 @@ function generateDataForGroupSummarize(dataIn1_csv, dataOut1_csv, inExpOrImpCol,
         let tempRow = []
         for(let col = 0;col < dataIn1_csv[0].length;col++){
             if(m1[0].indexOf(dataIn1_csv[0][col]) !== -1){
-                if(inExpOrImpCol.indexOf(col) !== -1)tempRow.push(dataIn1_csv[row][col])
+                // if(inExpOrImpCol.indexOf(col) !== -1)tempRow.push(dataIn1_csv[row][col])
+                if(allCols.indexOf(col) !== -1)tempRow.push(dataIn1_csv[row][col])
                 else{
                     tempRow.push("")
                 }
@@ -39,24 +47,37 @@ function generateDataForGroupSummarize(dataIn1_csv, dataOut1_csv, inExpOrImpCol,
         }
         m1.push(tempRow)
     }
-    for(let row = 1;row < Math.min(dataOut1_csv.length,4);row++){
+    let rows2 = []
+    let values = []
+    let col2 = inImpCol.length === 0 ? dataOut1_csv[0].indexOf(dataIn1_csv[0][inExpCol[0]]) : dataOut1_csv[0].indexOf(dataIn1_csv[0][inImpCol[0]])
+    let col1 = inImpCol.length === 0 ? m1[0].indexOf(dataIn1_csv[0][inExpCol[0]]) : m1[0].indexOf(dataIn1_csv[0][inImpCol[0]])
+    for(let row = 1;row < dataOut1_csv.length;row++){
+        values.push(dataOut1_csv[row][col2])
+    }
+    for(let row = 1;row < m1.length;row++){
+        rows2.push(values.indexOf(m1[row][col1]) + 1)
+    }
+    for(let row = 0;row < rows2.length;row++){
         let tempRow = []
         for(let col = 0;col < dataOut1_csv[0].length;col++){
             if(m2[0].indexOf(dataOut1_csv[0][col]) !== -1){
-                if(outExpOrImpCol.indexOf(col) !== -1)tempRow.push(dataOut1_csv[row][col])
-                else{
-                    tempRow.push("")
-                }
+                tempRow.push(dataOut1_csv[rows2[row]][col])
             }
         }
         m2.push(tempRow)
     }
     for(let col = 0;col < m1[0].length;col++){
-        if(inExpOrImpCol.indexOf(dataIn1_csv[0].indexOf(m1[0][col])) === -1)m1[0][col] = ''
+        if(allCols.indexOf(dataIn1_csv[0].indexOf(m1[0][col])) === -1)m1[0][col] = ''
     }
-    for(let col = 0;col < m2[0].length;col++){
-        if(outExpOrImpCol.indexOf(dataOut1_csv[0].indexOf(m2[0][col])) === -1)m2[0][col] = ''
+    let outColor = []
+    for(let col = 0;col < m2[0].length;col ++){
+        let idx = m1[0].indexOf(m2[0][col])
+        if(idx !== -1)outColor.push(m1[0].indexOf(m2[0][col]))
     }
+    outColor.push(m1[0].length)
+    // for(let col = 0;col < m2[0].length;col++){
+    //     if(outExpOrImpCol.indexOf(dataOut1_csv[0].indexOf(m2[0][col])) === -1 && dat)m2[0][col] = ''
+    // }
     // let rows1 = []
     // for(let row = 1;row < dataIn1_csv.length;row++){
     //     if(cmpRow(dataIn1_csv[row],dataOut1_csv[1]) || cmpRow(dataIn1_csv[row],dataOut1_csv[2])){
@@ -83,7 +104,7 @@ function generateDataForGroupSummarize(dataIn1_csv, dataOut1_csv, inExpOrImpCol,
     //     m2.push(tempRow)
     // }
 
-    return {m1,m2}
+    return {m1,m2,outColor}
 }
 
 function generateDataForRowInterpolate(dataIn1_csv, dataOut1_csv, inExpOrImpCol){

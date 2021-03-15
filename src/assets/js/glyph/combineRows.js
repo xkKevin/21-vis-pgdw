@@ -5,7 +5,7 @@ import {drawTableForColumn} from "../utils/common/createTableForColumn";
 import {fontSize, svgSize,showOperation} from "../config/config";
 import {drawPcentBar} from '../utils/common/pcentBar'
 
-function combine_rows_sum(m1,m2,rule,t1_name,t2_name,name,showTableName,pos,xPercents,yPercents){
+function combine_rows_sum(m1,m2,rule,t1_name,t2_name,name,showTableName,pos,xPercents,yPercents,outColor = []){
     if(!showTableName){
         t1_name = ''
         t2_name = ''
@@ -50,7 +50,7 @@ function combine_rows_sum(m1,m2,rule,t1_name,t2_name,name,showTableName,pos,xPer
     let arrowUrl = require('../../images/arrow.png')
     drawIcon(g,[(m1[0].length + 0.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
 
-    drawTableForColumn(g,m2,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize)
+    drawTableForColumn(g,m2,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,outColor)
     drawPcentBar(g,[(m1[0].length + 1) * colWidth,colHeight],m2[0].length * colWidth,m2.length * colHeight,colHeight,xPercents[1],yPercents[1])
 
     let yOfLine = (m1.length + 2) * colHeight

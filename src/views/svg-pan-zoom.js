@@ -560,7 +560,7 @@
       this.pendingUpdate = false;
     
       // Notify about the update
-      if (this.options.onUpdatedCTM) {
+      if (this.options.onUpdatedCTM) {        
         this.options.onUpdatedCTM(ctm);
       }
     };

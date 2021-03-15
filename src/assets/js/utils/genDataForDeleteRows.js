@@ -66,11 +66,19 @@ function generateDataForRows(dataIn1_csv, dataOut1_csv,inExpCols){
         }else{
             if(diffRow.length < 2)diffRow.push(row1)
         }
-        if(sameRows.length === 2 && diffRow !== -1)break
+        if(sameRows.length === 2 && diffRow.length === 2)break
         row1 += 1
     }
 
-    if(row2 === dataOut1_csv.length && diffRow.length < 2)diffRow.push(row1)
+    if(row2 === dataOut1_csv.length){
+        if(diffRow.length === 0){
+            for(row1;row1 < dataIn1_csv.length;row1 ++){
+                diffRow.push(row1)
+            }
+        }else if(diffRow.length === 1 && row1 < dataIn1_csv.length - 1){
+            diffRow.push(row1 + 1)
+        }
+    }
     let rows = Array.from(sameRows)
     
     if(sameRows.length === 2 && diffRow.length !== 0){
@@ -90,9 +98,6 @@ function generateDataForRows(dataIn1_csv, dataOut1_csv,inExpCols){
                     tempRow.push('')
             }
         }
-        
-        console.log("len: ",dataIn1_csv[0].length)
-        console.log("tempRow: ",tempRow)
         m1.push(tempRow)
         if(diffRow.indexOf(rows[row]) === -1)m2.push(tempRow)
     }

@@ -75,20 +75,30 @@ function generateDataForTableSort(dataIn1_csv,dataOut1_csv,sortedCol,order) {
         return dataOut1_csv[0].indexOf(a) - dataOut1_csv[0].indexOf(b)
     })
 
-    for(let row = 1;row <= Math.min(3,dataIn1_csv.length - 1);row ++){
+    let colVals = []
+    for(let row = 1;row < dataIn1_csv.length;row++){
+        colVals.push(dataIn1_csv[row][sortedCol[0]])
+    }
+    let uniqueVal = Array.from(new Set(colVals))
+    let rows = []
+    for(let idx = 0;idx < Math.min(uniqueVal.length,3);idx++){
+        rows.push(colVals.indexOf(uniqueVal[idx]) + 1)
+    }
+    rows.sort()
+    for(let row = 0;row < rows.length;row ++){
         let tempRow = []
         for(let col = 0;col < m1[0].length;col++){
-            if(m1[0][col] === dataIn1_csv[0][sortedCol[0]])tempRow.push(dataIn1_csv[row][sortedCol[0]])
+            if(m1[0][col] === dataIn1_csv[0][sortedCol[0]])tempRow.push(dataIn1_csv[rows[row]][sortedCol[0]])
             else
                 tempRow.push('')
         }
         m1.push(tempRow)
     }
 
-    for(let row = 1;row <= Math.min(3,dataOut1_csv.length - 1);row ++){
+    for(let row = 0;row < rows.length;row ++){
         let tempRow = []
         for(let col = 0;col < m2[0].length;col++){
-            if(m2[0][col] === dataIn1_csv[0][sortedCol[0]])tempRow.push(dataIn1_csv[row][sortedCol[0]])
+            if(m2[0][col] === dataIn1_csv[0][sortedCol[0]])tempRow.push(dataIn1_csv[rows[row]][sortedCol[0]])
             else
                 tempRow.push('')
         }

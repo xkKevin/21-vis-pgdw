@@ -55,11 +55,12 @@ function getLayout(specs){
             "algorithm": "layered",
             "spacing.edgeEdgeBetweenLayers": "300.0",
             "crossingMinimization.semiInteractive": "true",
-            "spacing.edgeNode": "25.0",
-            "spacing.edgeEdge": "20.0",
+            "spacing.edgeNode": "200.0",
+            // "spacing.edgeEdge": "200.0",
+            // "spacing.edgeEdge": "200",
             "spacing.nodeNode": parseInt(svgSize.height) + 20,//control the gap in direction of y 
-            "separateConnectedComponents": "true",
-            "spacing.componentComponent": "200.0",
+            // "separateConnectedComponents": "true",
+            // "spacing.componentComponent": "200.0",
             // "width": '2000',
             // "height": '700'
         },
