@@ -877,7 +877,9 @@ function generateDataForTablesExtend_withExplicitCol(dataIn1_csv, dataIn2_csv, d
     m3[0].push(inExpOrImpCol[0])
     contextualCols1.forEach(val =>{
         m1[0].push(val)
-        m3[0].push(val)
+        if(dataIn2_csv[0].indexOf(val) === -1){
+            m3[0].push(val)
+        }
     })
 
     contextualCols2.forEach(val => {

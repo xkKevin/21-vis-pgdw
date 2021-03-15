@@ -17,10 +17,10 @@ export function drawTable(g,matrix,expOrImpCols,pos,colWidth,colHeight,table_nam
     //     .attr('fill','black')
     //     .attr('font-size',`${colWidth / 4}px`)
     let showText = ''
-    if(16 >= table_name.length){
+    if(7 * matrix[0].length >= table_name.length){
         showText = table_name
     }else{
-        showText = table_name.slice(0,15)
+        showText = table_name.slice(0,7 * matrix[0].length - 1)
         showText += '…'
     }
 

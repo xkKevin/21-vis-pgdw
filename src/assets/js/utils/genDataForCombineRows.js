@@ -13,7 +13,7 @@ function generateDataForGroupSummarize(dataIn1_csv, dataOut1_csv, inExpCol, inIm
         m1[0].push(dataIn1_csv[0][idx])
     })
     if(inImpCol.length === 0){
-        m2[0].push(dataIn1_csv[0][inExpCol[0]])
+        if(dataOut1_csv[0].indexOf(dataIn1_csv[0][inExpCol[0]]) !== -1)m2[0].push(dataIn1_csv[0][inExpCol[0]])
     }else{
         m2[0].push(dataIn1_csv[0][inImpCol[0]])
     }
@@ -54,9 +54,15 @@ function generateDataForGroupSummarize(dataIn1_csv, dataOut1_csv, inExpCol, inIm
     for(let row = 1;row < dataOut1_csv.length;row++){
         values.push(dataOut1_csv[row][col2])
     }
+    
     for(let row = 1;row < m1.length;row++){
         rows2.push(values.indexOf(m1[row][col1]) + 1)
     }
+    
+    if(dataOut1_csv[0].indexOf(dataIn1_csv[0][inExpCol[0]]) === -1){
+        rows2 = Array.from(new Array(Math.min(3,dataOut1_csv.length - 1)),(v,k) => k + 1)
+    }
+    // console.log("rows2: ",rows2)
     for(let row = 0;row < rows2.length;row++){
         let tempRow = []
         for(let col = 0;col < dataOut1_csv[0].length;col++){
