@@ -3,14 +3,24 @@ import re, os
 Rscript_path = "Rscript"  # Rscript执行路径
 
 
-def deleteMatchFiles(directory, starts="", ends=""):
+def deleteMatchFiles(directory, starts="", ends="", recursion = False):
     '''
     按特定要求删除某路径下的匹配文件，如果starts和ends都不填写，则默认删除该目录下所有文件
+    recursion: 表示是否递归删除匹配的文件，默认为否，即值删除当前路径下的匹配文件
     '''
     for path, dir_list, file_list in os.walk(directory):
-        for fi in file_list:
-            if fi.startswith(starts) and fi.endswith(ends): # "table9.csv".startswith("") 为 True
-                os.remove(os.path.join(directory, fi))
+        if recursion: # 递归搜索并删除
+            for fi in file_list:
+                if fi.startswith(starts) and fi.endswith(ends): # "table9.csv".startswith("") 为 True
+                    print(directory, path, fi)
+                    os.remove(os.path.join(path, fi))
+        else: # 非递归搜索
+            if path == directory:  # 仅在当前文件下删除
+                for fi in file_list:
+                    if fi.startswith(starts) and fi.endswith(ends):
+                        print(directory, path, fi)
+                        os.remove(os.path.join(path, fi))
+                break
 
 
 def execScript(script_name):
