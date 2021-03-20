@@ -12,13 +12,13 @@ def deleteMatchFiles(directory, starts="", ends="", recursion = False):
         if recursion: # 递归搜索并删除
             for fi in file_list:
                 if fi.startswith(starts) and fi.endswith(ends): # "table9.csv".startswith("") 为 True
-                    print(directory, path, fi)
+                    # print(directory, path, fi)
                     os.remove(os.path.join(path, fi))
         else: # 非递归搜索
             if path == directory:  # 仅在当前文件下删除
                 for fi in file_list:
                     if fi.startswith(starts) and fi.endswith(ends):
-                        print(directory, path, fi)
+                        # print(directory, path, fi)
                         os.remove(os.path.join(path, fi))
                 break
 
@@ -606,7 +606,15 @@ def generate_transform_specs(script_name):
                     specs["input_explict_col"] = remove_quote(remove_quote(p_match_c.findall(params['none'][pi])[0].strip().split(',')))
                 else:
                     specs["input_explict_col"] = [remove_quote(params['none'][pi])]
-            specs["operation_rule"] = func.replace("_", " ").title() # .title 将各单词的首字母大写
+            if not specs.get("input_explict_col"):
+                input1_cols = set(col_states[var2num(specs["input_table_name"][0])])
+                input2_cols = set(col_states[var2num(specs["input_table_name"][1])])
+                implicit_col = remove_quote(list(input1_cols & input2_cols))
+                specs["input_explict_col"] = implicit_col
+            if len(specs["input_explict_col"]) == 1:
+                specs["operation_rule"] = "%s on %s" % (func.replace("_", " ").title(), specs["input_explict_col"][0]) # .title 将各单词的首字母大写
+            else:
+                specs["operation_rule"] = "%s on %s" % (func.replace("_", " ").title(), ",".join(specs["input_explict_col"])) # .title 将各单词的首字母大写
             
             var2table[output_tbl] = specs["output_table_file"]
             

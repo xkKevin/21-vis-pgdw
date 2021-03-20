@@ -1,112 +1,78 @@
 [
   {
     "type": "create_tables",
-    "output_table_name": "bailey",
+    "output_table_name": "p34_input1",
     "output_table_file": "table4.csv",
-    "operation_rule": "Load: \"./repo/Power_of_Irma/Energy-Poverty 32641 homes.csv\""
+    "operation_rule": "Load: \"benchmarks/r34_input1.csv\""
   },
   {
-    "type": "combine_rows_summarize",
-    "output_table_name": "landlords_1",
-    "output_table_file": "table5_1.csv",
-    "input_table_name": "bailey",
-    "input_explict_col": [
-      "OWNERNME1"
-    ],
-    "input_table_file": "table4.csv",
-    "output_explict_col": [
-      "n"
-    ],
-    "operation_rule": "Group:OWNERNME1, and Count"
+    "type": "create_tables",
+    "output_table_name": "p34_input2",
+    "output_table_file": "table5.csv",
+    "operation_rule": "Load: \"benchmarks/r34_input2.csv\""
   },
   {
-    "type": "transform_tables_sort",
-    "input_table_name": "landlords_1",
-    "input_table_file": "table5_1.csv",
-    "output_table_name": "landlords",
-    "output_table_file": "table5_2.csv",
-    "input_explict_col": [
-      "n"
-    ],
-    "operation_rule": "Sort: desc(n)"
-  },
-  {
-    "type": "delete_rows_filter",
-    "input_table_name": "landlords",
-    "input_table_file": "table5_2.csv",
-    "output_table_name": "landlords",
-    "output_table_file": "table6.csv",
-    "input_explict_col": [
-      "n"
-    ],
-    "operation_rule": "Filter: n>1"
-  },
-  {
-    "input_table_name": "bailey",
-    "input_table_file": "table4.csv",
-    "output_table_name": "by_owner",
-    "output_table_file": "table7.csv",
-    "type": "identical_operation",
-    "operation_rule": "group_by(bailey, OWNERNME1)"
-  },
-  {
-    "type": "combine_rows_summarize",
-    "input_table_name": "by_owner",
-    "input_table_file": "table7.csv",
-    "output_table_name": "utilities",
-    "output_table_file": "table8.csv",
-    "output_explict_col": [
-      "cost"
-    ],
-    "input_explict_col": [
-      "Unit.Utilities.Cost"
-    ],
-    "input_implict_col": [
-      "OWNERNME1"
-    ],
-    "operation_rule": "Group:OWNERNME1, Summarize:cost=sum(Unit.Utilities.Cost)"
-  },
-  {
-    "type": "combine_tables_left_join",
+    "type": "combine_tables_inner_join",
     "input_table_name": [
-      "landlords",
-      "utilities"
+      "p34_input2",
+      "p34_input1"
     ],
     "input_table_file": [
-      "table6.csv",
-      "table8.csv"
+      "table5.csv",
+      "table4.csv"
     ],
-    "output_table_name": "ownercost",
-    "output_table_file": "table9.csv",
+    "output_table_name": "TBL_3",
+    "output_table_file": "table6.csv",
     "input_explict_col": [
-      "OWNERNME1"
+      "mult"
     ],
-    "operation_rule": "Left Join"
+    "operation_rule": "Inner Join"
   },
   {
-    "output_table_name": "ownercost",
-    "output_table_file": "table10.csv",
-    "type": "transform_columns_rename",
-    "input_table_name": "ownercost",
-    "input_table_file": "table9.csv",
-    "input_explict_col": [
-      "n"
-    ],
-    "operation_rule": "Rename"
-  },
-  {
-    "input_table_name": "ownercost",
-    "input_table_file": "table10.csv",
-    "output_table_name": "ownercost",
-    "output_table_file": "table11.csv",
+    "input_table_name": "TBL_3",
+    "input_table_file": "table6.csv",
+    "output_table_name": "TBL_1",
+    "output_table_file": "table7.csv",
     "output_explict_col": [
-      "cost_per_property"
+      "total"
     ],
     "input_explict_col": [
-      "num_properties",
-      "cost"
+      "value",
+      "size"
     ],
-    "operation_rule": "Mutate: cost_per_property=cost / num_properties",
+    "operation_rule": "Mutate: total=value / size",
     "type": "create_columns_mutate"
+  },
+  {
+    "input_table_name": "TBL_1",
+    "input_table_file": "table7.csv",
+    "output_table_name": "morpheus",
+    "output_table_file": "table8.csv",
+    "type": "delete_columns_select_remove",
+    "input_explict_col": [
+      "value"
+    ],
+    "operation_rule": "Delete Columns: value"
+  },
+  {
+    "input_table_name": "morpheus",
+    "input_table_file": "table8.csv",
+    "output_table_name": "morpheus",
+    "output_table_file": "table9.csv",
+    "type": "identical_operation",
+    "operation_rule": "as.data.frame"
+  },
+  {
+    "input_table_name": "morpheus",
+    "input_table_file": "table9.csv",
+    "output_table_name": "morpheus",
+    "output_table_file": "table10.csv",
+    "type": "transform_tables_rearrange",
+    "input_explict_col": [
+      "size",
+      "mult",
+      "total"
+    ],
+    "operation_rule": "Rearrange Columns"
   }
 ]
