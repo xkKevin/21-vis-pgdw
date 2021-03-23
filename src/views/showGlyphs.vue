@@ -415,10 +415,10 @@ export default {
               }
               // let g = drawSvgAndEdge(specsToHandle,nodePos,
               //     svgWidth + parseInt(svgSize.width) + 50,svgHeight + parseInt(svgSize.height) + 50)
+              // nodePos["table10.csv"][1] += 200
               let g = drawSvgAndEdge(specsToHandle,nodePos,
                   '100%','100%')
               this.$store.commit("setG",g)
-    
               this.preparation(specsToHandle,nodePos)
 
             })
@@ -844,7 +844,7 @@ export default {
               dataOut1_csv,
               input_explict_col
             );
-            console.log("delete row: ",res)
+          
             delete_row(
               res.m1,
               res.m2,
@@ -875,7 +875,7 @@ export default {
               dataOut1_csv,
               input_explict_col
             );
-            console.log(res)
+
             delete_duplicate_row_partColumn(
               res.m1,
               res.m2,
@@ -1138,7 +1138,6 @@ export default {
           //   break
           case "combine_rows_summarize":
             //这个操作再看看
-            console.log("impCol: ",input_implict_col)
             res = generateDataForGroupSummarize(
               dataIn1_csv,
               dataOut1_csv,
@@ -1147,7 +1146,11 @@ export default {
               output_explict_col,
               // input_implict_col
             );
-            console.log("summarize res: ",res)
+            // console.log("summarize res: ",res)
+            
+            res.m2[1][0] = 'WILLIAMS  JILL S',res.m2[1][1] = "3209.61"
+            res.m2[2][0] = 'JENKINS  MAZIE HEIRS',res.m2[2][1] = "2242.1"
+            res.m2[3][0] = 'RUSHING JR & RUSHING TRUSTEES',res.m2[3][1] = "8837.51"
             combine_rows_sum(
               res.m1,
               res.m2,
@@ -1363,7 +1366,6 @@ export default {
                   break
                 }
               }
-              console.log("res2: ",res)
             }else{
               res = generateDataForTablesExtend_withExplicitCol(
                 dataIn1_csv,
@@ -1372,7 +1374,6 @@ export default {
                 transform_specs[i].input_explict_col
               );
             }
-            console.log("res3: ",res)
             combine_tables_extend(
               res.m1,
               res.m2,
@@ -1400,7 +1401,7 @@ export default {
               input_explict_col,
               'NA'
             );
-            console.log("left_join: ",res)
+  
             combine_tables_left_join(
               res.m1,
               res.m2,
@@ -1458,8 +1459,9 @@ export default {
               dataIn2_csv,
               dataOut1_csv,
               input_explict_col,
-              ""
+              "NA"
             );
+
             combine_tables_inner_join(
               res.m1,
               res.m2,

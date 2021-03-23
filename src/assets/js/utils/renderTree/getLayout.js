@@ -41,8 +41,8 @@ function getLayout(specs){
     }
     nodeName = Array.from(new Set(nodeName))
     let children = []
-    nodeName.forEach(nodeName => {
-        children.push({id: nodeName, width: nodeSize.width, height: nodeSize.height})
+    nodeName.forEach(name => {
+        children.push({id: name, width: nodeSize.width, height: nodeSize.height}) 
     })
 
     let graph = {

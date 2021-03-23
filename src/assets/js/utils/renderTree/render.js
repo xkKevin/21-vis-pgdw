@@ -48,7 +48,6 @@ function drawNode(g,specs,nodePos,specsInf,showTableFunc){
             let lastIdx = nodeName[idx].indexOf(".")
 
             let lineNum = nodeName[idx].substring(firstIdx,lastIdx)
-            console.log(lineNum)
             let letterWidth = nodeSize.width / (lineNum.length + 2)
             let midInY = (nodeSize.height - letterWidth) / 2 + letterWidth
             g.append('text')

@@ -7,8 +7,6 @@ import {extractCols} from "./common/extractContextualCols";
         m3[0].push('')
     }
 
-    console.log("m1: ",m1,m2,m3)
-
     for(let row = 1;row < Math.min(4,dataIn1_csv.length);row++){
         let tempRow = []
         for(let col = 0;col < m1[0].length;col++){
@@ -18,8 +16,6 @@ import {extractCols} from "./common/extractContextualCols";
         m3.push(tempRow)
     }
 
-
-    console.log("m1: ",m1,m2,m3)
     for(let row = 1;row < Math.min(4,dataIn2_csv.length);row++){
         let tempRow = []
         for(let col = 0;col < m2[0].length;col++){
@@ -29,7 +25,6 @@ import {extractCols} from "./common/extractContextualCols";
         m3.push(tempRow)
     }
 
-    console.log("m1: ",m1,m2,m3)
     let inColors1 = [],inColors2 = [],outColors = []
     for(let row = 1;row < m2.length;row++){
         inColors2.push(m1.length - 2 + row)
@@ -113,8 +108,6 @@ function generateDataForLeftJoin(dataIn1_csv, dataIn2_csv, dataOut1_csv,inExpOrI
         }
         if(sameRows.length !== 0 && diffRows !== -1)break
     }
-
-    console.log(sameRows,diffRows)
 
     let rows1 = [sameRows[0],diffRows]
     rows1.sort()
@@ -218,8 +211,6 @@ function generateDataForLeftJoin_2(dataIn1_csv,dataIn2_csv,dataOut1_csv,inExpCol
         if(sameRows.length === 2 && diffRow !== -1)break
     }
 
-    console.log("diff row: ",diffRow)
-    console.log("same row: ",sameRows)
     let rows1 = [],rows2 = [],rows3 = []
     if(sameRows.length === 0){
         rows1 = Array.from(new Array(Math.min(2,dataIn1_csv.length - 1)),(x,i) => i + 1)
@@ -733,9 +724,11 @@ function generateDataForFullJoin_2(dataIn1_csv, dataIn2_csv, dataOut1_csv,inExpC
 function generateDataForInnerJoin(dataIn1_csv, dataIn2_csv, dataOut1_csv,inExpOrImpCol){
     let m1 = [[]],m2 = [[]],m3 = [[]]
     let expVal = dataIn1_csv[0][inExpOrImpCol[0]]
-    dataIn1_csv = dropDupRowForTable(dataIn1_csv,[dataIn1_csv[0].indexOf(expVal)])
-    dataIn2_csv = dropDupRowForTable(dataIn2_csv,[dataIn2_csv[0].indexOf(expVal)])
-    dataOut1_csv = dropDupRowForTable(dataOut1_csv,[dataOut1_csv[0].indexOf(expVal)])
+    // dataIn1_csv = dropDupRowForTable(dataIn1_csv,[dataIn1_csv[0].indexOf(expVal)])
+    // dataIn2_csv = dropDupRowForTable(dataIn2_csv,[dataIn2_csv[0].indexOf(expVal)])
+    // dataOut1_csv = dropDupRowForTable(dataOut1_csv,[dataOut1_csv[0].indexOf(expVal)])
+
+    // console.log("expVal: ",expVal)
 
     m1[0].push(expVal)
     m2[0].push(expVal)
@@ -764,6 +757,7 @@ function generateDataForInnerJoin(dataIn1_csv, dataIn2_csv, dataOut1_csv,inExpOr
         return dataOut1_csv[0].indexOf(a) - dataOut1_csv[0].indexOf(b)
     })
 
+    // console.log(m1[0],m2[0],m3[0])
     //找到table1的exp列和table2的exp列都存在的值
     //以及table1的exp列存在而table2的exp列不存在的值
     let colVals1 = [],colVals2 = [],colVals3 = []
@@ -781,10 +775,11 @@ function generateDataForInnerJoin(dataIn1_csv, dataIn2_csv, dataOut1_csv,inExpOr
         let valPosIn2 = colVals2.indexOf(dataIn1_csv[row][dataIn1_csv[0].indexOf(expVal)])
         if(valPosIn2 === -1){
             diffRows.push(row)
-        }else{
-            sameRows = [row,valPosIn2 + 1]
+        }else if(sameRows.length < 4){
+            sameRows.push(row)
+            sameRows.push(valPosIn2 + 1)
         }
-        if(sameRows.length !== 0 && diffRows.length === 1)break
+        if((sameRows.length ===2 && diffRows.length === 1) || sameRows.length === 4)break
     }
     if(diffRows.length === 0)diffRows.push(-1)
     for(let row = 1;row < dataIn2_csv.length;row++){
@@ -795,12 +790,16 @@ function generateDataForInnerJoin(dataIn1_csv, dataIn2_csv, dataOut1_csv,inExpOr
         if(diffRows.length === 2)break
     }
 
-    let rows1 = [],rows2 = [],rows3
+    let rows1 = [],rows2 = [],rows3 = []
+    if(sameRows.length === 4 && diffRows.length === 1 && diffRows[0] === -1){
+        rows1 = [sameRows[0],sameRows[2]]
+        rows2 = [sameRows[1],sameRows[3]]
+    }
     if(sameRows.length === 2){
         rows1.push(sameRows[0])
         rows2.push(sameRows[1])
     }
-    if(diffRows.length === 1){
+    if(diffRows.length === 1 && diffRows[0] !== -1){
         rows1.push(diffRows[0])
     } else if(diffRows.length === 2){
         if(diffRows[0] !== -1)rows1.push(diffRows[0])
@@ -821,11 +820,16 @@ function generateDataForInnerJoin(dataIn1_csv, dataIn2_csv, dataOut1_csv,inExpOr
             inColors2 = sameRows[1] < diffRows[1] ? [color0,2] : [2,color0]
         }
     }
+    if(sameRows.length === 4 && diffRows.length === 1 && diffRows[0] === -1){
+        outColor = [0,1]
+        inColors2 = [0,1]
+    }
     
     rows1.sort()
     rows2.sort()
-    rows3 = [colVals3.indexOf(dataIn1_csv[sameRows[0]][dataIn1_csv[0].indexOf(expVal)]) + 1]
-
+    rows3 = (sameRows.length === 4 && diffRows.length === 1 && diffRows[0] === -1) ? 
+        [sameRows[0],sameRows[2]] : [colVals3.indexOf(dataIn1_csv[sameRows[0]][dataIn1_csv[0].indexOf(expVal)]) + 1]
+    
     for(let row = 0;row < rows1.length;row++){
         let tempRow = []
         for(let col = 0;col < dataIn1_csv[0].length;col++){
@@ -864,13 +868,10 @@ function generateDataForInnerJoin(dataIn1_csv, dataIn2_csv, dataOut1_csv,inExpOr
 
 function generateDataForTablesExtend_withExplicitCol(dataIn1_csv, dataIn2_csv, dataOut1_csv,inExpOrImpCol){
     // inExpOrImpCol保存的是值，不是下标
-    console.log("inexp or imp cols: ",inExpOrImpCol)
+
     let contextualCols1 = extractCols(Array.from(dataIn1_csv[0]),[dataIn1_csv[0].indexOf(inExpOrImpCol[0])],[1,2,3])
     let contextualCols2 = extractCols(Array.from(dataIn2_csv[0]),[dataIn2_csv[0].indexOf(inExpOrImpCol[0])],[1,2,3])
     let m1 = [[]],m2 = [[]],m3 = [[]]
-
-    console.log("contextual1: ",contextualCols1)
-    console.log("contextual2: ",contextualCols2)
 
     m1[0].push(inExpOrImpCol[0])
     m2[0].push(inExpOrImpCol[0])
@@ -905,7 +906,6 @@ function generateDataForTablesExtend_withExplicitCol(dataIn1_csv, dataIn2_csv, d
     //         }
     //     }
     // }
-    console.log("m3[0]: ",m3[0])
     // m3[0] = Array.from(new Set(m3[0]))
 
     m1[0].sort(function(a,b){
