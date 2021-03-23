@@ -30,5 +30,5 @@ const tableRender = {
     'opacity':1
 }
 
-const showOperation = false
+const showOperation = true
 export {svgSize,fontSize,nodeSize,lineAttr,nodeColor,tableRender,showOperation}
