@@ -186,12 +186,22 @@ function generateDataForFilterRowKeep(dataIn1_csv, dataOut1_csv,pos){
 }
 
 function generateDataForDeleteDuplicateRows(dataIn1_csv, dataOut1_csv, inExpCols){
-    for(let col = 0;col < dataIn1_csv[0].length;col++){
-        if(inExpCols.indexOf(col) === -1 && dataIn1_csv[0].indexOf(dataIn1_csv[0][col]) !== col)dataIn1_csv[0][col] += '_'
+    if(inExpCols.length === dataIn1_csv[0].length){
+        for(let col = 0;col < dataIn1_csv[0].length;col++){
+            if(dataIn1_csv[0].indexOf(dataIn1_csv[0][col]) !== col)dataIn1_csv[0][col] += '_'
+        }
+        for(let col = 0;col < dataOut1_csv[0].length;col++){
+            if(dataOut1_csv[0].indexOf(dataOut1_csv[0][col]) !== col)dataOut1_csv[0][col] += '_'
+        }
+    }else{
+        for(let col = 0;col < dataIn1_csv[0].length;col++){
+            if(inExpCols.indexOf(col) === -1 && dataIn1_csv[0].indexOf(dataIn1_csv[0][col]) !== col)dataIn1_csv[0][col] += '_'
+        }
+        for(let col = 0;col < dataOut1_csv[0].length;col++){
+            if(inExpCols.indexOf(col) === -1 && dataOut1_csv[0].indexOf(dataOut1_csv[0][col]) !== col)dataOut1_csv[0][col] += '_'
+        }
     }
-    for(let col = 0;col < dataOut1_csv[0].length;col++){
-        if(inExpCols.indexOf(col) === -1 && dataOut1_csv[0].indexOf(dataOut1_csv[0][col]) !== col)dataOut1_csv[0][col] += '_'
-    }
+
     let contextualCols = extractCols(Array.from(dataIn1_csv[0]),inExpCols,inExpCols)
     let m1 = [[]],m2 = [[]]
     let outColors = [],inColors = []
@@ -224,7 +234,7 @@ function generateDataForDeleteDuplicateRows(dataIn1_csv, dataOut1_csv, inExpCols
         if(duplicated_rows.length !== 0)break
     }
 
-    if(duplicated_rows.length === 0){
+    if(duplicated_rows.length === 0){ 
         let rows = Array.from(new Array(Math.min(3,dataIn1_csv.length)),(v,k) => k + 1)
         for(let row = 0;row < rows.length;row++){
             let tempRow = []
@@ -237,8 +247,21 @@ function generateDataForDeleteDuplicateRows(dataIn1_csv, dataOut1_csv, inExpCols
             m2.push(tempRow)
             inColors = Array.from(new Array(Math.min(3,dataIn1_csv.length)),(v,k) => k)
             outColors = Array.from(new Array(Math.min(3,dataIn1_csv.length)),(v,k) => k)
-            return {m1,m2,inColors,outColors}
         }
+        if(inExpCols.length === dataIn1_csv[0].length){
+            // for(let col = 0; col < m1[0].length;col++){
+            //     m1[0][col] = ''
+            //     m2[0][col] = ''
+            // }
+            for(let row = 0;row < m1.length;row++){
+                m1[row] = Array.from(new Array(Math.min(3,m1[row].length)),()=>'')
+                // m1[row].slice(0,Math.min(3,m1[row].length))
+            }
+            for(let row = 0;row < m2.length;row++){
+                m2[row] = Array.from(new Array(Math.min(3,m2[row].length)),()=>'')
+            }
+        }
+        return {m1,m2,inColors,outColors}
     }
         
     
@@ -343,6 +366,18 @@ function generateDataForDeleteDuplicateRows(dataIn1_csv, dataOut1_csv, inExpCols
                 }
                 m2[row] = tempRow
             }
+        }
+    }
+    if(inExpCols.length === dataIn1_csv[0].length){
+        // for(let col = 0; col < m1[0].length;col++){
+        //     m1[0][col] = ''
+        //     m2[0][col] = ''
+        // }
+        for(let row = 0;row < m1.length;row++){
+            m1[row] = Array.from(new Array(Math.min(3,m1[row].length)),()=>'')
+        }
+        for(let row = 0;row < m2.length;row++){
+            m2[row] = Array.from(new Array(Math.min(3,m2[row].length)),()=>'')
         }
     }
     return {m1,m2,inColors,outColors}

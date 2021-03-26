@@ -157,7 +157,7 @@ function delete_duplicate_row_partColumn(m1, m2, rule, t1_name, t2_name,inColors
     drawTableForRow(g,m2,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,outColors)
     drawPcentBar(g,[(m1[0].length + 1) * colWidth,colHeight],m2[0].length * colWidth,m2.length * colHeight,colHeight,xPercents[1],yPercents[1])
     
-    drawDashRect(g,[(m1[0].length + 1) * colWidth,colHeight],m1.length * colHeight,m2[0].length * colWidth)
+    if(m1.length !== m2.length)drawDashRect(g,[(m1[0].length + 1) * colWidth,colHeight],m1.length * colHeight,m2[0].length * colWidth)
 
     let yOfLine = (m1.length + 2) * colHeight
     if(showOperation)drawOperationName(g,[width / 2,yOfLine],`${rule}`,'1.2em',colFontSize)

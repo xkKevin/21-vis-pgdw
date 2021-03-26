@@ -19,7 +19,7 @@ function create_row(m1,m2,rule,t1_name,t2_name,insertPos = -1,name,showTableName
     let height = svgSize.height
     let colWidth = insertPos === -1 ? width / (m2[0].length * 2 + 1) : width / (m2[0].length * 2 + 2)
 
-    let colHeight = showOperation ? height / (m1.length + 3) : height / (m1.length + 2.5)
+    let colHeight = showOperation ? height / (m2.length + 3) : height / (m2.length + 2.5)
     let colFontSize = fontSize.colFontSize
     let cellFontSize = fontSize.cellFontSize
 

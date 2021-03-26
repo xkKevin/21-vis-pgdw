@@ -81,7 +81,21 @@ def custom_static_folder(filename):
 @app.route('/api/getTablesAndParse', methods=['post'])
 def getTablesAndParse():
     try:
-        print(request.form.to_dict())
+        # print("request: ")
+        # print(request.form.to_dict())
+        tables = request.form.to_dict()
+        
+        if tables['type'] == "input":
+            for tablename,tablecontent in tables.items():
+                if tablename != 'type':
+                    with open(data_path + "input/" + tablename,'w',newline='') as file_object:
+                        file_object.write(tablecontent)
+        elif tables['type'] == "output":
+            for tablename,tablecontent in tables.items():
+                if tablename != 'type':
+                    with open(data_path + "output/" + tablename,'w',newline='') as file_object:
+                        file_object.write(tablecontent)
+
         #使用io.StringIO和csv.reader解析从字符串中解析出csv
         #execute a cmd 
         script = '''library(tidyr)

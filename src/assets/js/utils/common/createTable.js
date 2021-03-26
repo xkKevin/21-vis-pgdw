@@ -54,7 +54,7 @@ export function drawTable(g,matrix,expOrImpCols,pos,colWidth,colHeight,table_nam
                     .attr('x',pos[0] + (col -dCol)* colWidth)
                     .attr('y',pos[1] + row * colHeight)
                 if(expOrImpCols.indexOf(col) !== -1){
-                    if(matrix[row][col].length <= 5){
+                    if(matrix[row][col].length <= 6){
                         g.append('text')
                         .attr('x',pos[0] + col * colWidth)
                         .attr('y',pos[1] + row * colHeight)
@@ -65,7 +65,7 @@ export function drawTable(g,matrix,expOrImpCols,pos,colWidth,colHeight,table_nam
                         .attr('fill','white')
                         .attr('font-size',`${colWidth / 4}px`)
                     }else{
-                        let textToShow = matrix[row][col].slice(0,4)
+                        let textToShow = matrix[row][col].slice(0,5)
                         g.append('text')
                         .attr('x',pos[0] + col * colWidth)
                         .attr('y',pos[1] + row * colHeight)
@@ -117,7 +117,7 @@ export function drawTable(g,matrix,expOrImpCols,pos,colWidth,colHeight,table_nam
                     //     matrix[row][col].slice(0,maxCharsPerCell) : matrix[row][col])
                     // .attr('fill','white')
                     // .attr('font-size',`${cellFontSize}px`)
-                    if(matrix[row][col].length <= 5){
+                    if(matrix[row][col].length <= 6){
                         g.append('text')
                         .attr('x',pos[0] + col * colWidth)
                         .attr('y',pos[1] + row * colHeight)
@@ -128,7 +128,7 @@ export function drawTable(g,matrix,expOrImpCols,pos,colWidth,colHeight,table_nam
                         .attr('fill','white')
                         .attr('font-size',`${colWidth / 4}px`)
                     }else{
-                        let textToShow = matrix[row][col].slice(0,4)
+                        let textToShow = matrix[row][col].slice(0,5)
                         g.append('text')
                         .attr('x',pos[0] + col * colWidth)
                         .attr('y',pos[1] + row * colHeight)

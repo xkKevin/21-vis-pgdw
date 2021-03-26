@@ -39,7 +39,8 @@ def execScript(script_name):
     codes = ""
     p = re.compile("^\s*([\w\.]+?)\s*(=|<-)\s*[\w\.:]+?\s*[(]") # 设置函数名和outputname必须是以 A-Za-z0-9_. 这些符号组成的，其他符号将不会匹配，因此可以做到过滤注释
     
-    deleteMatchFiles("./", starts="table", ends=".csv")
+    # deleteMatchFiles("./", starts="table", ends=".csv")
+    
     deleteMatchFiles("./", ends="_exec.txt")
     if os.path.exists("colnames.txt"):
         os.remove("colnames.txt")
@@ -243,7 +244,7 @@ def generate_transform_specs(script_name):
         specs = {}
         specs_after = {}
 
-        print(params)
+        # print(params)
         
         if func in ('read.table', 'read.csv', 'read.csv2', 'read.delim', 'read.delim2'):
             specs["type"] = 'create_tables'
@@ -755,7 +756,7 @@ def generate_transform_specs(script_name):
             else:
                 specs["input_table_name"] = params['none'][pi]
                 pi += 1
-            print(var2table)
+            # print(var2table)
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             specs["output_table_name"] = output_tbl
             specs["output_table_file"] = "table%d.csv" % line_num

@@ -26,7 +26,7 @@ const lineAttr = {
 const tableRender = {
     'firstRowColor':'#43504F',
     'strokeColor':'#767979',
-    'colors':['#5AABAC','#F07A66','#F8BA4B','#AAA1CC','#445050','#C9C9C9'],
+    'colors':['#5AABAC','#F07A66','#F8BA4B','#AAA1CC','#88E477','#EB57D1','#5584E0','#005977'],
     'opacity':1
 }
 

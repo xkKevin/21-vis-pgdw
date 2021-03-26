@@ -1,0 +1,32 @@
+specs = [
+    {
+        operation_rule: `Load: "scores.csv"`,
+        output_table_file: "scores.csv",
+        output_table_name: "scores",
+        type: "create_tables",
+    },
+    {
+        operation_rule: `Load: "scores2.csv"`,
+        output_table_file: "scores2.csv",
+        output_table_name: "scores2",
+        type: "create_tables",
+    },
+    {
+        operation_rule: `rearrange columns"`,
+        input_table_file: "scores.csv",
+        input_table_name: "scores",
+        output_explict_col:["ID","Math","P.E."],
+        output_table_file: "table4.csv",
+        output_table_name: "sorted_cols",
+        type: "transform_tables_rearrange",
+    },
+    {
+        operation_rule: `rearrange columns"`,
+        input_table_file: "scores2.csv",
+        input_table_name: "scores2",
+        output_explict_col:["ID","Math","P.E."],
+        output_table_file: "table6.csv",
+        output_table_name: "sorted_cols",
+        type: "transform_tables_rearrange",
+    },
+]

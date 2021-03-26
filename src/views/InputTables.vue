@@ -1,154 +1,42 @@
 <template>
   <div id="inputTables">
-    <el-row type="flex" justify="center">
-      <el-col :span="23" :offset="0">
-        <el-container>
-          <el-header height="70px">
-            <!-- Header content -->
-            <h2 style="text-align: center">PG4DT System</h2>
-          </el-header>
-          <el-row style="height: 450px">
-            <el-col
-              :span="12"
-              :offset="0"
-              class="script_table"
-              style="height: 100%"
-            >
-               <el-row type="flex" justify="space-between">
-                <div>Input Table View</div>
-                <div>
-                  Select Input Table:
-                  <el-dropdown @command="getInputTableData">
-                    <span
-                      class="el-dropdown-link"
-                      style="
-                        width: 135px;
-                        display: inline-block;
-                        text-align: right;
-                      "
-                    >
-                    {{ inputTableName }}
-                    <i class="el-icon-arrow-down el-icon--right"></i>
-                    </span>
-                        <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item
-                                v-for="item in inputfileList"
-                                :key="item.name"
-                                :value="item.name"
-                                :command="item.name">
-                                {{ item.name }}
-                            </el-dropdown-item>
-                        </el-dropdown-menu>
-                    </el-dropdown>
-                </div>
-              </el-row>
-              <el-row>
-                  <el-table height="405" :data="inputTableToShow" fit>
-                        <el-table-column type="index"> </el-table-column>
-                        <el-table-column
-                        v-for="item in inputTableHead"
-                        :key="item"
-                        :label="item"
-                        >
-                        <template scope="scope">
-                            {{ scope.row[item] }}
-                        </template>
-                        </el-table-column>
-                    </el-table>
-              </el-row>
-            </el-col>
-            
-             <el-col
-              :span="12"
-              :offset="0"
-              class="script_table"
-              style="height: 100%"
-            >
-               <el-row type="flex" justify="space-between">
-                <div>Output Table View</div>
-                <div>
-                  Select Output Table:
-                  <el-dropdown @command="getOutputTableData">
-                    <span
-                      class="el-dropdown-link"
-                      style="
-                        width: 135px;
-                        display: inline-block;
-                        text-align: right;
-                      "
-                    >
-                    {{ outputTableName }}
-                    <i class="el-icon-arrow-down el-icon--right"></i>
-                    </span>
-                        <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item
-                                v-for="item in outputfileList"
-                                :key="item.name"
-                                :value="item.name"
-                                :command="item.name">
-                                {{ item.name }}
-                            </el-dropdown-item>
-                        </el-dropdown-menu>
-                    </el-dropdown>
-                </div>
-              </el-row>
-              <el-row>
-                  <el-table height="405" :data="outputTableToShow" fit>
-                        <el-table-column type="index"> </el-table-column>
-                        <el-table-column
-                        v-for="item in outputTableHead"
-                        :key="item"
-                        :label="item"
-                        >
-                        <template scope="scope">
-                            {{ scope.row[item] }}
-                        </template>
-                        </el-table-column>
-                    </el-table>
-              </el-row>
-            </el-col>
+      <el-row type="flex" justify="space-between">
+        <div>Upload Tables</div> 
+      </el-row>
+      <div id="upload" style="text-align:center">
+          <el-row style="margin-top:5%">
+              <el-upload
+              action=""
+              ref="inputfiles"
+              :on-remove="handleInputRemove"
+              :on-change="handleInputChange"
+              :auto-upload="false"
+              :show-file-list="false"
+              multiple
+              >
+                  <el-button slot="trigger" size="small" type="primary">input file(csv, txt)</el-button>
+              </el-upload>
           </el-row>
+          <el-row style="margin-top:5%">
+              <el-upload   
+              action=""
+              ref="outputfiles"
+              :on-remove="handleOutputRemove"
+              multiple
+              :on-change="handleOutputChange"
+              :auto-upload="false"
+              :show-file-list="false"
+              >
+                  <el-button slot="trigger" size="small" type="primary">output file(csv, txt)</el-button>
+              </el-upload>
+          </el-row>
+          
+          <hr>
+          <el-row style="margin-top:5%">
+              <el-button @click="submitUpload" size="small" type="primary">upload and generate</el-button>
+          </el-row>
+      </div>
 
-          <el-footer height="300px" direction="horizontal">
-            <el-row type="flex" justify="space-between">
-              <div>Upload Tables</div> 
-            </el-row>
-            <div id="glyphs" style="height:200px">
-                <el-row>select tables</el-row>
-                <el-row style="margin-top:2%">
-                    <el-col style="width:45%;border:none;display: flex;justify-content:center;">
-                        <el-upload
-                        action=""
-                        ref="inputfiles"
-                        :on-remove="handleInputRemove"
-                        :on-change="handleInputChange"
-                        :auto-upload="false"
-                        multiple
-                        >
-                            <el-button slot="trigger" size="small" type="primary">选取输入文件（csv、txt）</el-button>
-                        </el-upload>
-                    </el-col>
-                    <el-col style="margin-left:10%;width:45%;border:none;display: flex;justify-content:center;">
-                        <el-upload   
-                        action=""
-                        ref="outputfiles"
-                        :on-remove="handleOutputRemove"
-                        multiple
-                        :on-change="handleOutputChange"
-                        :auto-upload="false"
-                        >
-                            <el-button slot="trigger" size="small" type="primary">选取输出文件（csv、txt）</el-button>
-                        </el-upload>
-                    </el-col>
-                </el-row>
-                <el-row style="margin-top:5%;display: flex;justify-content:center;">
-                    <el-button @click="submitUpload" size="small" type="primary">确认上传</el-button>
-                </el-row>
-            </div>
-          </el-footer>
-        </el-container>
-      </el-col>
-    </el-row>
   </div>
 </template>
 
@@ -156,7 +44,7 @@
 const request_api = ""
 import Papa from 'papaparse'
 export default {
-  name: "showGlyphs",
+  name: "uploadTables",
   data() {
     return {
       inputTableName: "",
@@ -187,7 +75,6 @@ export default {
                 }
                 objArr.push(tempObj)
             }
-            this.inputTableToShow = objArr 
         },
         getOutputTableData(filename){
             this.outputTableName = filename
@@ -201,7 +88,6 @@ export default {
                 }
                 objArr.push(tempObj)
             }
-            this.outputTableToShow = objArr  
         },
         handleInputChange(file, fileList) {
             this.inputfileList = fileList
@@ -230,7 +116,7 @@ export default {
                     type:'error',
                     showClose:true,
                     duration:3000,
-                    message:'请选择文件!'
+                    message:'please choose at least a file!'
                 });
             }else{
                 let flag1 = true,flag2 = true
@@ -273,11 +159,11 @@ export default {
 
                 Promise.all([p1,p2]).then(()=>{
                     if(flag1 && flag2){
-                        alert("解析成功")
-                        this.$router.push('/showGlyphs')
+                        alert("upload success")
+                        this.$emit("uploadSuccess");
                     }
                     else{
-                        alert("解析失败")
+                        alert("upload fail")
                     }
                 })
             };
@@ -291,29 +177,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-
-.el-col,
-.el-header,
-.el-aside,
-.el-main,
-.el-footer {
-  border: 1px solid #000;
-}
-.script_table,
-footer.el-footer {
-  padding: 10px;
-}
-.el-dropdown {
-  border: 1px solid #000;
-}
-.el-dropdown-link {
-  cursor: pointer;
-  color: #409eff;
-}
-.el-icon-arrow-down {
-  font-size: 12px;
-}
-
-</style>

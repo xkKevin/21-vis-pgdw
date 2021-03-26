@@ -1,134 +1,124 @@
 <template>
   <div id="showGlyphs">
     <remote-script src="http://ariutta.github.io/svg-pan-zoom/dist/svg-pan-zoom.min.js"></remote-script>
-    <el-row type="flex" justify="center">
-      <el-col :span="23" :offset="0">
-        <el-container>
-          <el-header height="70px">
-            <!-- Header content -->
-            <h2 style="text-align: center">PG4DT System</h2>
+    <el-row type="flex" justify="center" style="height:50vh">
+      <el-col style="width:20vw;margin-right:0.5vw" >
+        <el-row>
+          <el-header height="10vh" style="background:black">
+            <h2 style="text-align: center;color:white">PG4DT System</h2>
           </el-header>
-          <el-row style="height: 450px">
-            <el-col
-              :span="12"
-              :offset="0"
-              class="script_table"
-              style="height: 100%"
-            >
-              <el-row type="flex" justify="space-between">
-                <div>Script View</div>
-                <div>
-                  Select Programming Language:
-                  <el-dropdown @command="changeModel">
-                    <span
-                      class="el-dropdown-link"
-                      style="
-                        width: 69px;
-                        display: inline-block;
-                        text-align: right;
-                      "
-                    >
-                      {{ language }}
-                      <i class="el-icon-arrow-down el-icon--right"></i>
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item
-                        v-for="item in all_langs"
-                        :key="item"
-                        :value="item"
-                        :command="item"
-                      >
-                        {{ item }}
-                      </el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                </div>
-              </el-row>
-              <div id="monaco" style="height: 400px; margin-top: 10px"></div>
-            </el-col>
-            <el-col
-              :span="12"
-              :offset="0"
-              class="script_table"
-              style="height: 100%"
-            >
-              <el-row type="flex" justify="space-between">
-                <div>Table View</div>
-                <div>
-                  Select Table:
-                  <el-dropdown @command="getTableData">
-                    <span
-                      class="el-dropdown-link"
-                      style="
-                        width: 135px;
-                        display: inline-block;
-                        text-align: right;
-                      "
-                    >
-                      {{ table_name }}
-                      <i class="el-icon-arrow-down el-icon--right"></i>
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item
-                        v-for="item in all_tables"
-                        :key="item"
-                        :value="item"
-                        :command="item"
-                      >
-                        {{ item }}
-                      </el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                </div>
-              </el-row>
-
-              <el-table height="405" :data="tableData" fit>
-                <el-table-column type="index"> </el-table-column>
-                <el-table-column
-                  v-for="item in tableHead"
-                  :key="item"
-                  :label="item"
-                >
-                  <template scope="scope">
-                    {{ scope.row[item] }}
-                  </template>
-                </el-table-column>
-              </el-table>
-              <!-- <el-table :data="tableData">
-                <template v-for="item in tableHead">
-                  <el-table-column
-                    align="center"
-                    :label="item"
-                    :key="item"
-                    sortable
-                  >
-                    <template slot-scope="scope">
-                      {{ scope.row[item] }}
-                    </template>
-                  </el-table-column>
-                </template>
-              </el-table> -->
-            </el-col>
+          <div id="tag0"> 
+            
+          </div>
+          <el-row style="margin-top:2vh">
+            <upload-tables @uploadSuccess="generateGlyphs"></upload-tables>
           </el-row>
-          <el-footer height="700px">
-            <el-row type="flex" justify="space-between">
-              <div>Glyph View</div>
-              <div>
-                <el-button type="primary" size="mini" style="font-size:16px" @click="generateGlyphs">Generate</el-button>
-                <span style="margin-left:10px; margin-right:5px;">Show Table Name:</span>
-                <el-switch
-                  v-model="show_table_name"
-                  active-color="#13ce66"
-                  inactive-color="#ff4949"
-                  @change="controlShow"
-                >
-                </el-switch>
-              </div>
-            </el-row>
-            <div id="glyphs" style="height:600px">Here is the glyphs</div>
-          </el-footer>
-        </el-container>
+         
+        </el-row>
       </el-col>
+    
+      <el-col
+        class="script_table"
+        style="width:40vw;margin-right:0.5vw"
+      >
+        <el-row type="flex" justify="space-between" style="height:5vh">
+          <div id="tag1"></div>
+          <div >
+            Select Programming Language:
+            <el-dropdown @command="changeModel">
+              <span
+                class="el-dropdown-link"
+                style="
+                  width: 69px;
+                  display: inline-block;
+                  text-align: right;
+                "
+              >
+                {{ language }}
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item
+                  v-for="item in all_langs"
+                  :key="item"
+                  :value="item"
+                  :command="item"
+                >
+                  {{ item }}
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </div>
+        </el-row>
+        <div id="monaco" style="height:43vh;"></div>
+      </el-col>
+      <el-col
+        class="script_table"
+        style="width:40vw"
+      >
+        <el-row type="flex" justify="space-between" style="height:5vh">
+          <div id="tag2"></div>
+          <div>
+            Select Table:
+            <el-dropdown @command="getTableData">
+              <span
+                class="el-dropdown-link"
+                style="
+                  width: 135px;
+                  display: inline-block;
+                  text-align: right;
+                "
+              >
+                {{ table_name }}
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item
+                  v-for="item in all_tables"
+                  :key="item"
+                  :value="item"
+                  :command="item"
+                >
+                  {{ item }}
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </div>
+        </el-row>
+
+        <el-table  :data="tableData" fit height="43vh">
+          <el-table-column type="index"> </el-table-column>
+          <el-table-column
+            v-for="item in tableHead"
+            :key="item"
+            :label="item"
+          >
+            <template scope="scope">
+              {{ scope.row[item] }}
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-col>   
+    </el-row>
+    <el-row style="margin-top:1vh">
+        <el-col style="height:49vh">
+          <el-row type="flex" justify="space-between" style="height:5vh;">
+            <div id="tag3"></div>
+            <div>
+              <!-- <el-button type="primary" size="mini" style="font-size:16px" @click="generateGlyphs">Generate</el-button> -->
+              <span style="margin-left:10px; margin-right:5px;">Show Table Name:</span>
+              <el-switch
+                v-model="show_table_name"
+                active-color="#13ce66"
+                inactive-color="#ff4949"
+                @change="controlShow"
+              >
+              </el-switch>
+            </div>
+           
+        </el-row>
+           <div id="glyphs" style="height:44vh">Here is the glyphs</div>
+        </el-col>
     </el-row>
   </div>
 </template>
@@ -240,6 +230,11 @@ import {getComponents} from '@/assets/js/utils/renderTree/getComponents'
 import {svgSize,nodeSize} from '@/assets/js/config/config'
 import '@/assets/js/utils/common/importJs.js'
 
+import {generateDataForTablesConcat,generateDataForSummarize_python} from '@/assets/js/utils/generateDataForPython'
+import {combine_tables_extend_axis0,combine_tables_extend_axis1} from '@/assets/js/glyph/glyphs_for_python'
+
+import uploadTables from './InputTables'
+
 const request_api = ""
 
 export default {
@@ -270,7 +265,44 @@ export default {
       show_table_name: true,
     };
   },
+  components:{
+    uploadTables,
+  },
   methods: {
+    drawTag(id,text){
+      let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute('id', `${id}svg`);
+      svg.setAttribute('width', "200px");
+      svg.setAttribute('height', "40px");
+      svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
+
+      // document.getElementById("glyphs").appendChild(svg)
+      // let svg = d3.append("svg")
+      //           .attr('id',`${id}svg`)
+     
+      document.getElementById(id).appendChild(svg)
+      let g = d3.select(`#${id}svg`).append("g")
+      g.append('path')
+      .attr('d','M0,0 L0,40 L150,40 L170,0 L0,0')
+      .attr('fill','#62ADB2')
+
+      // g.append("rect")
+      // .attr('x',0)
+      // .attr('y',0)
+      // .attr("height",10)
+      // .attr("width",60)
+      // .attr("fill","red")
+      
+      g.append('text')
+      .attr('x',0)
+      .attr('y',0)
+      .attr('dy',25)
+      .attr('dx',5)
+      .attr('text-anchor', 'start')
+      .attr('fill','balck')
+      .attr('font-size',`20px`)
+      .text(text)
+    },
     initData() {
       this.initEditor();
       this.getTableData(this.all_tables[0]);
@@ -308,20 +340,6 @@ export default {
       this.editor.setModel(newModel);
     },
     getTableData(table_file) {
-      // this.$message('click on item ' + command);
-      // if (table_file.startsWith("table")) {
-      //   this.$message({
-      //     message: "The table does not exist.",
-      //     type: "error", // success/warning/info/error
-      //   });
-      // } else {
-      //   const table_path = `${request_api}/data/${table_file}?a=${Math.random()}`;
-      //   d3.csv(table_path).then((data) => {
-      //     this.table_name = table_file;
-      //     this.tableData = data;
-      //     this.tableHead = data.columns;
-      //   });
-      // }
       const table_path = `${request_api}/data/${table_file}?a=${Math.random()}`;
       d3.csv(table_path).then((data) => {
         this.table_name = table_file;
@@ -365,7 +383,116 @@ export default {
             console.log(response.data.transform_specs)
             document.getElementById("glyphs").innerHTML = "";
             // Object.assign(specsToHandle,response.data.transform_specs)
+            
             specsToHandle = Array.from(response.data.transform_specs)
+
+            // specsToHandle = [
+            //   {
+            //         operation_rule: `Load: "apple-iphone-revenue.csv"`,
+            //         output_table_file: "t1.csv",
+            //         output_table_name: "revenue",
+            //         type: "create_tables",
+            //     },
+               
+            //     {
+            //         operation_rule: `rearrange Category`,
+            //         input_table_file: "t1.csv",
+            //         input_table_name: "revenue",
+            //         input_explict_col:["Category"],
+            //         output_table_file: "t3.csv",
+            //         output_table_name: "revenue_sort",
+            //         type: "transform_tables_sort",
+            //     },
+            //     // {
+            //     //     operation_rule: `transform scores`,
+            //     //     output_explict_col:['P.E.'],
+            //     //     input_table_file: "t6.csv",
+            //     //     input_table_name: "scores2",
+            //     //     output_explict_col:["P.E."],
+            //     //     output_table_file: "t11.csv",
+            //     //     output_table_name: "level2score",
+            //     //     type: "transform_columns_mutate",
+            //     // },
+            //     {
+            //         operation_rule: `Load: "apple-iphone-unit-sales.csv"`,
+            //         output_table_file: "t2.csv",
+            //         output_table_name: "sales",
+            //         type: "create_tables",
+            //     },
+            //      {
+            //         operation_rule: `rearrange Category`,
+            //         input_table_file: "t2.csv",
+            //         input_table_name: "sales",
+            //         input_explict_col:["Category"],
+            //         output_table_file: "t4.csv",
+            //         output_table_name: "sales_sort",
+            //         type: "transform_tables_sort",
+            //     },
+            //     // {
+            //     //     operation_rule: `transform scores`,
+            //     //     output_explict_col:['P.E.'],
+            //     //     input_table_file: "t4.csv",
+            //     //     input_table_name: "scores2",
+            //     //     output_explict_col:["P.E."],
+            //     //     output_table_file: "t9.csv",
+            //     //     output_table_name: "level2score",
+            //     //     type: "transform_columns_mutate",
+            //     // },
+
+            //     {
+            //         operation_rule: `concat tables`,
+            //         input_table_file: ["t3.csv","t4.csv"],
+            //         input_table_name: ["revenue_sort","sales_sort"],
+            //         output_table_file: "t5.csv",
+            //         output_table_name: "rev_sales",
+            //         axis:0,
+            //         type: "combine_tables_concat_python",
+            //     },
+            //     // {
+            //     //     operation_rule: `drop duplicated rows`,
+            //     //     input_table_file: 't14.csv',
+            //     //     input_table_name: "all_scores",
+            //     //     output_table_file: "t17.csv",
+            //     //     output_table_name: "drop_dup",
+            //     //     // axis:0,
+            //     //     type:'delete_rows_deduplicate',
+            //     // },
+            //     {
+            //       input_table_file: 't5.csv',
+            //       input_table_name: "rev_sales",
+            //       output_table_file: "t6.csv",
+            //       output_table_name: "rev_sales",
+            //       operation_rule:"reset_index",
+            //       type:"identical_operation"
+            //     },
+            //     {
+            //       input_table_file: 't6.csv',
+            //       input_table_name: "rev_sales",
+            //       input_explict_col:['Category'],
+            //       output_table_file: "t7.csv",
+            //       output_table_name: "rev_sales",
+            //       operation_rule:"delete Category",
+            //       type:"delete_columns_select_remove"
+            //     },
+            //     // {
+            //     //   input_table_file: 't19.csv',
+            //     //   input_table_name: "drop_dup",
+            //     //   input_explict_col:['ID'],
+            //     //   output_table_file: "t21.csv",
+            //     //   output_table_name: "drop_ID",
+            //     //   operation_rule:"delete ID",
+            //     //   type:"delete_columns_select_remove"
+            //     // },
+            //     {
+            //       input_table_file: 't7.csv',
+            //       input_table_name: "Category",
+            //       output_table_file: "t8.csv",
+            //       output_table_name: "Category",
+            //       operation_rule:"caculate mean",
+            //       type:'create_rows_summarize'
+            //     } 
+            // ]
+
             let nullInfileCount = '*',nullOutfileCount = '#'
             specsToHandle.forEach(spec => {
                 if(!spec.input_table_file){
@@ -420,7 +547,6 @@ export default {
                   '100%','100%')
               this.$store.commit("setG",g)
               this.preparation(specsToHandle,nodePos)
-
             })
           }
         })
@@ -483,6 +609,7 @@ export default {
           input_table_name2,
           output_table_name2;
         let replace_value;
+        let axis;
         let res;
 
         if (transform_specs[i].input_table_file && transform_specs[i].input_table_file[0] !== '*') {
@@ -605,6 +732,9 @@ export default {
             }
           }
         }
+        if(transform_specs[i].axis){
+          axis = parseInt(transform_specs[i].axis)
+        }
         switch (transform_specs[i].type) {
           case "create_tables":
             res = generateDataForCreateTable(dataOut1_csv);
@@ -718,7 +848,6 @@ export default {
               [m1[0].length / dataIn1_csv[0].length,m2[0].length / dataOut1_csv[0].length],
               [m1.length / dataIn1_csv.length, m2.length / dataOut1_csv.length]
             );
-           
             break;
           case "create_rows_insert":
             res = generateDataForInsertRows(
@@ -1536,6 +1665,59 @@ export default {
             case "identical_operation":
               identical_operation(pos,i,rule)
             break
+
+            case 'combine_tables_concat_python':
+              res = generateDataForTablesConcat(dataIn1_csv, dataIn2_csv,dataOut1_csv,axis)
+              if(axis === 1){
+                combine_tables_extend_axis1(
+                  res.m1,
+                  res.m2,
+                  res.m3,
+                  rule,
+                  input_table_name,
+                  input_table_name2,
+                  output_table_name,
+                  res.inColors2,
+                  i,
+                  this.show_table_name,
+                  pos,
+                  [res.m1[0].length / dataIn1_csv[0].length, res.m2[0].length / dataIn2_csv[0].length, res.m3[0].length / dataOut1_csv[0].length],
+                  [res.m1.length / dataIn1_csv.length, res.m2.length / dataIn2_csv.length, res.m3.length / dataOut1_csv.length]
+                );
+              }else{
+                combine_tables_extend_axis0(
+                  res.m1,
+                  res.m2,
+                  res.m3,
+                  rule,
+                  input_table_name,
+                  input_table_name2,
+                  output_table_name,
+                  res.inColors2,
+                  i,
+                  this.show_table_name,
+                  pos,
+                  [res.m1[0].length / dataIn1_csv[0].length, res.m2[0].length / dataIn2_csv[0].length, res.m3[0].length / dataOut1_csv[0].length],
+                  [res.m1.length / dataIn1_csv.length, res.m2.length / dataIn2_csv.length, res.m3.length / dataOut1_csv.length]
+                );
+              }
+            break;
+            case "create_rows_summarize":
+              res = generateDataForSummarize_python(dataIn1_csv,dataOut1_csv)
+              create_row(
+                res.m1,
+                res.m2,
+                rule,
+                input_table_name,
+                output_table_name,
+                1,
+                i,
+                this.show_table_name,
+                pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+                [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
+              );
+            break
         }
       }
 
@@ -1545,6 +1727,10 @@ export default {
   },
   mounted() {
     this.initData();
+    this.drawTag("tag0","Causual View")
+    this.drawTag("tag1","Script View")
+    this.drawTag("tag2","Causual View")
+    this.drawTag("tag3","Glyph View")
   },
 };
 </script>

@@ -122,11 +122,11 @@ function generateDataForTableSort(dataIn1_csv,dataOut1_csv,sortedCol,order) {
     if(order.indexOf("desc") === -1){
         //暂定为只对数值类型进行排序
         colVal = colVal.sort(function(a,b){
-            return parseFloat(a) - parseFloat(b)
+            return a - b
         })
     }else{
         colVal = colVal.sort(function(a,b){
-            return parseFloat(b) - parseFloat(a)
+            return b - a
         })
     }
 
