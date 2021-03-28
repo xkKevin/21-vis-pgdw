@@ -29,12 +29,14 @@ export function separate_rows(m1, m2, rule, t1_name, t2_name,outColor,name,showT
     .attr('height',parseInt(height))
     .attr('stroke','gray')
     .attr('fill','transparent')
+    .attr('class',`glyph_${name}`)
 
     g.append("path")
     .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
     .attr('fill','none')
     .attr('stroke','white')
     .attr('stroke-width',"1px")
+    .attr('class',`glyph_${name}`)
 
     g.append("path")
     .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2},${parseInt(height) + 4} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
@@ -43,6 +45,7 @@ export function separate_rows(m1, m2, rule, t1_name, t2_name,outColor,name,showT
     .attr('stroke','gray')
     .attr('stroke-width',"1px")
     .style("stroke-linecap", "round")
+    .attr('class',`glyph_${name}`)
 
     drawTableForRow(g,m1,[0,2 * colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
     drawPcentBar(g,[0,2 * colHeight],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])

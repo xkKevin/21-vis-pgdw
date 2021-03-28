@@ -210,11 +210,10 @@ function drawEdge(g,specs,nodePos,editor){
                         range: new monaco.Range(lineNum,1,lineNum,1),
                         options: {
                             isWholeLine: true,
-                            class: "myContentClass"
+                            className: "myContentClass"
                         }
                     }
                 ]);
-                console.log("decorations: ",decorations)
             })
          }else if(typeof(specs[idx].input_table_file) === 'string'){
             let meetingPosY = nodePos[specs[idx].input_table_file][1] + nodeSize.height / 2

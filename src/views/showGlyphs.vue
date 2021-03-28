@@ -1,5 +1,7 @@
 <template>
   <div id="showGlyphs">
+    
+    <!-- <remote-script src="https://github.com/bumbu/svg-pan-zoom/blob/master/dist/svg-pan-zoom.min.js"></remote-script> -->
     <remote-script src="http://ariutta.github.io/svg-pan-zoom/dist/svg-pan-zoom.min.js"></remote-script>
     <el-row type="flex" justify="center" style="height:50vh">
       <el-col style="width:20vw;margin-right:0.5vw" >
@@ -1734,6 +1736,7 @@ export default {
           d3.selectAll(`.edge_${this.lastLine}`).attr('stroke','gray')
           // d3.select(`#arrow_${pos}`).attr('fill','red')
           d3.selectAll(`.arrow_${this.lastLine}`).attr('fill','gray')
+          d3.selectAll(`.glyph_${this.lastLine}`).attr('stroke','gray')
           
           if(typeof(transform_specs[this.lastLine].input_table_file) === 'string'){
             let lastIdx = transform_specs[this.lastLine].input_table_file.indexOf(".")
@@ -1776,7 +1779,8 @@ export default {
         d3.selectAll(`.edge_${pos}`).attr('stroke','red')
         // d3.select(`#arrow_${pos}`).attr('fill','red')
         d3.selectAll(`.arrow_${pos}`).attr('fill','red')
-        
+        d3.selectAll(`.glyph_${pos}`).attr('stroke','red')
+
         if(typeof(transform_specs[pos].input_table_file) === 'string'){
           let lastIdx = transform_specs[pos].input_table_file.indexOf(".")
           d3.select(`#node_${transform_specs[pos].input_table_file.substring(0,lastIdx)}`).attr('stroke','red')

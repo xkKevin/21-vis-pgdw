@@ -30,11 +30,13 @@ function separate_tables_subset(m1,m2,m3,rule,t1_name,t2_name,t3_name,outColor1,
     .attr('height',parseInt(height))
     .attr('stroke','gray')
     .attr('fill','transparent')
+    .attr('class',`glyph_${name}`)
     g.append("path")
     .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
     .attr('fill','none')
     .attr('stroke','white')
     .attr('stroke-width',"1px")
+    .attr('class',`glyph_${name}`)
     g.append("path")
     .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2},${parseInt(height) + 4} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
     // .attr('d',"M0,0 L8,4 L0,8 L4,4 L0,0")
@@ -42,6 +44,7 @@ function separate_tables_subset(m1,m2,m3,rule,t1_name,t2_name,t3_name,outColor1,
     .attr('stroke','gray')
     .attr('stroke-width',"1px")
     .style("stroke-linecap", "round")
+    .attr('class',`glyph_${name}`)
 
     drawTableForRow(g,m1,[0,2 * colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
     drawPcentBar(g,[0,2 * colHeight],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])
@@ -79,11 +82,13 @@ function separate_tables_decompose(m1,m2s,rule,t1_name,name,showTableName,pos,xP
     .attr('height',parseInt(height))
     .attr('stroke','gray')
     .attr('fill','transparent')
+    .attr('class',`glyph_${name}`)
     g.append("path")
     .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
     .attr('fill','none')
     .attr('stroke','white')
     .attr('stroke-width',"1px")
+    .attr('class',`glyph_${name}`)
     g.append("path")
     .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2},${parseInt(height) + 4} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
     // .attr('d',"M0,0 L8,4 L0,8 L4,4 L0,0")
@@ -91,6 +96,7 @@ function separate_tables_decompose(m1,m2s,rule,t1_name,name,showTableName,pos,xP
     .attr('stroke','gray')
     .attr('stroke-width',"1px")
     .style("stroke-linecap", "round")
+    .attr('class',`glyph_${name}`)
     drawTableForRow(g,m1,[0, colHeight + (m2s.length - 1) / 2 * colHeight * 2],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
     drawPcentBar(g,[0, colHeight + (m2s.length - 1) / 2 * colHeight * 2],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])
 
@@ -132,6 +138,7 @@ function separate_tables_split(m1,m2,m3,rule,t1_name,t2_name,t3_name,outColors1,
     .attr('height',parseInt(height))
     .attr('stroke','gray')
     .attr('fill','transparent')
+    .attr('class',`glyph_${name}`)
 
     // var arrow_path = "M0,0 L8,4 L0,8 L4,4 L0,0";
     // arrowMarker.append("path")
@@ -142,6 +149,7 @@ function separate_tables_split(m1,m2,m3,rule,t1_name,t2_name,t3_name,outColors1,
     .attr('fill','none')
     .attr('stroke','white')
     .attr('stroke-width',"1px")
+    .attr('class',`glyph_${name}`)
 
     g.append("path")
     .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2},${parseInt(height) + 4} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
@@ -150,6 +158,7 @@ function separate_tables_split(m1,m2,m3,rule,t1_name,t2_name,t3_name,outColors1,
     .attr('stroke','gray')
     .attr('stroke-width',"1px")
     .style("stroke-linecap", "round")
+    .attr('class',`glyph_${name}`)
 
     drawTableForColumn(g,m1,[0, colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
     drawPcentBar(g,[0, colHeight],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])

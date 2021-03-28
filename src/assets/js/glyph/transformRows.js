@@ -30,6 +30,7 @@ export function transform_rows_edit(m1,m2,rule,t1_name,t2_name,idx,name,showTabl
     .attr('height',parseInt(height))
     .attr('stroke','gray')
     .attr('fill','transparent')
+    .attr('class',`glyph_${name}`)
 
     // var arrow_path = "M0,0 L8,4 L0,8 L4,4 L0,0";
     // arrowMarker.append("path")
@@ -40,6 +41,7 @@ export function transform_rows_edit(m1,m2,rule,t1_name,t2_name,idx,name,showTabl
     .attr('fill','none')
     .attr('stroke','white')
     .attr('stroke-width',"1px")
+    .attr('class',`glyph_${name}`)
 
     g.append("path")
     .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2},${parseInt(height) + 4} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
@@ -48,6 +50,7 @@ export function transform_rows_edit(m1,m2,rule,t1_name,t2_name,idx,name,showTabl
     .attr('stroke','gray')
     .attr('stroke-width',"1px")
     .style("stroke-linecap", "round")
+    .attr('class',`glyph_${name}`)
 
     let inputX = 0.5 * colWidth
     drawTableForRow(g,m1,[inputX,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
