@@ -1,6 +1,6 @@
 import * as d3 from 'd3'
 import {drawEdge} from './render'
-function drawSvgAndEdge(specs,nodePos,svgWidth,svgHeight){
+function drawSvgAndEdge(specs,nodePos,svgWidth,svgHeight,monaco){
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute('id', `mainsvg`);
     svg.setAttribute('width', svgWidth);
@@ -11,7 +11,7 @@ function drawSvgAndEdge(specs,nodePos,svgWidth,svgHeight){
 
     // d3.select('#mainsvg').call(zoom);
     const g = d3.select('#mainsvg').append('g')
-    drawEdge(g,specs,nodePos)
+    drawEdge(g,specs,nodePos,monaco)
 
     return g
 }

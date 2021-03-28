@@ -1,4 +1,5 @@
 import {nodeSize,lineAttr} from '@/assets/js/config/config'
+import * as monaco from "monaco-editor";
 function drawNode(g,specs,nodePos,specsInf,showTableFunc){
     let nodeName = []
     for(let idx = 0;idx < specs.length;idx++){
@@ -20,6 +21,8 @@ function drawNode(g,specs,nodePos,specsInf,showTableFunc){
     }
 
     nodeName = Array.from(new Set(nodeName))
+
+    console.log("nodename: ",nodeName)
     for(let idx = 0;idx < nodeName.length;idx++){
   
         let nodeRect = g.append('rect')
@@ -47,6 +50,8 @@ function drawNode(g,specs,nodePos,specsInf,showTableFunc){
             }
             let lastIdx = nodeName[idx].indexOf(".")
 
+            nodeRect.attr('id',`node_${nodeName[idx].substring(0,lastIdx)}`)
+            
             let lineNum = nodeName[idx].substring(firstIdx,lastIdx)
             let letterWidth = nodeSize.width / (lineNum.length + 2)
             let midInY = (nodeSize.height - letterWidth) / 2 + letterWidth
@@ -156,22 +161,37 @@ function drawNode(g,specs,nodePos,specsInf,showTableFunc){
     }
 }
 
-function drawEdge(g,specs,nodePos){
-    var defs = g.append("defs");
-    var arrowMarker = defs.append("marker")
-        .attr("id","arrow")
-        .attr("markerUnits","strokeWidth")
-        .attr("markerWidth","10")
-        .attr("markerHeight","10")
-        .attr("viewBox","0 0 10 10") 
-        .attr("refX","8")
-        .attr("refY","4")
-        .attr("orient","auto");
-    var arrow_path = "M0,0 L8,4 L0,8 L4,4 L0,0";
-    arrowMarker.append("path")
-        .attr("d",arrow_path)
-        .attr("fill","gray");
+function drawEdge(g,specs,nodePos,editor){
+    
     for(let idx = 0;idx < specs.length;idx++){
+        let defs = g.append("defs")
+        .attr('class',`edge_${idx}`)
+        let arrowMarker = defs.append("marker")
+            .attr("id",`arrow_${idx}`)
+            .attr("markerUnits","strokeWidth")
+            .attr("markerWidth","10")
+            .attr("markerHeight","10")
+            .attr("viewBox","0 0 10 10") 
+            .attr("refX","8")
+            .attr("refY","4")
+            .attr("orient","auto");
+        let arrow_path = "M0,0 L8,4 L0,8 L4,4 L0,0";
+        arrowMarker.append("path")
+            .attr("d",arrow_path)
+            .attr("fill","gray")
+            .attr('class',`arrow_${idx}`)
+
+        let str = typeof(specs[idx].output_table_file) === 'string' ? specs[idx].output_table_file : specs[idx].output_table_file[0]
+        let firstIdx = 0
+        for(let s = 0;s < str.length;s++){
+            if(str[s] >= '0' && str[s] <= '9'){
+                firstIdx = s
+                break
+            }
+        }
+        let lastIdx = str.indexOf("_") === -1 ? str.indexOf(".") : str.indexOf("_")
+        let lineNum = parseInt(str.substring(firstIdx,lastIdx))
+
         if(typeof(specs[idx].input_table_file) === 'string'
          && typeof(specs[idx].output_table_file) === 'string'){
              g.append('line')
@@ -181,7 +201,21 @@ function drawEdge(g,specs,nodePos){
              .attr('y2',nodePos[specs[idx].output_table_file][1] + nodeSize.height / 2)
              .attr('stroke',lineAttr.color)
              .attr('stroke-width',lineAttr.strokeWidth)
-             .attr("marker-end","url(#arrow)")
+             .attr("marker-end",`url(#arrow_${idx})`)
+             .attr('class',`edge_${idx}`)
+             .on('click',function(event){
+                console.log(lineNum)
+                var decorations = editor.deltaDecorations([], [
+                    {
+                        range: new monaco.Range(lineNum,1,lineNum,1),
+                        options: {
+                            isWholeLine: true,
+                            class: "myContentClass"
+                        }
+                    }
+                ]);
+                console.log("decorations: ",decorations)
+            })
          }else if(typeof(specs[idx].input_table_file) === 'string'){
             let meetingPosY = nodePos[specs[idx].input_table_file][1] + nodeSize.height / 2
             let meetingPosX = nodePos[specs[idx].input_table_file][0] + nodeSize.width
@@ -194,6 +228,7 @@ function drawEdge(g,specs,nodePos){
             .attr("r", 2 * lineAttr.strokeWidth)
             .style("fill", lineAttr.color)       
             .style("stroke", lineAttr.color)    
+            .attr('class',`edge_${idx}`)
 
             g.append('line')
             .attr('x1',nodePos[specs[idx].input_table_file][0] + nodeSize.width)
@@ -202,6 +237,7 @@ function drawEdge(g,specs,nodePos){
             .attr('y2',meetingPosY)
             .attr('stroke',lineAttr.color)
             .attr('stroke-width',lineAttr.strokeWidth)
+            .attr('class',`edge_${idx}`)
 
             g.append('line')
             .attr('x1',meetingPosX)
@@ -210,7 +246,8 @@ function drawEdge(g,specs,nodePos){
             .attr('y2',nodePos[specs[idx].output_table_file[0]][1] + nodeSize.height / 2)
             .attr('stroke',lineAttr.color)
             .attr('stroke-width',lineAttr.strokeWidth)
-            .attr("marker-end","url(#arrow)")
+            .attr("marker-end",`url(#arrow_${idx})`)
+            .attr('class',`edge_${idx}`)
 
             g.append('line')
             .attr('x1',meetingPosX)
@@ -219,7 +256,8 @@ function drawEdge(g,specs,nodePos){
             .attr('y2',nodePos[specs[idx].output_table_file[1]][1] + nodeSize.height / 2)
             .attr('stroke',lineAttr.color)
             .attr('stroke-width',lineAttr.strokeWidth)
-            .attr("marker-end","url(#arrow)")
+            .attr("marker-end",`url(#arrow_${idx})`)
+            .attr('class',`edge_${idx}`)
          }else{
             let meetingPosY = nodePos[specs[idx].output_table_file][1] + nodeSize.height / 2
             let meetingPosX = Math.max(nodePos[specs[idx].input_table_file[0]][0],nodePos[specs[idx].input_table_file[1]][0])
@@ -232,6 +270,7 @@ function drawEdge(g,specs,nodePos){
             .attr("r", 2 * lineAttr.strokeWidth)
             .style("fill", lineAttr.color)       
             .style("stroke", "black")     
+            .attr('class',`edge_${idx}`)
 
             g.append('line')
             .attr('x1',nodePos[specs[idx].input_table_file[0]][0] + nodeSize.width)
@@ -240,6 +279,7 @@ function drawEdge(g,specs,nodePos){
             .attr('y2',meetingPosY)
             .attr('stroke',lineAttr.color)
             .attr('stroke-width',lineAttr.strokeWidth)
+            .attr('class',`edge_${idx}`)
 
             g.append('line')
             .attr('x1',nodePos[specs[idx].input_table_file[1]][0] + nodeSize.width)
@@ -248,6 +288,7 @@ function drawEdge(g,specs,nodePos){
             .attr('y2',meetingPosY)
             .attr('stroke',lineAttr.color)
             .attr('stroke-width',lineAttr.strokeWidth)
+            .attr('class',`edge_${idx}`)
             
             g.append('line')
             .attr('x1',meetingPosX)
@@ -256,7 +297,8 @@ function drawEdge(g,specs,nodePos){
             .attr('y2',nodePos[specs[idx].output_table_file][1] + nodeSize.height / 2)
             .attr('stroke',lineAttr.color)
             .attr('stroke-width',lineAttr.strokeWidth)
-            .attr("marker-end","url(#arrow)")
+            .attr("marker-end",`url(#arrow_${idx})`)
+            .attr('class',`edge_${idx}`)
          }
     }
 

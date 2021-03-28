@@ -51,7 +51,7 @@ function delete_column(m1,m2,rule,t1_name,t2_name,outColors,name,showTableName,p
     drawTableForColumn(g,m1,[0,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
     drawPcentBar(g,[0,colHeight],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])
     // 添加加号和箭头
-    let arrowUrl = require('../../images/arrow.png')
+    let arrowUrl = require('../../images/arrow.svg')
     drawIcon(g,[(m1[0].length + 0.2) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
 
     // drawTable(g,m2,expOrImpCols,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,'col')
@@ -113,7 +113,7 @@ function delete_duplicate(m1,m2,oriExpOrImpCols,rule,t1_name,t2_name,name,showTa
     drawTable(g,m1,expOrImpCols,[0,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize,'col')
     drawPcentBar(g,[0,colHeight],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])
     // 添加箭头
-    let arrowUrl = require('../../images/arrow.png')
+    let arrowUrl = require('../../images/arrow.svg')
     drawIcon(g,[(m1[0].length + 0.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
 
     drawTable(g,m2,oriExpOrImpCols,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,'col')
@@ -183,7 +183,7 @@ function delete_dropna(m1,m2,rule,t1_name,t2_name,inColors,outColors,naPos,name,
     drawTableForColumn(g,m1,[0,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize,inColors,naPos)
     drawPcentBar(g,[0,colHeight],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])
     // 添加加号和箭头
-    let arrowUrl = require('../../images/arrow.png')
+    let arrowUrl = require('../../images/arrow.svg')
     drawIcon(g,[(m1[0].length + 0.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
 
     // drawTable(g,m1,[],[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,'col',-1,expOrImpCols[0])

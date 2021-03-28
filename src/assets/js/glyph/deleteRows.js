@@ -52,7 +52,7 @@ function delete_row(m1,m2,rule,t1_name,t2_name,outColors,name,showTableName,pos,
     drawTableForRow(g,m1,[0,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
     drawPcentBar(g,[0,colHeight],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])
 
-    let arrowUrl = require('../../images/arrow.png')
+    let arrowUrl = require('../../images/arrow.svg')
     drawIcon(g,[(m1[0].length + 0.2) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth,colHeight,arrowUrl)
     drawTableForRow(g,m2,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,outColors)
     drawPcentBar(g,[(m1[0].length + 1) * colWidth,colHeight],m2[0].length * colWidth,m2.length * colHeight,colHeight,xPercents[1],yPercents[1])
@@ -100,7 +100,7 @@ function delete_duplicate_row_fullColumn(m1, m2, rule, t1_name, t2_name,inColor,
     drawTableForRow(g,m1,[0,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize,inColor)
     drawPcentBar(g,[0,colHeight],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])
     // 添加箭头
-    let arrowUrl = require('../../images/arrow.png')
+    let arrowUrl = require('../../images/arrow.svg')
     drawIcon(g,[(m1[0].length + 0.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
 
     drawTableForRow(g,m2,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,outColor)
@@ -151,7 +151,7 @@ function delete_duplicate_row_partColumn(m1, m2, rule, t1_name, t2_name,inColors
     drawTableForRow(g,m1,[0,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize,inColors)
     drawPcentBar(g,[0,colHeight],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])
     // 添加箭头
-    let arrowUrl = require('../../images/arrow.png')
+    let arrowUrl = require('../../images/arrow.svg')
     drawIcon(g,[(m1[0].length + 0.2) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
 
     drawTableForRow(g,m2,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,outColors)
@@ -201,7 +201,7 @@ function delete_filter(m1, m2, rule, t1_name, t2_name,outColor,name,showTableNam
     drawTableForRow(g,m1,[0,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
     drawPcentBar(g,[0,colHeight],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])
     // 添加箭头
-    let arrowUrl = require('../../images/arrow.png')
+    let arrowUrl = require('../../images/arrow.svg')
     drawIcon(g,[(m1[0].length + 0.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
 
     drawTableForRow(g,m2,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,outColor)

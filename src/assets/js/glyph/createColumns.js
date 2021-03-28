@@ -51,9 +51,9 @@ function create_column(m1,m2,rule,t1_name,t2_name,inExp,outExp,name,showTableNam
     drawDashRect(g,[m1[0].length * colWidth,colHeight],m1.length * colHeight,colWidth)
 
     // 添加加号和箭头
-    let plusUrl = require('../../images/plus.png')
+    let plusUrl = require('../../images/add.svg')
     drawIcon(g,[(m1[0].length + 0.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth,0.8 * colHeight,plusUrl)
-    let arrowUrl = require('../../images/arrow.png')
+    let arrowUrl = require('../../images/arrow.svg')
     drawIcon(g,[(m1[0].length + 1.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
 
     // drawTable(g,m2,outputExpOrImp,[(m2[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,'col')
@@ -125,9 +125,9 @@ function create_column_create(m1,m2,rule,t1_name,t2_name,name,showTableName,pos,
     drawDashRect(g,[m1[0].length * colWidth,colHeight],m1.length * colHeight,colWidth)
 
     // 添加加号和箭头
-    let plusUrl = require('../../images/plus.png')
+    let plusUrl = require('../../images/add.svg')
     drawIcon(g,[m1[0].length * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],colWidth,colHeight,plusUrl)
-    let arrowUrl = require('../../images/arrow.png')
+    let arrowUrl = require('../../images/arrow.svg')
     drawIcon(g,[(m1[0].length + 1.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
 
     // drawTable(g,m2,outputExpOrImp,[(m2[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,'col')

@@ -51,9 +51,9 @@ function create_row(m1,m2,rule,t1_name,t2_name,insertPos = -1,name,showTableName
     drawPcentBar(g,[inputX,colHeight],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])
    
     drawDashRect(g,[inputX,(m1.length + 1) * colHeight + 3],colHeight,m1[0].length * colWidth)
-    let plusUrl = require('../../images/plus.png')
+    let plusUrl = require('../../images/add.svg')
     drawIcon(g,[inputX + (m1[0].length - 0.8) * colWidth / 2,(m1.length + 1.1) * colHeight],0.8 * colWidth,0.8 * colHeight,plusUrl)
-    let arrowUrl = require('../../images/arrow.png')
+    let arrowUrl = require('../../images/arrow.svg')
     drawIcon(g,[(m1[0].length + 0.05) * colWidth + inputX * 1.6,(1 + m2.length / 2) * colHeight - colHeight / 2],0.8 * colWidth,colHeight,arrowUrl)
     let outputX = insertPos === -1 ? (m1[0].length + 1) * colWidth : (m1[0].length + 1.5)* colWidth
     // drawTable(g,m2,[],[inputX + outputX,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,'row',insertPos)
@@ -117,10 +117,10 @@ function create_row_insert(m1, m2, rule, t1_name, t2_name,inColor,outColor,inIdx
     drawPcentBar(g,[inDx,colHeight],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])
     drawDashRect(g,[inDx,(m1.length + 1) * colHeight],colHeight,m1[0].length * colWidth)
 
-    let plusUrl = require('../../images/plus.png')
+    let plusUrl = require('../../images/add.svg')
     drawIcon(g,[inDx + (m1[0].length - 1) * colWidth / 2,(m1.length + 1.1) * colHeight],colWidth, 0.8 * colHeight,plusUrl)
     // 添加箭头
-    let arrowUrl = require('../../images/arrow.png')
+    let arrowUrl = require('../../images/arrow.svg')
     drawIcon(g,[inDx + (m1[0].length + 0.1) * colWidth,(1 + m2.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
 
     drawIndex(g,[inDx + (m1[0].length + 1) * colWidth,2 * colHeight],outIdx,0.5 * colWidth,colHeight,cellFontSize)

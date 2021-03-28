@@ -46,7 +46,7 @@ function combine_tables_extend_axis0(m1,m2,m3,rule,t1_name,t2_name,t3_name, inCo
     drawTableForRow(g,m2,[0, 2.5 * colHeight + m1.length * colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,inColors2)
     drawPcentBar(g,[0, 2.5 * colHeight + m1.length * colHeight],m2[0].length * colWidth,m2.length * colHeight,colHeight,xPercents[1],yPercents[1])
    
-    let arrowUrl = require('../../images/arrow.png')
+    let arrowUrl = require('../../images/arrow.svg')
     drawIcon(g,[(m1[0].length + 0.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2 + colHeight * 3],0.8 * colWidth, colHeight,arrowUrl)
 
     drawTableForRow(g,m3,[(m1[0].length + 1) * colWidth,2 * colHeight],colWidth,colHeight,t3_name,colFontSize,cellFontSize)
@@ -97,7 +97,7 @@ function combine_tables_extend_axis1(m1,m2,m3,rule,t1_name,t2_name,t3_name, inCo
     drawTableForRow(g,m2,[0, 2.5 * colHeight + m1.length * colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,inColors2)
     drawPcentBar(g,[0, 2.5 * colHeight + m1.length * colHeight],m2[0].length * colWidth,m2.length * colHeight,colHeight,xPercents[1],yPercents[1])
    
-    let arrowUrl = require('../../images/arrow.png')
+    let arrowUrl = require('../../images/arrow.svg')
     drawIcon(g,[(m1[0].length + 0.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2 + colHeight * 3],0.8 * colWidth, colHeight,arrowUrl)
 
     drawTableForRow(g,m3,[(m1[0].length + 1) * colWidth,4 * colHeight],colWidth,colHeight,t3_name,colFontSize,cellFontSize)

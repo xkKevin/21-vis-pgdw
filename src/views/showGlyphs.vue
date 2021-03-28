@@ -263,6 +263,7 @@ export default {
       tableHead: [
       ],
       show_table_name: true,
+      lastLine:'',
     };
   },
   components:{
@@ -319,6 +320,7 @@ export default {
         readOnly: false, // 只读
         theme: "vs", // 官方自带三种主题vs, hc-black, or vs-dark,
       });
+      
     },
     changeModel(lang = "r", script_content = "", flag = true) {
       //创建新模型，value为旧文本，lang 为语言
@@ -332,6 +334,7 @@ export default {
       //   return lang.id;
       // });
       var newModel = monaco.editor.createModel(script_content, lang);
+
       //将旧模型销毁
       if (oldModel) {
         oldModel.dispose();
@@ -544,7 +547,7 @@ export default {
               //     svgWidth + parseInt(svgSize.width) + 50,svgHeight + parseInt(svgSize.height) + 50)
               // nodePos["table10.csv"][1] += 200
               let g = drawSvgAndEdge(specsToHandle,nodePos,
-                  '100%','100%')
+                  '100%','100%',this.editor)
               this.$store.commit("setG",g)
               this.preparation(specsToHandle,nodePos)
             })
@@ -1723,6 +1726,78 @@ export default {
 
       drawNode(this.$store.state.g,transform_specs,nodePos,tableInf,this.getTableData)
       var panZoomTiger = svgPanZoom('#mainsvg');
+
+      this.editor.onMouseDown((e) => {
+        
+        if(this.lastLine !== '' && e.target.position.lineNumber !== this.lastLine){
+
+          d3.selectAll(`.edge_${this.lastLine}`).attr('stroke','gray')
+          // d3.select(`#arrow_${pos}`).attr('fill','red')
+          d3.selectAll(`.arrow_${this.lastLine}`).attr('fill','gray')
+          
+          if(typeof(transform_specs[this.lastLine].input_table_file) === 'string'){
+            let lastIdx = transform_specs[this.lastLine].input_table_file.indexOf(".")
+            d3.select(`#node_${transform_specs[this.lastLine].input_table_file.substring(0,lastIdx)}`).attr('stroke','gray')
+          }else{
+            for(let idx2 = 0;idx2 < transform_specs[this.lastLine].input_table_file.length;idx2++){
+              let lastIdx = transform_specs[this.lastLine].input_table_file[idx2].indexOf(".")
+              d3.select(`#node_${transform_specs[this.lastLine].input_table_file[idx2].substring(0,lastIdx)}`).attr('stroke','gray')
+            }
+          }
+
+          if(typeof(transform_specs[this.lastLine].output_table_file) === 'string'){
+            let lastIdx = transform_specs[this.lastLine].output_table_file.indexOf(".")
+            d3.select(`#node_${transform_specs[this.lastLine].output_table_file.substring(0,lastIdx)}`).attr('stroke','gray')
+          }else{
+            for(let idx2 = 0;idx2 < transform_specs[this.lastLine].output_table_file.length;idx2++){
+              let lastIdx = transform_specs[this.lastLine].output_table_file[idx2].indexOf(".")
+              d3.select(`#node_${transform_specs[this.lastLine].output_table_file[idx2].substring(0,lastIdx)}`).attr('stroke','gray')
+            }
+          }
+        }
+        let tableId = `table${e.target.position.lineNumber}.csv`
+        let pos
+        for(let idx = 0;idx < transform_specs.length;idx++){
+          if(typeof(transform_specs[idx].output_table_file) === 'string'){
+            if(tableId === transform_specs[idx].output_table_file){
+              pos = idx
+              break
+            }
+          }else{
+            for(let idx2 = 0;idx2 < transform_specs[idx].output_table_file.length;idx2++){
+              if(transform_specs[idx].output_table_file[idx2] === tableId){
+                pos = idx
+                break
+              }
+            }
+          }
+        }
+        this.lastLine = pos
+        d3.selectAll(`.edge_${pos}`).attr('stroke','red')
+        // d3.select(`#arrow_${pos}`).attr('fill','red')
+        d3.selectAll(`.arrow_${pos}`).attr('fill','red')
+        
+        if(typeof(transform_specs[pos].input_table_file) === 'string'){
+          let lastIdx = transform_specs[pos].input_table_file.indexOf(".")
+          d3.select(`#node_${transform_specs[pos].input_table_file.substring(0,lastIdx)}`).attr('stroke','red')
+        }else{
+          for(let idx2 = 0;idx2 < transform_specs[pos].input_table_file.length;idx2++){
+            let lastIdx = transform_specs[pos].input_table_file[idx2].indexOf(".")
+            d3.select(`#node_${transform_specs[pos].input_table_file[idx2].substring(0,lastIdx)}`).attr('stroke','red')
+          }
+        }
+
+        if(typeof(transform_specs[pos].output_table_file) === 'string'){
+          let lastIdx = transform_specs[pos].output_table_file.indexOf(".")
+          d3.select(`#node_${transform_specs[pos].output_table_file.substring(0,lastIdx)}`).attr('stroke','red')
+        }else{
+          for(let idx2 = 0;idx2 < transform_specs[pos].output_table_file.length;idx2++){
+            let lastIdx = transform_specs[pos].output_table_file[idx2].indexOf(".")
+            d3.select(`#node_${transform_specs[pos].output_table_file[idx2].substring(0,lastIdx)}`).attr('stroke','red')
+          }
+        }
+        
+      });
     },
   },
   mounted() {
@@ -1757,6 +1832,14 @@ footer.el-footer {
 }
 .el-icon-arrow-down {
   font-size: 12px;
+}
+
+.myContentClass {
+	background: red;
+}
+
+.myContentClass {
+	background: lightblue;
 }
 
 </style>

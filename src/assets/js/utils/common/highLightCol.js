@@ -20,13 +20,13 @@ export function drawHighLightCol(g,matrix,expOrImpCols,pos,colWidth,colHeight,bo
     for(let group = 0; group < highlightCols.length; group++){
         //高亮框
         g.append('rect')
-            .attr('width',(highlightCols[group][1] - highlightCols[group][0] + 1) * colWidth - 3)
-            .attr('height',colHeight * matrix.length - 3)
-            .attr('stroke-width','3px')
+            .attr('width',(highlightCols[group][1] - highlightCols[group][0] + 1) * colWidth - 2)
+            .attr('height',colHeight * matrix.length - 2)
+            .attr('stroke-width','2px')
             .attr('stroke',borderColor)
             .attr('fill','none')
-            .attr('x',pos[0] + highlightCols[group][0] * colWidth + 1.5)
-            .attr('y',pos[1] + 1.5)
+            .attr('x',pos[0] + highlightCols[group][0] * colWidth + 1)
+            .attr('y',pos[1] + 1)
 
         //每个组的竖线
         g.append("line")
