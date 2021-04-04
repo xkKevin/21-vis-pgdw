@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template, jsonify, send_from_directory,json
 # from flask_cors import CORS  # 前端已经通过代理处理CORS了，因此后端不需要再开启
 import generate_transform_specs as gts
+import python_adaptor
 import os
 
 # 当设置了某个路径为static_folder后，自动将最后一个文件夹设置为url的静态文件访问起始网址
@@ -47,24 +48,32 @@ def generate_transform_specs():
     transform_specs = {}
     if request.method == "GET":
         script_content = request.args.get("script_content", "")  # POST请求用 request.form.get
-        # language = request.args.get("language", "r")
-        with open(data_path + script_file, 'w', encoding='utf-8') as f:
+        language = request.args.get("language", "r")
+        if language == 'r':
+            data_path_lan = os.path.join(data_path, "r_case")
+            adaptor = gts.generate_transform_specs
+        elif language == 'python':
+            data_path_lan = os.path.join(data_path, "python_case") 
+            adaptor = python_adaptor.generate_transform_specs
+
+        with open(os.path.join(data_path_lan, script_file), 'w', encoding='utf-8') as f:
             f.write(script_content)
         
         # -------- 以下代码是用来调试的 -------- # 
-        # os.chdir(os.path.join(os.getcwd(), data_path)) # 修改当前工作目录  os.path.join(os.getcwd(),script_name)
-        # transform_specs = gts.generate_transform_specs(script_file)
+        # os.chdir(os.path.join(os.getcwd(), data_path_lan)) # 修改当前工作目录  os.path.join(os.getcwd(),script_name)
+        # transform_specs = adaptor(script_file)  # transform_specs = gts.generate_transform_specs(script_file)
         # import json
         # with open("transform_specs.json", "w") as fp:
         #     json.dump(transform_specs, fp, indent=2)
         # ------------------------------------ # 
         try:
-            os.chdir(os.path.join(os.getcwd(), data_path)) # 修改当前工作目录  os.path.join(os.getcwd(),script_name)
-            transform_specs = gts.generate_transform_specs(script_file)  # 判断是否有异常发生
+            os.chdir(os.path.join(os.getcwd(), data_path_lan)) # 修改当前工作目录  os.path.join(os.getcwd(),script_name)
+            transform_specs = adaptor(script_file)  # 判断是否有异常发生
         except Exception as e:
             return jsonify({'error_info': str(e)})   # 如果有异常的话，将异常信息返回给前端
         finally:
             os.chdir(original_cwd) # 修改回原来的工作目录
+
 
     return jsonify({'transform_specs': transform_specs})
     # return jsonify({'transform_specs': {}})

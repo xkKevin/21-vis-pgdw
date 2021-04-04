@@ -2,7 +2,8 @@
   <div id="showGlyphs">
     
     <!-- <remote-script src="https://github.com/bumbu/svg-pan-zoom/blob/master/dist/svg-pan-zoom.min.js"></remote-script> -->
-    <remote-script src="http://ariutta.github.io/svg-pan-zoom/dist/svg-pan-zoom.min.js"></remote-script>
+    <!-- <remote-script src="http://ariutta.github.io/svg-pan-zoom/dist/svg-pan-zoom.min.js"></remote-script> -->
+    <remote-script src="http://localhost/data/static/svg-pan-zoom.js"></remote-script>
     <el-row type="flex" justify="center" style="height:50vh">
       <el-col style="width:20vw;margin-right:0.5vw" >
         <el-row>
@@ -124,7 +125,6 @@
     </el-row>
   </div>
 </template>
-
 
 <script>
 import axios from "axios";
@@ -345,7 +345,7 @@ export default {
       this.editor.setModel(newModel);
     },
     getTableData(table_file) {
-      const table_path = `${request_api}/data/${table_file}?a=${Math.random()}`;
+      const table_path = `${request_api}/data/${this.language}_case/${table_file}?a=${Math.random()}`;
       d3.csv(table_path).then((data) => {
         this.table_name = table_file;
         this.tableData = data;
@@ -620,21 +620,21 @@ export default {
         if (transform_specs[i].input_table_file && transform_specs[i].input_table_file[0] !== '*') {
           if (typeof transform_specs[i].input_table_file === "string") {
             dataIn1_csv = await getCsv(
-              `${request_api}/data/${transform_specs[i].input_table_file}?a=${Math.random()}`
+              `${request_api}/data/${this.language}_case/${transform_specs[i].input_table_file}?a=${Math.random()}`
             );
             if(!tableInf[transform_specs[i].input_table_file]){
               tableInf[transform_specs[i].input_table_file] = [transform_specs[i].input_table_name,dataIn1_csv.length,dataIn1_csv[0].length]
             }
           } else {
             dataIn1_csv = await getCsv(
-              `${request_api}/data/${transform_specs[i].input_table_file[0]}?a=${Math.random()}`
+              `${request_api}/data/${this.language}_case/${transform_specs[i].input_table_file[0]}?a=${Math.random()}`
             );
             if(!tableInf[transform_specs[i].input_table_file[0]]){
               tableInf[transform_specs[i].input_table_file[0]] = [transform_specs[i].input_table_name[0],dataIn1_csv.length,dataIn1_csv[0].length]
             }
             if (transform_specs[i].input_table_file.length > 1)
               dataIn2_csv = await getCsv(
-                `${request_api}/data/${transform_specs[i].input_table_file[1]}?a=${Math.random()}`
+                `${request_api}/data/${this.language}_case/${transform_specs[i].input_table_file[1]}?a=${Math.random()}`
               );
               if(!tableInf[transform_specs[i].input_table_file[1]]){
                 tableInf[transform_specs[i].input_table_file[1]] = [transform_specs[i].input_table_name[1],dataIn2_csv.length,dataIn2_csv[0].length]
@@ -644,21 +644,21 @@ export default {
         if (transform_specs[i].output_table_file && transform_specs[i].output_table_file[0] !== '#') {
           if (typeof transform_specs[i].output_table_file === "string") {
             dataOut1_csv = await getCsv(
-              `${request_api}/data/${transform_specs[i].output_table_file}?a=${Math.random()}`
+              `${request_api}/data/${this.language}_case/${transform_specs[i].output_table_file}?a=${Math.random()}`
             );
             if(!tableInf[transform_specs[i].output_table_file]){
               tableInf[transform_specs[i].output_table_file] = [transform_specs[i].output_table_name,dataOut1_csv.length,dataOut1_csv[0].length]
             }
           } else {
             dataOut1_csv = await getCsv(
-              `${request_api}/data/${transform_specs[i].output_table_file[0]}?a=${Math.random()}`
+              `${request_api}/data/${this.language}_case/${transform_specs[i].output_table_file[0]}?a=${Math.random()}`
             );
             if(!tableInf[transform_specs[i].output_table_file[0]]){
               tableInf[transform_specs[i].output_table_file[0]] = [transform_specs[i].output_table_name[0],dataOut1_csv.length,dataOut1_csv[0].length]
             }
             if (transform_specs[i].output_table_file.length > 1)
               dataOut2_csv = await getCsv(
-              `${request_api}/data/${transform_specs[i].output_table_file[1]}?a=${Math.random()}`
+              `${request_api}/data/${this.language}_case/${transform_specs[i].output_table_file[1]}?a=${Math.random()}`
             );
             if(!tableInf[transform_specs[i].output_table_file[1]]){
               tableInf[transform_specs[i].output_table_file[1]] = [transform_specs[i].output_table_name[1],dataOut2_csv.length,dataOut2_csv[0].length]

@@ -1,0 +1,7 @@
+4,size,mult
+5,value,mult
+7,value,mult,size
+8,value,mult,size,total
+9,mult,size,total
+10,mult,size,total
+11,size,mult,total

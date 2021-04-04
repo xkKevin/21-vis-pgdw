@@ -1,0 +1,68 @@
+[
+  {
+    "type": "create_tables",
+    "output_table_name": "p19_input1",
+    "output_table_file": "table4.csv",
+    "operation_rule": "Load: \"benchmark19.txt\""
+  },
+  {
+    "type": "transform_tables_fold",
+    "input_table_name": "p19_input1",
+    "input_table_file": "table4.csv",
+    "output_table_name": "TBL_7",
+    "output_table_file": "table5.csv",
+    "output_explict_col": [
+      "MORPH38",
+      "value"
+    ],
+    "input_explict_col": [
+      "12:10",
+      "12:20",
+      "12:30"
+    ],
+    "operation_rule": "Fold"
+  },
+  {
+    "input_table_name": "TBL_7",
+    "input_table_file": "table5.csv",
+    "output_table_name": "TBL_3",
+    "output_table_file": "table6.csv",
+    "type": "identical_operation",
+    "operation_rule": "group_by: `MORPH38`,`value`"
+  },
+  {
+    "type": "combine_rows_summarize",
+    "input_table_name": "TBL_3",
+    "input_table_file": "table6.csv",
+    "output_table_name": "TBL_1",
+    "output_table_file": "table7.csv",
+    "output_explict_col": [
+      "MORPH39"
+    ],
+    "input_explict_col": [],
+    "input_implict_col": [
+      "value"
+    ],
+    "operation_rule": "Group:value, Summarize:MORPH39=n()"
+  },
+  {
+    "type": "transform_tables_unfold",
+    "input_table_name": "TBL_1",
+    "input_table_file": "table7.csv",
+    "output_table_name": "morpheus",
+    "output_table_file": "table8.csv",
+    "input_explict_col": [
+      "MORPH38",
+      "MORPH39"
+    ],
+    "operation_rule": "Unfold"
+  },
+  {
+    "input_table_name": "morpheus",
+    "input_table_file": "table8.csv",
+    "output_table_name": "morpheus",
+    "output_table_file": "table9.csv",
+    "type": "identical_operation",
+    "operation_rule": "as.data.frame"
+  }
+]
