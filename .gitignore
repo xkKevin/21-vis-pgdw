@@ -25,8 +25,11 @@ pnpm-debug.log*
 # backend
 /backend/__pycache__
 /backend/data/table*.csv
+/backend/data/*/table*.csv
 /backend/data/colnames.txt
 /backend/data/*_exec.txt
 /backend/data/*test.txt
 /backend/data/benchmarks
 /backend/data/repo
+/backend/data/input/*
+/backend/data/output/*

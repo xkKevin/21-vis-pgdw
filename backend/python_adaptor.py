@@ -282,10 +282,13 @@ def generate_transform_specs(script_name):
             if func == 'groupby':
                 p_res = pi_value[3].split(".")
                 specs["input_explict_col"] = [i for i in col_states[line_num] if i in p_res[0]]
+                specs["input_implict_col"] = specs["input_explict_col"]
+                specs["input_explict_col"] = list(set(col_states[line_num]) - set(specs["input_implict_col"]))
+                specs["output_explict_col"] = specs["input_explict_col"]
                 func = p_res[-1][:-1]
                 if  func in ['mean', 'max', 'mad', 'median', 'min','sum']:
                     specs["type"] = "combine_rows_summarize"
-                    specs["operation_rule"] = "Group by %s, Summarize columns by %s" % (",".join(specs["input_explict_col"]), func)  # Summarize rows
+                    specs["operation_rule"] = "Group by %s, Summarize columns by %s" % (",".join(specs["input_implict_col"]), func)  # Summarize rows
             
             if func == 'reset_index':
                 if params.get('drop') and params.get('drop') == 'True':

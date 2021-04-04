@@ -1,7 +1,6 @@
-4,size,mult
-5,value,mult
-7,value,mult,size
-8,value,mult,size,total
-9,mult,size,total
-10,mult,size,total
-11,size,mult,total
+3,ID,T,P.1,P.2,Q.1
+4,ID,T,MORPH394,P
+5,ID,T,MORPH469,Channel,P
+6,ID,T,Channel,P
+7,ID,T,Channel,P
+8,ID,Channel,T,P

@@ -3,8 +3,8 @@
 library(tidyr)
 library(dplyr)
 
-p34_input1 = read.csv("case/r34_input1.csv")
-p34_input2 = read.csv("case/r34_input2.csv")
+p34_input1 = read.csv("r34_input1.csv")
+p34_input2 = read.csv("r34_input2.csv")
 # TBL_3=inner_join(p34_input2, p34_input1, by="mult")
 TBL_3=inner_join(p34_input2, p34_input1)
 TBL_1=mutate(TBL_3,total=value / size)
