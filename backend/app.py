@@ -97,12 +97,12 @@ def getTablesAndParse():
         if tables['type'] == "input":
             for tablename,tablecontent in tables.items():
                 if tablename != 'type':
-                    with open(data_path + "input/" + tablename,'w',newline='') as file_object:
+                    with open(data_path + "r_case/" + tablename,'w',newline='') as file_object:
                         file_object.write(tablecontent)
         elif tables['type'] == "output":
             for tablename,tablecontent in tables.items():
                 if tablename != 'type':
-                    with open(data_path + "output/" + tablename,'w',newline='') as file_object:
+                    with open(data_path + "r_case/" + tablename,'w',newline='') as file_object:
                         file_object.write(tablecontent)
 
         #使用io.StringIO和csv.reader解析从字符串中解析出csv

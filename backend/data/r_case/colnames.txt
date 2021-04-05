@@ -1,6 +1,0 @@
-3,ID,T,P.1,P.2,Q.1
-4,ID,T,MORPH394,P
-5,ID,T,MORPH469,Channel,P
-6,ID,T,Channel,P
-7,ID,T,Channel,P
-8,ID,Channel,T,P

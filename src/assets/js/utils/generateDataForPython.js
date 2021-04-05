@@ -3,13 +3,40 @@ function generateDataForTablesConcat(dataIn1_csv, dataIn2_csv,dataOut1_csv,axis 
     let m1 = [[]],m2 = [[]],m3 = [[]]
     let inColors2 = []
     if(axis === 0){
+        // for(let col = 0;col < Math.min(dataIn1_csv[0].length,4);col++){
+        //     m1[0].push(dataIn1_csv[0][col])
+        //     m2[0].push(dataIn2_csv[0][col])
+        //     m3[0].push(dataOut1_csv[0][col])
+        // }
+    
+        // for(let row = 1;row < Math.min(4,dataIn1_csv.length);row++){
+        //     let tempRow = []
+        //     for(let col = 0;col < m1[0].length;col++){
+        //         tempRow.push('')
+        //     }
+        //     m1.push(tempRow)
+        //     m3.push(tempRow)
+        // }
+    
+        // for(let row = 1;row < Math.min(4,dataIn2_csv.length);row++){
+        //     let tempRow = []
+        //     for(let col = 0;col < m2[0].length;col++){
+        //         tempRow.push('')
+        //     }
+        //     m2.push(tempRow)
+        //     m3.push(tempRow)
+        // }
+    
+        // for(let row = 1;row < m2.length;row++){
+        //     inColors2.push(m1.length - 2 + row)
+        // }
         for(let col = 0;col < Math.min(dataIn1_csv[0].length,4);col++){
             m1[0].push(dataIn1_csv[0][col])
             m2[0].push(dataIn2_csv[0][col])
             m3[0].push(dataOut1_csv[0][col])
         }
     
-        for(let row = 1;row < Math.min(4,dataIn1_csv.length);row++){
+        for(let row = 1;row < Math.min(3,dataIn1_csv.length);row++){
             let tempRow = []
             for(let col = 0;col < m1[0].length;col++){
                 tempRow.push('')
@@ -18,7 +45,7 @@ function generateDataForTablesConcat(dataIn1_csv, dataIn2_csv,dataOut1_csv,axis 
             m3.push(tempRow)
         }
     
-        for(let row = 1;row < Math.min(4,dataIn2_csv.length);row++){
+        for(let row = 1;row < Math.min(2,dataIn2_csv.length);row++){
             let tempRow = []
             for(let col = 0;col < m2[0].length;col++){
                 tempRow.push('')

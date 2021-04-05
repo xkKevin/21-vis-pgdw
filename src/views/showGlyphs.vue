@@ -1,20 +1,20 @@
 <template>
-  <div id="showGlyphs">
+  <div id="showGlyphs" style="">
     
     <!-- <remote-script src="https://github.com/bumbu/svg-pan-zoom/blob/master/dist/svg-pan-zoom.min.js"></remote-script> -->
     <!-- <remote-script src="http://ariutta.github.io/svg-pan-zoom/dist/svg-pan-zoom.min.js"></remote-script> -->
     <remote-script src="http://localhost/data/static/svg-pan-zoom.js"></remote-script>
     <el-row type="flex" justify="center" style="height:50vh">
-      <el-col style="width:20vw;margin-right:0.5vw" >
+      <el-col style="width:20vw;margin-right:0.5vw;" >
         <el-row>
           <el-header height="10vh" style="background:black">
             <h2 style="text-align: center;color:white">Somnus</h2>
           </el-header>
-          <div id="tag0"> 
+          <div id="tag0" style="background:#F5F5F5;height:7vh"> 
             
           </div>
-          <el-row style="margin-top:2vh">
-            <upload-tables @uploadSuccess="generateGlyphs"></upload-tables>
+          <el-row style="background:#F6F8FB">
+            <upload-tables style="margin-top:2vh"></upload-tables>
           </el-row>
          
         </el-row>
@@ -22,11 +22,12 @@
     
       <el-col
         class="script_table"
-        style="width:40vw;margin-right:0.5vw"
+        style="width:40vw;margin-right:0.5vw;padding:0 0 0 0"
       >
-        <el-row type="flex" justify="space-between" style="height:5vh">
-          <div id="tag1"></div>
-          <div >
+        <el-row type="flex" justify="space-between" style="height:7vh;background:#F5F5F5;">
+          <div id="tag1" ></div>
+          <div style=" display:flex;
+              align-items: center;">
             Select Programming Language:
             <el-dropdown @command="changeModel">
               <span
@@ -53,13 +54,13 @@
             </el-dropdown>
           </div>
         </el-row>
-        <div id="monaco" style="height:43vh;"></div>
+        <div id="monaco" style="height:42vh;"></div>
       </el-col>
       <el-col
         class="script_table"
-        style="width:40vw"
+        style="width:40vw;padding:0 0 0 0"
       >
-        <el-row type="flex" justify="space-between" style="height:5vh">
+        <el-row type="flex" justify="space-between" style="height:7vh;background:#F5F5F5;">
           <div id="tag2"></div>
           <div>
             {{ table_name }}
@@ -92,7 +93,7 @@
           </div>
         </el-row>
 
-        <el-table  :data="tableData" fit height="43vh">
+        <el-table  :data="tableData" fit height="42vh">
           <el-table-column type="index"> </el-table-column>
           <el-table-column
             v-for="item in tableHead"
@@ -108,11 +109,24 @@
     </el-row>
     <el-row style="margin-top:1vh">
         <el-col style="height:49vh">
-          <el-row type="flex" justify="space-between" style="height:5vh;">
+          <el-row type="flex" justify="space-between" style="height:7vh;background:#F5F5F5;">
             <div id="tag3"></div>
-           
+            <el-button round @click="generateGlyphs" 
+              style="background:#6391D7;
+              font-family: PingFangSC-Regular;
+              font-size: 14px;
+              color: #FFFFFF;
+              letter-spacing: -0.7px;
+              line-height: 17px;
+              font-weight: 400;
+              display:flex;
+              align-items: center;
+              height:5vh;
+              margin-top:1vh
+              " 
+              size="small" type="primary">Run</el-button>
         </el-row>
-           <div id="glyphs" style="height:45vh"></div>
+           <div id="glyphs" style="height:43vh"></div>
         </el-col>
     </el-row>
   </div>
@@ -258,6 +272,7 @@ export default {
       ],
       show_table_name: true,
       lastLine:'',
+      decorations: null
     };
   },
   components:{
@@ -294,7 +309,7 @@ export default {
       .attr('dy',25)
       .attr('dx',5)
       .attr('text-anchor', 'start')
-      .attr('fill','balck')
+      .attr('fill','white')
       .attr('font-size',`20px`)
       .text(text)
     },
@@ -354,17 +369,9 @@ export default {
           this.language = response.data.language;
           this.changeModel(this.language, this.script_content, false);
 
+          this.decorations = this.editor.deltaDecorations([], []);
 
-  //         var decorations = this.editor.deltaDecorations([], [
-	// {
-	// 	range: new monaco.Range(5,1,5,1),
-	// 	options: {
-	// 		isWholeLine: true,
-	// 		className: 'myContentClass',
-	// 		glyphMarginClassName: 'myGlyphMarginClass'
-	// 	}
-	// }
-// ]);
+        console.log(this.decorations);  
         })
         .catch((error) => {
           console.log(error);
@@ -554,7 +561,7 @@ export default {
               //     svgWidth + parseInt(svgSize.width) + 50,svgHeight + parseInt(svgSize.height) + 50)
               // nodePos["table10.csv"][1] += 200
               let g = drawSvgAndEdge(specsToHandle,nodePos,
-                  '100%','100%',this.editor)
+                  '100%','100%',this.editor,this.decorations)
               this.$store.commit("setG",g)
               this.preparation(specsToHandle,nodePos)
             })
@@ -1675,11 +1682,10 @@ export default {
             case "identical_operation":
               identical_operation(pos,i,rule)
             break
-
-            case 'combine_tables_concat_python':
-              res = generateDataForTablesConcat(dataIn1_csv, dataIn2_csv,dataOut1_csv,axis)
-              if(axis === 1){
-                combine_tables_extend_axis1(
+            
+            case 'combine_tables_extend_column':
+              res = generateDataForTablesConcat(dataIn1_csv, dataIn2_csv,dataOut1_csv,1)
+              combine_tables_extend_axis1(
                   res.m1,
                   res.m2,
                   res.m3,
@@ -1694,8 +1700,10 @@ export default {
                   [res.m1[0].length / dataIn1_csv[0].length, res.m2[0].length / dataIn2_csv[0].length, res.m3[0].length / dataOut1_csv[0].length],
                   [res.m1.length / dataIn1_csv.length, res.m2.length / dataIn2_csv.length, res.m3.length / dataOut1_csv.length]
                 );
-              }else{
-                combine_tables_extend_axis0(
+              break
+            case 'combine_tables_extend_row':
+              res = generateDataForTablesConcat(dataIn1_csv, dataIn2_csv,dataOut1_csv,0)
+              combine_tables_extend_axis0(
                   res.m1,
                   res.m2,
                   res.m3,
@@ -1710,8 +1718,43 @@ export default {
                   [res.m1[0].length / dataIn1_csv[0].length, res.m2[0].length / dataIn2_csv[0].length, res.m3[0].length / dataOut1_csv[0].length],
                   [res.m1.length / dataIn1_csv.length, res.m2.length / dataIn2_csv.length, res.m3.length / dataOut1_csv.length]
                 );
-              }
-            break;
+              break
+            // case 'combine_tables_concat_python':
+            //   res = generateDataForTablesConcat(dataIn1_csv, dataIn2_csv,dataOut1_csv,axis)
+            //   if(axis === 1){
+            //     combine_tables_extend_axis1(
+            //       res.m1,
+            //       res.m2,
+            //       res.m3,
+            //       rule,
+            //       input_table_name,
+            //       input_table_name2,
+            //       output_table_name,
+            //       res.inColors2,
+            //       i,
+            //       this.show_table_name,
+            //       pos,
+            //       [res.m1[0].length / dataIn1_csv[0].length, res.m2[0].length / dataIn2_csv[0].length, res.m3[0].length / dataOut1_csv[0].length],
+            //       [res.m1.length / dataIn1_csv.length, res.m2.length / dataIn2_csv.length, res.m3.length / dataOut1_csv.length]
+            //     );
+            //   }else{
+            //     combine_tables_extend_axis0(
+            //       res.m1,
+            //       res.m2,
+            //       res.m3,
+            //       rule,
+            //       input_table_name,
+            //       input_table_name2,
+            //       output_table_name,
+            //       res.inColors2,
+            //       i,
+            //       this.show_table_name,
+            //       pos,
+            //       [res.m1[0].length / dataIn1_csv[0].length, res.m2[0].length / dataIn2_csv[0].length, res.m3[0].length / dataOut1_csv[0].length],
+            //       [res.m1.length / dataIn1_csv.length, res.m2.length / dataIn2_csv.length, res.m3.length / dataOut1_csv.length]
+            //     );
+            //   }
+            // break;
             case "create_rows_summarize":
               res = generateDataForSummarize_python(dataIn1_csv,dataOut1_csv)
               create_row(
@@ -1736,17 +1779,18 @@ export default {
             }
             console.log(transform_specs[i].output_table_file)
             let lineNum = parseInt(transform_specs[i].output_table_file.substring(1,last))
-            // d3.selectAll(".myGlyphMarginClass").attr("style", "backgroud: white;")
-            // d3.selectAll(".myContentClass").attr("style", "backgroud: white;")
-            d3.selectAll(".myGlyphMarginClass").attr("class", "null")
-            d3.selectAll(".myContentClass").attr("class", "null")
-            var decorations = this.editor.deltaDecorations([], [{
-                range: new monaco.Range(lineNum, 1, lineNum, 1),
-                options: {
-                    isWholeLine: true,
-                    className: "myContentClass"
-                }
-            }]);
+            d3.selectAll(".myGlyphMarginClass").attr("style", "backgroud: white;")
+            d3.selectAll(".myContentClass").attr("style", "backgroud: white;")
+            // d3.selectAll(".myGlyphMarginClass").attr("class", "null")
+            // d3.selectAll(".myContentClass").attr("class", "null")
+            // var decorations = this.editor.deltaDecorations([], [{
+            //     range: new monaco.Range(lineNum, 1, lineNum, 1),
+            //     options: {
+            //         isWholeLine: true,
+            //         className: "myContentClass"
+            //     }
+            // }]);
+            this.codeHighlight(lineNum,this.editor,this.decorations)
         })
       }
 
@@ -1856,23 +1900,36 @@ export default {
       });
     },
     initEvent (){
+      let self = this
       this.$nextTick(function () {
       document.addEventListener('keyup', function (e) {
-        // console.log(e);
+        console.log(e);
         if (e.key == "Escape") {
             d3.selectAll("rect[class^='glyph']").attr('stroke','gray')
             d3.selectAll("rect[id^='node']").attr('stroke','gray')
             d3.selectAll("circle[class^='edge']").attr('style',`fill: gray;`)
             d3.selectAll("line[class^='edge']").attr('stroke','gray')
             d3.selectAll("path[class^='arrow']").attr('fill','gray')
-
-            d3.selectAll(".myGlyphMarginClass").attr("style", "backgroud: white;")
-            d3.selectAll(".myContentClass").attr("style", "backgroud: white;")
-
+            self.codeHighlight(0,self.editor,self.decorations)
         }
       })
       })
-    }
+    },
+    codeHighlight (line,editor,decorations){
+      console.log(line)
+      if (line == 0){
+        editor.deltaDecorations(decorations, [])
+      }else{
+        editor.deltaDecorations(decorations, [{
+            range: new monaco.Range(line,1,line,1),
+            options: {
+              isWholeLine: true,
+              className: 'myContentClass',
+              glyphMarginClassName: 'myGlyphMarginClass'
+            }
+          }])
+      }
+    },
   },
   mounted() {
     this.initData();

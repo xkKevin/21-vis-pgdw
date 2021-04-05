@@ -1,10 +1,11 @@
 <template>
-  <div id="inputTables">
+  <div id="inputTables" >
       <el-row type="flex" justify="space-between">
-        <div>Upload Tables</div> 
+        <!-- <div>Upload Tables</div>  -->
       </el-row>
-      <div id="upload" style="text-align:center">
-          <el-row style="margin-top:5%">
+      <div id="upload" style="text-align:left;">
+         <el-row>
+              <el-col style="margin-top:5%;height:20vh;border:none;width:8vw">
               <el-upload
               action=""
               ref="inputfiles"
@@ -14,10 +15,17 @@
               :show-file-list="false"
               multiple
               >
-                  <el-button slot="trigger" size="small" type="primary">input file(csv, txt)</el-button>
+                  <el-button round slot="trigger" size="small" type="primary" style="border:1px solid #699E9D;background:white;margin-left:17px">
+                    <img style="" src="@/assets/images/input.svg"/>
+                    <p style="display:inline;color: #666666;margin-left:9px;font-family: PingFangSC-Regular;font-weight: 400;">Source</p>
+                  </el-button>
               </el-upload>
-          </el-row>
-          <el-row style="margin-top:5%">
+              <div v-for="(v,k) in inputfileList" :key="k" style="margin-left:2vw;margin-top:1vh;width:9vw">
+                <img src="@/assets/images/circle_input.svg"/>
+                {{v.name}}
+              </div>
+          </el-col>
+          <!-- <el-col style="margin-top:5%;height:20vh;border:none;width:8vw">
               <el-upload   
               action=""
               ref="outputfiles"
@@ -27,13 +35,33 @@
               :auto-upload="false"
               :show-file-list="false"
               >
-                  <el-button slot="trigger" size="small" type="primary">output file(csv, txt)</el-button>
+                  <el-button round slot="trigger" size="small" type="primary" style="border:1px solid #699E9D;background:white;margin-left:17px">
+                    <img style="" src="@/assets/images/output.svg"/>
+                    <p style="display:inline;color: #666666;font-family: PingFangSC-Regular;font-weight: 400;">Target</p>
+                  </el-button>
               </el-upload>
-          </el-row>
+          </el-col> -->
+         </el-row>
           
-          <hr>
-          <el-row style="margin-top:5%">
-              <el-button @click="submitUpload" size="small" type="primary">upload and generate</el-button>
+          <hr style=""> 
+          <el-row style="background:white">
+              <!-- <el-button round @click="submitUpload" size="small" type="primary">upload and generate</el-button> -->
+
+              <el-button round style="
+                background:#6391D7;
+                font-family: PingFangSC-Regular;
+                font-size: 14px;
+                color: #FFFFFF;
+                letter-spacing: -0.7px;
+                line-height: 17px;
+                font-weight: 400;
+                display:flex;
+                align-items: center;
+                margin-left:7vw;
+                " 
+                @click="submitUpload" size="small" type="primary">
+                  Upload
+              </el-button>
           </el-row>
       </div>
 
@@ -111,8 +139,8 @@ export default {
             }
         },
         submitUpload(){
-            this.$emit("uploadSuccess");
-            return ;
+            // this.$emit("uploadSuccess");
+            // return ;
             if(this.$refs.inputfiles.$children[0].fileList.length===0 && this.$refs.outputfiles.$children[0].fileList.length===0){
                 this.$message({
                     type:'error',

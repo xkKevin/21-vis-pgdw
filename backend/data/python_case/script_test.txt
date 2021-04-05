@@ -12,5 +12,6 @@ r_sum = revenue.groupby(['year']).sum()
 s_sum = s_sum.reset_index(drop=True)
 r_sum = r_sum.reset_index(drop=True)
 
+# rev_sales2 = pd.merge([s_sum, r_sum])
 rev_sales = pd.concat([s_sum, r_sum])
 rev_sales.loc[len(rev_sales)] = rev_sales.mean()

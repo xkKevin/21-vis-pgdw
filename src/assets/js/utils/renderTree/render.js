@@ -2,6 +2,21 @@ import { nodeSize, lineAttr } from '@/assets/js/config/config'
 import * as monaco from "monaco-editor";
 import * as d3 from 'd3'
 
+function codeHighlight (line,editor,decorations){
+    console.log(line)
+    if (line == 0){
+      editor.deltaDecorations(decorations, [])
+    }else{
+      editor.deltaDecorations(decorations, [{
+          range: new monaco.Range(line,1,line,1),
+          options: {
+            isWholeLine: true,
+            className: 'myContentClass',
+            glyphMarginClassName: 'myGlyphMarginClass'
+          }
+        }])
+    }
+  }
 function drawNode(g, specs, nodePos, specsInf, showTableFunc) {
     let nodeName = []
     for (let idx = 0; idx < specs.length; idx++) {
@@ -161,7 +176,7 @@ function drawNode(g, specs, nodePos, specsInf, showTableFunc) {
     }
 }
 
-function drawEdge(g, specs, nodePos, editor) {
+function drawEdge(g, specs, nodePos, editor,decorations) {
 
     for (let idx = 0; idx < specs.length; idx++) {
         let defs = g.append("defs")
@@ -208,14 +223,15 @@ function drawEdge(g, specs, nodePos, editor) {
                     d3.selectAll(".myContentClass").attr("style", "backgroud: white;")
                     // d3.selectAll(".myGlyphMarginClass").attr("class", "null")
                     // d3.selectAll(".myContentClass").attr("class", "null")
-                    var decorations = editor.deltaDecorations([], [{
-                        range: new monaco.Range(lineNum, 1, lineNum, 1),
-                        options: {
-                            isWholeLine: true,
-                            className: "myContentClass",
-                            glyphMarginClassName: 'myGlyphMarginClass'
-                        }
-                    }]);
+                    codeHighlight(lineNum,editor,decorations)
+                    // var decorations = editor.deltaDecorations([], [{
+                    //     range: new monaco.Range(lineNum, 1, lineNum, 1),
+                    //     options: {
+                    //         isWholeLine: true,
+                    //         className: "myContentClass",
+                    //         glyphMarginClassName: 'myGlyphMarginClass'
+                    //     }
+                    // }]);
                 })
         } else if (typeof(specs[idx].input_table_file) === 'string') {
             let meetingPosY = nodePos[specs[idx].input_table_file][1] + nodeSize.height / 2
@@ -228,7 +244,7 @@ function drawEdge(g, specs, nodePos, editor) {
                 .attr("cy", meetingPosY)
                 .attr("r", 2 * lineAttr.strokeWidth)
                 .style("fill", lineAttr.color)
-                .style("stroke", lineAttr.color)
+                // .style("stroke", lineAttr.color)
                 .attr('class', `edge_${idx}`)
 
             g.append('line')
@@ -265,13 +281,29 @@ function drawEdge(g, specs, nodePos, editor) {
                 nodeSize.width + 0.2 * (nodePos[specs[idx].output_table_file][0] - nodeSize.width -
                     Math.max(nodePos[specs[idx].input_table_file[0]][0], nodePos[specs[idx].input_table_file[1]][0]))
 
+            let str = typeof(specs[idx].output_table_file) === 'string' ? specs[idx].output_table_file : specs[idx].output_table_file[0]
+            let firstIdx = 0
+            for (let s = 0; s < str.length; s++) {
+                if (str[s] >= '0' && str[s] <= '9') {
+                    firstIdx = s
+                    break
+                }
+            }
+            let lastIdx = str.indexOf("_") === -1 ? str.indexOf(".") : str.indexOf("_")
+            let lineNum = parseInt(str.substring(firstIdx, lastIdx))
+
             g.append("circle")
                 .attr("cx", meetingPosX)
                 .attr("cy", meetingPosY)
                 .attr("r", 2 * lineAttr.strokeWidth)
                 .style("fill", lineAttr.color)
-                .style("stroke", "black")
+                // .style("stroke", "black")
                 .attr('class', `edge_${idx}`)
+                .on('click', function(event) {
+                    d3.selectAll(".myGlyphMarginClass").attr("style", "backgroud: white;")
+                    d3.selectAll(".myContentClass").attr("style", "backgroud: white;")
+                    codeHighlight(lineNum,editor,decorations)
+                })
 
             g.append('line')
                 .attr('x1', nodePos[specs[idx].input_table_file[0]][0] + nodeSize.width)
@@ -281,6 +313,11 @@ function drawEdge(g, specs, nodePos, editor) {
                 .attr('stroke', lineAttr.color)
                 .attr('stroke-width', lineAttr.strokeWidth)
                 .attr('class', `edge_${idx}`)
+                .on('click', function(event) {
+                    d3.selectAll(".myGlyphMarginClass").attr("style", "backgroud: white;")
+                    d3.selectAll(".myContentClass").attr("style", "backgroud: white;")
+                    codeHighlight(lineNum,editor,decorations)
+                })
 
             g.append('line')
                 .attr('x1', nodePos[specs[idx].input_table_file[1]][0] + nodeSize.width)
@@ -290,6 +327,11 @@ function drawEdge(g, specs, nodePos, editor) {
                 .attr('stroke', lineAttr.color)
                 .attr('stroke-width', lineAttr.strokeWidth)
                 .attr('class', `edge_${idx}`)
+                .on('click', function(event) {
+                    d3.selectAll(".myGlyphMarginClass").attr("style", "backgroud: white;")
+                    d3.selectAll(".myContentClass").attr("style", "backgroud: white;")
+                    codeHighlight(lineNum,editor,decorations)
+                })
 
             g.append('line')
                 .attr('x1', meetingPosX)
@@ -300,6 +342,11 @@ function drawEdge(g, specs, nodePos, editor) {
                 .attr('stroke-width', lineAttr.strokeWidth)
                 .attr("marker-end", `url(#arrow_${idx})`)
                 .attr('class', `edge_${idx}`)
+                .on('click', function(event) {
+                    d3.selectAll(".myGlyphMarginClass").attr("style", "backgroud: white;")
+                    d3.selectAll(".myContentClass").attr("style", "backgroud: white;")
+                    codeHighlight(lineNum,editor,decorations)
+                })
         }
     }
 
