@@ -20,7 +20,7 @@
                     <p style="display:inline;color: #666666;margin-left:9px;font-family: PingFangSC-Regular;font-weight: 400;">Source</p>
                   </el-button>
               </el-upload>
-              <div v-for="(v,k) in inputfileList" :key="k" style="margin-left:2vw;margin-top:1vh;width:9vw">
+              <div v-for="(v,k) in inputfileList" :key="k" style="margin-left:1vw;margin-top:1vh;width:9vw">
                 <img src="@/assets/images/circle_input.svg"/>
                 {{v.name}}
               </div>

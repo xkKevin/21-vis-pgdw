@@ -55,7 +55,7 @@ if (is.data.frame(r_sum) | is.matrix(r_sum)) {
     }
 
 # rev_sales2 = pd.merge([s_sum, r_sum])
-rev_sales = pd.concat([s_sum, r_sum],axis = 1)
+rev_sales = pd.concat([s_sum, r_sum], axis = 1)
 if (is.data.frame(rev_sales) | is.matrix(rev_sales)) {
         write(paste(append(colnames(rev_sales), 16, after = 0), collapse=','), "colnames.txt", append=T)
         write.table(rev_sales, file="L16 (rev_sales).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)

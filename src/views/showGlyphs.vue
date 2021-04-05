@@ -4,13 +4,14 @@
     <!-- <remote-script src="https://github.com/bumbu/svg-pan-zoom/blob/master/dist/svg-pan-zoom.min.js"></remote-script> -->
     <!-- <remote-script src="http://ariutta.github.io/svg-pan-zoom/dist/svg-pan-zoom.min.js"></remote-script> -->
     <remote-script src="http://localhost/data/static/svg-pan-zoom.js"></remote-script>
-    <el-row type="flex" justify="center" style="height:50vh">
+    <el-row type="flex" justify="center" style="height:48.6vh">
       <el-col style="width:20vw;margin-right:0.5vw;" >
         <el-row>
-          <el-header height="10vh" style="background:black">
-            <h2 style="text-align: center;color:white">Somnus</h2>
+          <el-header height="60px" style="background:black">
+            <div style="text-align: center;color:white; font-size: 1.5em; font-weight: bold; line-height:60px ">Somnus</div> 
+ 
           </el-header>
-          <div id="tag0" style="background:#F5F5F5;height:7vh"> 
+          <div id="tag0" style="background:#F5F5F5;height:50px"> 
             
           </div>
           <el-row style="background:#F6F8FB">
@@ -24,23 +25,22 @@
         class="script_table"
         style="width:40vw;margin-right:0.5vw;padding:0 0 0 0"
       >
-        <el-row type="flex" justify="space-between" style="height:7vh;background:#F5F5F5;">
+        <el-row type="flex" justify="space-between" style="height:50px;background:#F5F5F5;">
           <div id="tag1" ></div>
-          <div style=" display:flex;
-              align-items: center;">
-            Select Programming Language:
-            <el-dropdown @command="changeModel">
+          <div class="title_right">
+            Language:
+            <el-dropdown @command="changeModel" style="margin-left: 8px">
               <span
                 class="el-dropdown-link"
                 style="
-                  width: 69px;
+                  width: 68px;
                   display: inline-block;
-                  text-align: right;
+                  text-align: center;
                 "
               >
                 {{ language }}
-                <i class="el-icon-arrow-down el-icon--right"></i>
               </span>
+              <i class="el-icon-arrow-down el-icon--right"></i>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item
                   v-for="item in all_langs"
@@ -60,9 +60,9 @@
         class="script_table"
         style="width:40vw;padding:0 0 0 0"
       >
-        <el-row type="flex" justify="space-between" style="height:7vh;background:#F5F5F5;">
+        <el-row type="flex" justify="space-between" style="height:50px;background:#F5F5F5;">
           <div id="tag2"></div>
-          <div>
+          <div class="title_right">
             {{ table_name }}
             <!--
             Select Table:
@@ -95,13 +95,14 @@
 
         <el-table  :data="tableData" fit height="42vh">
           <el-table-column type="index"> </el-table-column>
+           <!-- label 为 显示在table上的名字 -->
           <el-table-column
             v-for="item in tableHead"
-            :key="item"
-            :label="item"
+            :key="item[1]"
+            :label="item[0]"
           >
             <template scope="scope">
-              {{ scope.row[item] }}
+              {{ scope.row[item[1]] }}
             </template>
           </el-table-column>
         </el-table>
@@ -109,22 +110,22 @@
     </el-row>
     <el-row style="margin-top:1vh">
         <el-col style="height:49vh">
-          <el-row type="flex" justify="space-between" style="height:7vh;background:#F5F5F5;">
+          <el-row type="flex" justify="space-between" style="height:50px;background:#F5F5F5;">
             <div id="tag3"></div>
-            <el-button round @click="generateGlyphs" 
-              style="background:#6391D7;
-              font-family: PingFangSC-Regular;
-              font-size: 14px;
-              color: #FFFFFF;
-              letter-spacing: -0.7px;
-              line-height: 17px;
-              font-weight: 400;
-              display:flex;
-              align-items: center;
-              height:5vh;
-              margin-top:1vh
-              " 
-              size="small" type="primary">Run</el-button>
+            <el-button round @click="generateGlyphs" style="
+            background:#6391D7;
+                font-family: PingFangSC-Regular;
+                font-size: 14px;
+                color: #FFFFFF;
+                letter-spacing: -0.7px;
+                line-height: 17px;
+                font-weight: 400;
+                display:flex;
+                align-items: center;
+                height: 38px;
+                margin-top: 5px;
+                margin-right: 16px"
+              >Run</el-button>
         </el-row>
            <div id="glyphs" style="height:43vh"></div>
         </el-col>
@@ -271,7 +272,6 @@ export default {
       tableHead: [
       ],
       show_table_name: true,
-      lastLine:'',
       decorations: null
     };
   },
@@ -351,14 +351,39 @@ export default {
       }
       //设置新模型
       this.editor.setModel(newModel);
+      this.decorations = this.editor.deltaDecorations([], [{
+            range: new monaco.Range(1,1,1,1),
+            options: {
+              isWholeLine: true,
+              className: 'myContentClass2',
+              glyphMarginClassName: 'myGlyphMarginClass2'
+            }
+          }]);
+
+        // console.log(this.decorations);  
     },
     getTableData(table_file) {
       const table_path = `${request_api}/data/${this.language}_case/${table_file}?a=${Math.random()}`;
+      // dataIn1_csv = await getCsv(table_path);
+      d3.text(table_path).then(data => {
+        // console.log("text", d3.csvParseRows(data))
+        this.table_name = table_file
+        data = d3.csvParseRows(data)
+        this.tableData = data.splice(1)
+        let id = 0
+        this.tableHead = data[0].map(value => [value, id++])
+      })
+      /*
       d3.csv(table_path).then((data) => {
         this.table_name = table_file;
         this.tableData = data;
         this.tableHead = data.columns;
+        // this.tableData = [{"iPhone": 3.7039999999999997, "YOY growth": 0.0, "iPhone1": 1.666, "YOY growt2h": 13}];
+        // this.tableHead = [["iPhone",1], ["YOY growth",2], ["iPhone1",3], ["YOY growt2h",4]]; //data.columns;
+        console.log(data.columns);
+        console.log(data);
       });
+      */
     },
     getScriptData(script_content = "", language = "") {
       const path = `${request_api}/getScriptData`;
@@ -368,10 +393,6 @@ export default {
           this.script_content = response.data.script_content;
           this.language = response.data.language;
           this.changeModel(this.language, this.script_content, false);
-
-          this.decorations = this.editor.deltaDecorations([], []);
-
-        console.log(this.decorations);  
         })
         .catch((error) => {
           console.log(error);
@@ -1777,19 +1798,8 @@ export default {
             while(transform_specs[i].output_table_file[last] >='0' && transform_specs[i].output_table_file[last] <= '9'){
               last++
             }
-            console.log(transform_specs[i].output_table_file)
+            // console.log(transform_specs[i].output_table_file)
             let lineNum = parseInt(transform_specs[i].output_table_file.substring(1,last))
-            d3.selectAll(".myGlyphMarginClass").attr("style", "backgroud: white;")
-            d3.selectAll(".myContentClass").attr("style", "backgroud: white;")
-            // d3.selectAll(".myGlyphMarginClass").attr("class", "null")
-            // d3.selectAll(".myContentClass").attr("class", "null")
-            // var decorations = this.editor.deltaDecorations([], [{
-            //     range: new monaco.Range(lineNum, 1, lineNum, 1),
-            //     options: {
-            //         isWholeLine: true,
-            //         className: "myContentClass"
-            //     }
-            // }]);
             this.codeHighlight(lineNum,this.editor,this.decorations)
         })
       }
@@ -1798,17 +1808,6 @@ export default {
       var panZoomTiger = svgPanZoom('#mainsvg');
 
       this.editor.onMouseDown((e) => {
-        d3.selectAll(".myGlyphMarginClass").attr("class", "null")
-        d3.selectAll(".myContentClass").attr("class", "null")
-        var decorations = this.editor.deltaDecorations([], [{
-            range: new monaco.Range(e.target.position.lineNumber, 1, e.target.position.lineNumber, 1),
-            options: {
-                isWholeLine: true,
-                className: "myContentClass",
-                glyphMarginClassName: 'myGlyphMarginClass'
-            }
-        }]);
-        // console.log(this.lastLine, e.target.position.lineNumber);
         
         /*
         if(this.lastLine !== ''){
@@ -1893,8 +1892,6 @@ export default {
               d3.select(`#node_${transform_specs[pos].output_table_file[idx2].substring(0,lastIdx)}`).attr('stroke',fill_color)
             }
           }
-        }else{
-          this.lastLine = ''
         }
         
       });
@@ -1903,7 +1900,7 @@ export default {
       let self = this
       this.$nextTick(function () {
       document.addEventListener('keyup', function (e) {
-        console.log(e);
+        // console.log(e);
         if (e.key == "Escape") {
             d3.selectAll("rect[class^='glyph']").attr('stroke','gray')
             d3.selectAll("rect[id^='node']").attr('stroke','gray')
@@ -1916,9 +1913,15 @@ export default {
       })
     },
     codeHighlight (line,editor,decorations){
-      console.log(line)
       if (line == 0){
-        editor.deltaDecorations(decorations, [])
+        editor.deltaDecorations(decorations, [{
+          range: new monaco.Range(line,1,line,1),
+            options: {
+              isWholeLine: true,
+              className: 'myContentClass2',
+              glyphMarginClassName: 'myGlyphMarginClass2'
+            }
+        }])
       }else{
         editor.deltaDecorations(decorations, [{
             range: new monaco.Range(line,1,line,1),
@@ -1943,7 +1946,11 @@ export default {
 </script>
 
 <style>
-
+.title_right {
+  display:flex; 
+  align-items: center; 
+  margin-right: 16px;
+}
 .el-col,
 .el-header,
 .el-aside,
@@ -1967,13 +1974,16 @@ footer.el-footer {
 }
 
 .myGlyphMarginClass {
-	background: blue;
-  margin-left: 20px !important;
-  width: 10px !important;
+	background: #6391D7;
+  margin-left: 35px !important;
+  width: 6px !important;
 }
 
 .myContentClass {
 	background: lightblue;
+}
+
+.myContentClass2, .myGlyphMarginClass2 {
 }
 
 </style>
