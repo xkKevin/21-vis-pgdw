@@ -1,5 +1,6 @@
 import { nodeSize, lineAttr } from '@/assets/js/config/config'
 import * as monaco from "monaco-editor";
+import * as d3 from 'd3'
 
 function drawNode(g, specs, nodePos, specsInf, showTableFunc) {
     let nodeName = []
@@ -22,8 +23,6 @@ function drawNode(g, specs, nodePos, specsInf, showTableFunc) {
     }
 
     nodeName = Array.from(new Set(nodeName))
-
-    console.log("nodename: ", nodeName)
     for (let idx = 0; idx < nodeName.length; idx++) {
 
         let nodeRect = g.append('rect')
@@ -205,12 +204,16 @@ function drawEdge(g, specs, nodePos, editor) {
                 .attr("marker-end", `url(#arrow_${idx})`)
                 .attr('class', `edge_${idx}`)
                 .on('click', function(event) {
-                    console.log(lineNum)
+                    d3.selectAll(".myGlyphMarginClass").attr("style", "backgroud: white;")
+                    d3.selectAll(".myContentClass").attr("style", "backgroud: white;")
+                    // d3.selectAll(".myGlyphMarginClass").attr("class", "null")
+                    // d3.selectAll(".myContentClass").attr("class", "null")
                     var decorations = editor.deltaDecorations([], [{
                         range: new monaco.Range(lineNum, 1, lineNum, 1),
                         options: {
                             isWholeLine: true,
-                            className: "myContentClass"
+                            className: "myContentClass",
+                            glyphMarginClassName: 'myGlyphMarginClass'
                         }
                     }]);
                 })

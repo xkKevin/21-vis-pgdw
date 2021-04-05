@@ -355,16 +355,16 @@ export default {
           this.changeModel(this.language, this.script_content, false);
 
 
-          var decorations = this.editor.deltaDecorations([], [
-	{
-		range: new monaco.Range(5,1,5,1),
-		options: {
-			isWholeLine: true,
-			className: 'myContentClass',
-			glyphMarginClassName: 'myGlyphMarginClass'
-		}
-	}
-]);
+  //         var decorations = this.editor.deltaDecorations([], [
+	// {
+	// 	range: new monaco.Range(5,1,5,1),
+	// 	options: {
+	// 		isWholeLine: true,
+	// 		className: 'myContentClass',
+	// 		glyphMarginClassName: 'myGlyphMarginClass'
+	// 	}
+	// }
+// ]);
         })
         .catch((error) => {
           console.log(error);
@@ -1287,9 +1287,9 @@ export default {
             );
             // console.log("summarize res: ",res)
             
-            res.m2[1][0] = 'WILLIAMS  JILL S',res.m2[1][1] = "3209.61"
-            res.m2[2][0] = 'JENKINS  MAZIE HEIRS',res.m2[2][1] = "2242.1"
-            res.m2[3][0] = 'RUSHING JR & RUSHING TRUSTEES',res.m2[3][1] = "8837.51"
+            // res.m2[1][0] = 'WILLIAMS  JILL S',res.m2[1][1] = "3209.61"
+            // res.m2[2][0] = 'JENKINS  MAZIE HEIRS',res.m2[2][1] = "2242.1"
+            // res.m2[3][0] = 'RUSHING JR & RUSHING TRUSTEES',res.m2[3][1] = "8837.51"
             combine_rows_sum(
               res.m1,
               res.m2,
@@ -1729,12 +1729,41 @@ export default {
               );
             break
         }
+        d3.select(`#glyph${i}`).on('click', (e) => {
+            let last = 1
+            while(transform_specs[i].output_table_file[last] >='0' && transform_specs[i].output_table_file[last] <= '9'){
+              last++
+            }
+            console.log(transform_specs[i].output_table_file)
+            let lineNum = parseInt(transform_specs[i].output_table_file.substring(1,last))
+            // d3.selectAll(".myGlyphMarginClass").attr("style", "backgroud: white;")
+            // d3.selectAll(".myContentClass").attr("style", "backgroud: white;")
+            d3.selectAll(".myGlyphMarginClass").attr("class", "null")
+            d3.selectAll(".myContentClass").attr("class", "null")
+            var decorations = this.editor.deltaDecorations([], [{
+                range: new monaco.Range(lineNum, 1, lineNum, 1),
+                options: {
+                    isWholeLine: true,
+                    className: "myContentClass"
+                }
+            }]);
+        })
       }
 
       drawNode(this.$store.state.g,transform_specs,nodePos,tableInf,this.getTableData)
       var panZoomTiger = svgPanZoom('#mainsvg');
 
       this.editor.onMouseDown((e) => {
+        d3.selectAll(".myGlyphMarginClass").attr("class", "null")
+        d3.selectAll(".myContentClass").attr("class", "null")
+        var decorations = this.editor.deltaDecorations([], [{
+            range: new monaco.Range(e.target.position.lineNumber, 1, e.target.position.lineNumber, 1),
+            options: {
+                isWholeLine: true,
+                className: "myContentClass",
+                glyphMarginClassName: 'myGlyphMarginClass'
+            }
+        }]);
         // console.log(this.lastLine, e.target.position.lineNumber);
         
         /*
@@ -1774,7 +1803,6 @@ export default {
       d3.selectAll("line[class^='edge']").attr('stroke','gray')
       d3.selectAll("path[class^='arrow']").attr('fill','gray')
 
-
         let tableId = `L${e.target.position.lineNumber} (`
         let pos = null
         for(let idx = 0;idx < transform_specs.length;idx++){
@@ -1795,7 +1823,6 @@ export default {
         let fill_color = "#72BDBC"
         if (pos != null){
           // this.lastLine = pos
-          console.log(pos);
 
           d3.selectAll(`line.edge_${pos}`).attr('stroke',fill_color)
           d3.selectAll(`circle.edge_${pos}`).attr('style',`fill: ${fill_color};`)
