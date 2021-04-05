@@ -236,11 +236,10 @@ def generate_transform_specs(script_name):
                 specs["input_table_name"] = remove_quote(pi_value[3][1:-1].split(","), flag=True)
                 specs["input_table_file"] = [var2table[specs["input_table_name"][0]], var2table[specs["input_table_name"][1]]]
                 if 'axis' in params.keys() and params.get('axis') == 1:
-                    specs["type"] = "combine_tables_extend_row"
+                    specs["type"] = "combine_tables_extend_column"
                     specs["operation_rule"] = "Extend tables along column axis"
                 else:
-                    specs["type"] = "combine_tables_extend_column"
-                    specs["type"] = "combine_tables_concat_python"
+                    specs["type"] = "combine_tables_extend_row"
                     specs["operation_rule"] = "Extend tables along row axis"
                     
             if func == "merge":

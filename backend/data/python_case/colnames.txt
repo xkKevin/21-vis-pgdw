@@ -1,1 +1,52 @@
-{}
+{
+  "3": [
+    "Category",
+    "iPhone",
+    "YOY growth"
+  ],
+  "4": [
+    "Category",
+    "iPhone",
+    "YOY growth"
+  ],
+  "6": [
+    "Category",
+    "iPhone",
+    "YOY growth",
+    "quarter",
+    "year"
+  ],
+  "7": [
+    "Category",
+    "iPhone",
+    "YOY growth",
+    "quarter",
+    "year"
+  ],
+  "9": [
+    "year",
+    "iPhone",
+    "YOY growth"
+  ],
+  "10": [
+    "year",
+    "iPhone",
+    "YOY growth"
+  ],
+  "12": [
+    "iPhone",
+    "YOY growth"
+  ],
+  "13": [
+    "iPhone",
+    "YOY growth"
+  ],
+  "15": [
+    "iPhone",
+    "YOY growth"
+  ],
+  "16": [
+    "iPhone",
+    "YOY growth"
+  ]
+}

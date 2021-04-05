@@ -1,50 +1,65 @@
-library(tidyr)
-library(dplyr)
-p5_input1= read.table("benchmark5.txt", header = T, sep = ",")
-if (is.data.frame(p5_input1) | is.matrix(p5_input1)) {
-        write(paste(append(colnames(p5_input1), 3, after = 0), collapse=','), "colnames.txt", append=T)
-        write.table(p5_input1, file="L3 (p5_input1).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
-        if (is.grouped_df(p5_input1)) {
-            write(paste(append(group_vars(p5_input1), "group3", after = 0), collapse=','), "colnames.txt", append=T)
+import pandas as pd
+
+revenue = pd.read_csv("apple-iphone-revenue.csv")
+if (is.data.frame(revenue) | is.matrix(revenue)) {
+        write(paste(append(colnames(revenue), 3, after = 0), collapse=','), "colnames.txt", append=T)
+        write.table(revenue, file="L3 (revenue).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
+        if (is.grouped_df(revenue)) {
+            write(paste(append(group_vars(revenue), "group3", after = 0), collapse=','), "colnames.txt", append=T)
         }
     }
-TBL_3=gather(p5_input1,MORPH394,P,-`ID`,-`T`)
-if (is.data.frame(TBL_3) | is.matrix(TBL_3)) {
-        write(paste(append(colnames(TBL_3), 4, after = 0), collapse=','), "colnames.txt", append=T)
-        write.table(TBL_3, file="L4 (TBL_3).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
-        if (is.grouped_df(TBL_3)) {
-            write(paste(append(group_vars(TBL_3), "group4", after = 0), collapse=','), "colnames.txt", append=T)
+sales = pd.read_csv("apple-iphone-unit-sales.csv")
+if (is.data.frame(sales) | is.matrix(sales)) {
+        write(paste(append(colnames(sales), 4, after = 0), collapse=','), "colnames.txt", append=T)
+        write.table(sales, file="L4 (sales).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
+        if (is.grouped_df(sales)) {
+            write(paste(append(group_vars(sales), "group4", after = 0), collapse=','), "colnames.txt", append=T)
         }
     }
-TBL_1=separate(TBL_3,`MORPH394`,into=c('MORPH469','Channel'))
-if (is.data.frame(TBL_1) | is.matrix(TBL_1)) {
-        write(paste(append(colnames(TBL_1), 5, after = 0), collapse=','), "colnames.txt", append=T)
-        write.table(TBL_1, file="L5 (TBL_1).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
-        if (is.grouped_df(TBL_1)) {
-            write(paste(append(group_vars(TBL_1), "group5", after = 0), collapse=','), "colnames.txt", append=T)
+
+sales[['quarter', "year"]] = sales.Category.str.split("/",expand=True)
+revenue[['quarter', "year"]] = revenue.Category.str.split("/",expand=True)
+
+s_sum = sales.groupby(['year']).sum()
+if (is.data.frame(s_sum) | is.matrix(s_sum)) {
+        write(paste(append(colnames(s_sum), 9, after = 0), collapse=','), "colnames.txt", append=T)
+        write.table(s_sum, file="L9 (s_sum).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
+        if (is.grouped_df(s_sum)) {
+            write(paste(append(group_vars(s_sum), "group9", after = 0), collapse=','), "colnames.txt", append=T)
         }
     }
-morpheus=select(TBL_1,-`MORPH469`)
-if (is.data.frame(morpheus) | is.matrix(morpheus)) {
-        write(paste(append(colnames(morpheus), 6, after = 0), collapse=','), "colnames.txt", append=T)
-        write.table(morpheus, file="L6 (morpheus).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
-        if (is.grouped_df(morpheus)) {
-            write(paste(append(group_vars(morpheus), "group6", after = 0), collapse=','), "colnames.txt", append=T)
+r_sum = revenue.groupby(['year']).sum()
+if (is.data.frame(r_sum) | is.matrix(r_sum)) {
+        write(paste(append(colnames(r_sum), 10, after = 0), collapse=','), "colnames.txt", append=T)
+        write.table(r_sum, file="L10 (r_sum).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
+        if (is.grouped_df(r_sum)) {
+            write(paste(append(group_vars(r_sum), "group10", after = 0), collapse=','), "colnames.txt", append=T)
         }
     }
-morpheus=as.data.frame(morpheus)
-if (is.data.frame(morpheus) | is.matrix(morpheus)) {
-        write(paste(append(colnames(morpheus), 7, after = 0), collapse=','), "colnames.txt", append=T)
-        write.table(morpheus, file="L7 (morpheus).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
-        if (is.grouped_df(morpheus)) {
-            write(paste(append(group_vars(morpheus), "group7", after = 0), collapse=','), "colnames.txt", append=T)
+
+s_sum = s_sum.reset_index(drop=True)
+if (is.data.frame(s_sum) | is.matrix(s_sum)) {
+        write(paste(append(colnames(s_sum), 12, after = 0), collapse=','), "colnames.txt", append=T)
+        write.table(s_sum, file="L12 (s_sum).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
+        if (is.grouped_df(s_sum)) {
+            write(paste(append(group_vars(s_sum), "group12", after = 0), collapse=','), "colnames.txt", append=T)
         }
     }
-morpheus=select(morpheus,1,3,2,4)
-if (is.data.frame(morpheus) | is.matrix(morpheus)) {
-        write(paste(append(colnames(morpheus), 8, after = 0), collapse=','), "colnames.txt", append=T)
-        write.table(morpheus, file="L8 (morpheus).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
-        if (is.grouped_df(morpheus)) {
-            write(paste(append(group_vars(morpheus), "group8", after = 0), collapse=','), "colnames.txt", append=T)
+r_sum = r_sum.reset_index(drop=True)
+if (is.data.frame(r_sum) | is.matrix(r_sum)) {
+        write(paste(append(colnames(r_sum), 13, after = 0), collapse=','), "colnames.txt", append=T)
+        write.table(r_sum, file="L13 (r_sum).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
+        if (is.grouped_df(r_sum)) {
+            write(paste(append(group_vars(r_sum), "group13", after = 0), collapse=','), "colnames.txt", append=T)
         }
     }
+
+rev_sales = pd.concat([s_sum, r_sum])
+if (is.data.frame(rev_sales) | is.matrix(rev_sales)) {
+        write(paste(append(colnames(rev_sales), 15, after = 0), collapse=','), "colnames.txt", append=T)
+        write.table(rev_sales, file="L15 (rev_sales).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
+        if (is.grouped_df(rev_sales)) {
+            write(paste(append(group_vars(rev_sales), "group15", after = 0), collapse=','), "colnames.txt", append=T)
+        }
+    }
+rev_sales.loc[len(rev_sales)] = rev_sales.mean()

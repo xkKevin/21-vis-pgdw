@@ -313,6 +313,7 @@ export default {
         fontSize: 16, //字体大小
         readOnly: false, // 只读
         theme: "vs", // 官方自带三种主题vs, hc-black, or vs-dark,
+        glyphMargin: true
       });
       
     },
@@ -352,6 +353,18 @@ export default {
           this.script_content = response.data.script_content;
           this.language = response.data.language;
           this.changeModel(this.language, this.script_content, false);
+
+
+          var decorations = this.editor.deltaDecorations([], [
+	{
+		range: new monaco.Range(5,1,5,1),
+		options: {
+			isWholeLine: true,
+			className: 'myContentClass',
+			glyphMarginClassName: 'myGlyphMarginClass'
+		}
+	}
+]);
         })
         .catch((error) => {
           console.log(error);
@@ -1825,6 +1838,10 @@ export default {
             d3.selectAll("circle[class^='edge']").attr('style',`fill: gray;`)
             d3.selectAll("line[class^='edge']").attr('stroke','gray')
             d3.selectAll("path[class^='arrow']").attr('fill','gray')
+
+            d3.selectAll(".myGlyphMarginClass").attr("style", "backgroud: white;")
+            d3.selectAll(".myContentClass").attr("style", "backgroud: white;")
+
         }
       })
       })
@@ -1841,7 +1858,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 
 .el-col,
 .el-header,
@@ -1865,8 +1882,10 @@ footer.el-footer {
   font-size: 12px;
 }
 
-.myContentClass {
-	background: red;
+.myGlyphMarginClass {
+	background: blue;
+  margin-left: 20px !important;
+  width: 10px !important;
 }
 
 .myContentClass {

@@ -1,8 +1,16 @@
-library(tidyr)
-library(dplyr)
-p5_input1= read.table("benchmark5.txt", header = T, sep = ",")
-TBL_3=gather(p5_input1,MORPH394,P,-`ID`,-`T`)
-TBL_1=separate(TBL_3,`MORPH394`,into=c('MORPH469','Channel'))
-morpheus=select(TBL_1,-`MORPH469`)
-morpheus=as.data.frame(morpheus)
-morpheus=select(morpheus,1,3,2,4)
+import pandas as pd
+
+revenue = pd.read_csv("apple-iphone-revenue.csv")
+sales = pd.read_csv("apple-iphone-unit-sales.csv")
+
+sales[['quarter', "year"]] = sales.Category.str.split("/",expand=True)
+revenue[['quarter', "year"]] = revenue.Category.str.split("/",expand=True)
+
+s_sum = sales.groupby(['year']).sum()
+r_sum = revenue.groupby(['year']).sum()
+
+s_sum = s_sum.reset_index(drop=True)
+r_sum = r_sum.reset_index(drop=True)
+
+rev_sales = pd.concat([s_sum, r_sum])
+rev_sales.loc[len(rev_sales)] = rev_sales.mean()
