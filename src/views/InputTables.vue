@@ -111,6 +111,8 @@ export default {
             }
         },
         submitUpload(){
+            this.$emit("uploadSuccess");
+            return ;
             if(this.$refs.inputfiles.$children[0].fileList.length===0 && this.$refs.outputfiles.$children[0].fileList.length===0){
                 this.$message({
                     type:'error',

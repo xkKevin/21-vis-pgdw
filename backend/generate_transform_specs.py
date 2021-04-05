@@ -42,6 +42,7 @@ def execScript(script_name):
     # deleteMatchFiles("./", starts="table", ends=".csv")
     
     deleteMatchFiles("./", ends="_exec.txt")
+    deleteMatchFiles("./", starts="L", ends=").csv")
     if os.path.exists("colnames.txt"):
         os.remove("colnames.txt")
     
@@ -61,7 +62,7 @@ def execScript(script_name):
                 codes += \
 '''if (is.data.frame({value}) | is.matrix({value})) {{
         write(paste(append(colnames({value}), {line_num}, after = 0), collapse=','), "colnames.txt", append=T)
-        write.table({value}, file="table{line_num}.csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
+        write.table({value}, file="L{line_num} ({value}).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
         if (is.grouped_df({value})) {{
             write(paste(append(group_vars({value}), "group{line_num}", after = 0), collapse=','), "colnames.txt", append=T)
         }}
@@ -211,7 +212,7 @@ def generate_transform_specs(script_name):
     original_codes, col_states, group_states = execScript(script_name)
 
     p = re.compile("^\s*([\w\.]+?)\s*(=|<-)\s*([\w\.:]+?)\s*[(](.+)[)]")  # 设置函数名和outputname必须是以 A-Za-z0-9_. 这些符号组成的
-    p_match_num = re.compile("table(.+)\.csv")
+    p_match_num = re.compile("L(.+) \(.+\).csv") # p_match_num = re.compile("table(.+)\.csv")
     p_match_c = re.compile("c\s*\((.+)\)")
 
     result = []
@@ -249,7 +250,7 @@ def generate_transform_specs(script_name):
         if func in ('read.table', 'read.csv', 'read.csv2', 'read.delim', 'read.delim2'):
             specs["type"] = 'create_tables'
             specs["output_table_name"] = output_tbl
-            specs["output_table_file"] = "table%d.csv" % line_num
+            specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             if params.get('file'):
                 file = params.get('file')
             else:
@@ -261,7 +262,7 @@ def generate_transform_specs(script_name):
         elif func in ('data.frame', 'tibble'):
             specs["type"] = 'create_tables'
             specs["output_table_name"] = output_tbl
-            specs["output_table_file"] = "table%d.csv" % line_num
+            specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             specs["operation_rule"] = 'Create Manually'
             
             var2table[output_tbl] = specs["output_table_file"]
@@ -276,7 +277,7 @@ def generate_transform_specs(script_name):
                 pi += 1
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             specs["output_table_name"] = output_tbl
-            specs["output_table_file"] = "table%d.csv" % line_num
+            specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             specs["input_explict_col"] = remove_quote(params["none"][pi:])
             if params.get('sep'):
                 specs["operation_rule"] = 'Separate Row: ' + params["sep"]
@@ -292,7 +293,7 @@ def generate_transform_specs(script_name):
             specs["input_table_name"] = params['none'][0]
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             specs["output_table_name"] = output_tbl
-            specs["output_table_file"] = "table%d.csv" % line_num
+            specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             specs["input_explict_col"] = [i for i in col_states[line_num] if i in parseCondition(condition)]
             specs["operation_rule"] = 'Filter: ' + condition
             
@@ -308,7 +309,7 @@ def generate_transform_specs(script_name):
                 pi += 1
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             specs["output_table_name"] = output_tbl
-            specs["output_table_file"] = "table%d.csv" % line_num
+            specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             specs["input_explict_col"] = []
             specs["output_explict_col"] = []
             if params.get('col'):
@@ -341,7 +342,7 @@ def generate_transform_specs(script_name):
                 pi += 1
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             specs["output_table_name"] = output_tbl
-            specs["output_table_file"] = "table%d.csv" % line_num
+            specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             specs["output_explict_col"] = []
             if params.get('key'):
                 specs["output_explict_col"].append(params.get('key'))
@@ -379,7 +380,7 @@ def generate_transform_specs(script_name):
                 pi += 1
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             specs["output_table_name"] = output_tbl
-            specs["output_table_file"] = "table%d.csv" % line_num
+            specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             specs["input_explict_col"] = []
             if params.get('key'):
                 specs["input_explict_col"].append(params.get('key'))
@@ -401,7 +402,7 @@ def generate_transform_specs(script_name):
             specs["input_table_name"] = params['none'][0]
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             specs["output_table_name"] = output_tbl
-            specs["output_table_file"] = "table%d.csv" % line_num
+            specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             remove_col = []
             keep_col = []
             for i in range(1, len(params['none'])):
@@ -477,7 +478,7 @@ def generate_transform_specs(script_name):
             specs["input_table_name"] = params['none'][0]
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             specs["output_table_name"] = output_tbl
-            specs["output_table_file"] = "table%d.csv" % line_num
+            specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             specs["output_explict_col"] = []
             input_line_num = var2num(specs["input_table_name"])
             tmp = set()
@@ -501,7 +502,7 @@ def generate_transform_specs(script_name):
         elif func == 'count':
             specs["type"] = "combine_rows_summarize"
             specs["output_table_name"] = output_tbl
-            specs["output_table_file"] = "table%d.csv" % line_num
+            specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             if params.get('x'):
                 specs["input_table_name"] = params['x']
                 specs["input_explict_col"] = remove_quote(params['none'])
@@ -563,7 +564,7 @@ def generate_transform_specs(script_name):
                 pi += 1
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             specs["output_table_name"] = output_tbl
-            specs["output_table_file"] = "table%d.csv" % line_num
+            specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             if params.get('col'):
                 specs["output_explict_col"] = [remove_quote(params.get('col'))]
             else:
@@ -595,7 +596,7 @@ def generate_transform_specs(script_name):
                 pi += 1
             specs["input_table_file"] = [var2table[specs["input_table_name"][0]], var2table[specs["input_table_name"][1]]]
             specs["output_table_name"] = output_tbl
-            specs["output_table_file"] = "table%d.csv" % line_num
+            specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             # 暂时不支持 by=c("A"="B") 的这种情况
             if params.get('by'):
                 if params['by'].startswith("c("):
@@ -624,7 +625,7 @@ def generate_transform_specs(script_name):
             specs["input_table_name"] = params['none'][0]
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             specs["output_table_name"] = output_tbl
-            specs["output_table_file"] = "table%d.csv" % line_num
+            specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             input_line_num = var2num(specs["input_table_name"])
             for pk, pv in params.items():
                 pk = remove_quote(pk)
@@ -670,7 +671,7 @@ def generate_transform_specs(script_name):
             specs["input_table_name"] = params['none'][0]
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             specs["output_table_name"] = output_tbl
-            specs["output_table_file"] = "table%d.csv" % line_num
+            specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             if params['none'][1].startswith("desc"):
                 specs["input_explict_col"] = [remove_quote(params['none'][1][5:-1])]
                 specs["operation_rule"] = "Sort: desc(%s)" % specs["input_explict_col"][0]
@@ -709,7 +710,7 @@ def generate_transform_specs(script_name):
             ######################################################
             specs["input_table_file"] = [var2table[specs["input_table_name"][0]], var2table[specs["input_table_name"][1]]]
             specs["output_table_name"] = output_tbl
-            specs["output_table_file"] = "table%d.csv" % line_num
+            specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             if not params.get("all") or remove_quote(params.get("all")) in ("F", "FALSE"):
                 specs["operation_rule"] = "Extend"
             elif params.get("all") in ("T", "TRUE"):
@@ -720,7 +721,7 @@ def generate_transform_specs(script_name):
         elif func == 'rbind':
             # 既可以连接两表，也可以Create Rows
             specs["output_table_name"] = output_tbl
-            specs["output_table_file"] = "table%d.csv" % line_num
+            specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             if var2table.get(params['none'][0]) and var2table.get(params['none'][1]):
                 specs["type"] = "combine_tables_extend"
                 specs["input_table_name"] = [params['none'][0], params['none'][1]]
@@ -742,7 +743,7 @@ def generate_transform_specs(script_name):
             specs["input_table_name"] = [params['none'][0], params['none'][1]]
             specs["input_table_file"] = [var2table[specs["input_table_name"][0]], var2table[specs["input_table_name"][1]]]
             specs["output_table_name"] = output_tbl
-            specs["output_table_file"] = "table%d.csv" % line_num
+            specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             specs["operation_rule"] = "Extend"
             
             var2table[output_tbl] = specs["output_table_file"]
@@ -759,7 +760,7 @@ def generate_transform_specs(script_name):
             # print(var2table)
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             specs["output_table_name"] = output_tbl
-            specs["output_table_file"] = "table%d.csv" % line_num
+            specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             # condition = r[3].replace(params['none'][0],"").strip().strip(",").strip()
             condition = ",".join(r[3].strip().split(",")[1:]).strip()
             specs["input_explict_col"] = [i for i in col_states[line_num] if i in parseCondition(condition)]
@@ -777,7 +778,7 @@ def generate_transform_specs(script_name):
                 pi += 1
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             specs["output_table_name"] = output_tbl
-            specs["output_table_file"] = "table%d.csv" % line_num
+            specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             specs["operation_rule"] = "Delete Dupliate Row"
             
             var2table[output_tbl] = specs["output_table_file"]
@@ -792,7 +793,7 @@ def generate_transform_specs(script_name):
                 pi += 1
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             specs["output_table_name"] = output_tbl
-            specs["output_table_file"] = "table%d.csv" % line_num
+            specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             specs["input_explict_col"] = remove_quote(params['none'][pi:])
             specs["operation_rule"] = "Delete Dupliate Row"
             
@@ -800,7 +801,7 @@ def generate_transform_specs(script_name):
 
         elif func == 'cbind':
             specs["output_table_name"] = output_tbl
-            specs["output_table_file"] = "table%d.csv" % line_num 
+            specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"]) 
             if len(params['none']) and var2table.get(params['none'][0]):
                 specs["type"] = 'create_columns_create'
                 specs["input_table_name"] = remove_quote(params['none'][0])
@@ -823,7 +824,7 @@ def generate_transform_specs(script_name):
         elif func == 'as.data.frame':
             if not (len(params['none']) and var2table.get(params['none'][0])):
                 specs["output_table_name"] = output_tbl
-                specs["output_table_file"] = "table%d.csv" % line_num 
+                specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"]) 
                 specs["type"] = 'create_tables'
                 specs["operation_rule"] = 'Create Manually'
                 var2table[output_tbl] = specs["output_table_file"]
@@ -831,7 +832,7 @@ def generate_transform_specs(script_name):
                 specs["input_table_name"] = remove_quote(params['none'][0])
                 specs["input_table_file"] = var2table[specs["input_table_name"]]
                 specs["output_table_name"] = output_tbl
-                specs["output_table_file"] = "table%d.csv" % line_num 
+                specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"]) 
                 specs["type"] = 'identical_operation'
                 # specs["operation_rule"] = "%s(%s)" % (func, r[3])  # 函数名加参数
                 specs["operation_rule"] = func
@@ -839,7 +840,7 @@ def generate_transform_specs(script_name):
         
         elif func == 'rename':
             specs["output_table_name"] = output_tbl
-            specs["output_table_file"] = "table%d.csv" % line_num 
+            specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"]) 
             specs["type"] = 'transform_columns_rename'
             specs["input_table_name"] = remove_quote(params['none'][0])
             specs["input_table_file"] = var2table[specs["input_table_name"]]
@@ -857,18 +858,18 @@ def generate_transform_specs(script_name):
             specs["input_table_name"] = remove_quote(params['none'][0])
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             specs["output_table_name"] = output_tbl
-            specs["output_table_file"] = "table%d.csv" % line_num 
+            specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"]) 
             specs["type"] = 'identical_operation'
             if len(params['none'])>1:
                 specs["operation_rule"] = "%s: %s" % (func, ",".join(params['none'][1:]))
             else:
                 specs["operation_rule"] = func  # 函数名加参数
             # specs["operation_rule"] = "%s(%s)" % (func, r[3])  # 函数名加参数
-            var2table[output_tbl] = "table%d.csv" % line_num
+            var2table[output_tbl] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
 
         else: # default, could also just omit condition or 'if True'
             print("The function, %s, is not currently supported!" % func)
-            var2table[output_tbl] = "table%d.csv" % line_num
+            var2table[output_tbl] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             
         # print(func, specs)
         if specs_before:

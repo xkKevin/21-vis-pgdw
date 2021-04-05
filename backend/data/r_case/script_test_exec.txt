@@ -3,7 +3,7 @@ library(dplyr)
 p5_input1= read.table("benchmark5.txt", header = T, sep = ",")
 if (is.data.frame(p5_input1) | is.matrix(p5_input1)) {
         write(paste(append(colnames(p5_input1), 3, after = 0), collapse=','), "colnames.txt", append=T)
-        write.table(p5_input1, file="table3.csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
+        write.table(p5_input1, file="L3 (p5_input1).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
         if (is.grouped_df(p5_input1)) {
             write(paste(append(group_vars(p5_input1), "group3", after = 0), collapse=','), "colnames.txt", append=T)
         }
@@ -11,7 +11,7 @@ if (is.data.frame(p5_input1) | is.matrix(p5_input1)) {
 TBL_3=gather(p5_input1,MORPH394,P,-`ID`,-`T`)
 if (is.data.frame(TBL_3) | is.matrix(TBL_3)) {
         write(paste(append(colnames(TBL_3), 4, after = 0), collapse=','), "colnames.txt", append=T)
-        write.table(TBL_3, file="table4.csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
+        write.table(TBL_3, file="L4 (TBL_3).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
         if (is.grouped_df(TBL_3)) {
             write(paste(append(group_vars(TBL_3), "group4", after = 0), collapse=','), "colnames.txt", append=T)
         }
@@ -19,7 +19,7 @@ if (is.data.frame(TBL_3) | is.matrix(TBL_3)) {
 TBL_1=separate(TBL_3,`MORPH394`,into=c('MORPH469','Channel'))
 if (is.data.frame(TBL_1) | is.matrix(TBL_1)) {
         write(paste(append(colnames(TBL_1), 5, after = 0), collapse=','), "colnames.txt", append=T)
-        write.table(TBL_1, file="table5.csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
+        write.table(TBL_1, file="L5 (TBL_1).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
         if (is.grouped_df(TBL_1)) {
             write(paste(append(group_vars(TBL_1), "group5", after = 0), collapse=','), "colnames.txt", append=T)
         }
@@ -27,7 +27,7 @@ if (is.data.frame(TBL_1) | is.matrix(TBL_1)) {
 morpheus=select(TBL_1,-`MORPH469`)
 if (is.data.frame(morpheus) | is.matrix(morpheus)) {
         write(paste(append(colnames(morpheus), 6, after = 0), collapse=','), "colnames.txt", append=T)
-        write.table(morpheus, file="table6.csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
+        write.table(morpheus, file="L6 (morpheus).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
         if (is.grouped_df(morpheus)) {
             write(paste(append(group_vars(morpheus), "group6", after = 0), collapse=','), "colnames.txt", append=T)
         }
@@ -35,7 +35,7 @@ if (is.data.frame(morpheus) | is.matrix(morpheus)) {
 morpheus=as.data.frame(morpheus)
 if (is.data.frame(morpheus) | is.matrix(morpheus)) {
         write(paste(append(colnames(morpheus), 7, after = 0), collapse=','), "colnames.txt", append=T)
-        write.table(morpheus, file="table7.csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
+        write.table(morpheus, file="L7 (morpheus).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
         if (is.grouped_df(morpheus)) {
             write(paste(append(group_vars(morpheus), "group7", after = 0), collapse=','), "colnames.txt", append=T)
         }
@@ -43,7 +43,7 @@ if (is.data.frame(morpheus) | is.matrix(morpheus)) {
 morpheus=select(morpheus,1,3,2,4)
 if (is.data.frame(morpheus) | is.matrix(morpheus)) {
         write(paste(append(colnames(morpheus), 8, after = 0), collapse=','), "colnames.txt", append=T)
-        write.table(morpheus, file="table8.csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
+        write.table(morpheus, file="L8 (morpheus).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
         if (is.grouped_df(morpheus)) {
             write(paste(append(group_vars(morpheus), "group8", after = 0), collapse=','), "colnames.txt", append=T)
         }

@@ -27,7 +27,8 @@ def execScript(script_name):
     # deleteMatchFiles("./", starts="table", ends=".csv")
     
     deleteMatchFiles("./", ends="_exec.txt")
-    deleteMatchFiles("./", starts="table", ends=".csv")
+    # deleteMatchFiles("./", starts="table", ends=".csv")
+    deleteMatchFiles("./", starts="L", ends=").csv")
     if os.path.exists("colnames.txt"):
         os.remove("colnames.txt")
          
@@ -66,10 +67,10 @@ def execScript(script_name):
 {space_index}    if columns[0]:
 {space_index}        columns.extend(list({value}.columns.values))
 {space_index}        col_states[{line_num}] = columns
-{space_index}        {value}.to_csv("table{line_num}.csv", index=True)
+{space_index}        {value}.to_csv("L{line_num} ({value}).csv", index=True)
 {space_index}    else:
 {space_index}        col_states[{line_num}] = list({value}.columns.values)
-{space_index}        {value}.to_csv("table{line_num}.csv", index=False)
+{space_index}        {value}.to_csv("L{line_num} ({value}).csv", index=False)
 \n'''.format(space_index=space_index, value=match_r[0][1],line_num=line_num,pandas_abbr=pandas_abbr) 
                 
     with open(script_exec_name, "w", encoding='utf-8') as fp:
@@ -205,7 +206,8 @@ def generate_transform_specs(script_name):
     
     transform_specs = []
     var2table = {} # 用来记录变量对应的table file名称
-    p_match_num = re.compile("table(.+)\.csv")
+    # p_match_num = re.compile("table(.+)\.csv")  #  L{line_num} ({value})
+    p_match_num = re.compile("L(.+) \(.+\).csv") 
     var2num = lambda var: int(p_match_num.findall(var2table[var])[0]) # 根据变量找到对应的行号
     
     p_loc = re.compile("loc\s*\[\s*(.+?)\s*$")
@@ -216,7 +218,7 @@ def generate_transform_specs(script_name):
         specs = {}
         output_tbl = pi_value[0]
         specs["output_table_name"] = output_tbl
-        specs["output_table_file"] = "table%d.csv" % line_num
+        specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])   # "table%d.csv" % line_num
         funcs = pi_value[2].split(".")
         params = parseArgs(pi_value[3])
         
