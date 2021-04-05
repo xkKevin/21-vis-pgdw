@@ -258,6 +258,7 @@ export default {
       ],
       show_table_name: true,
       lastLine:'',
+      decorations: null
     };
   },
   components:{
@@ -354,17 +355,17 @@ export default {
           this.language = response.data.language;
           this.changeModel(this.language, this.script_content, false);
 
+          this.decorations = this.editor.deltaDecorations([], [{
+            range: new monaco.Range(4,1,4,1),
+            options: {
+              isWholeLine: true,
+              className: 'myContentClass',
+              glyphMarginClassName: 'myGlyphMarginClass'
+            }
+          }]);
 
-          var decorations = this.editor.deltaDecorations([], [
-	{
-		range: new monaco.Range(5,1,5,1),
-		options: {
-			isWholeLine: true,
-			className: 'myContentClass',
-			glyphMarginClassName: 'myGlyphMarginClass'
-		}
-	}
-]);
+        console.log(this.decorations);  
+        this.codeHighlight(6)
         })
         .catch((error) => {
           console.log(error);
@@ -1829,23 +1830,36 @@ export default {
       });
     },
     initEvent (){
+      let self = this
       this.$nextTick(function () {
       document.addEventListener('keyup', function (e) {
-        // console.log(e);
+        console.log(e);
         if (e.key == "Escape") {
             d3.selectAll("rect[class^='glyph']").attr('stroke','gray')
             d3.selectAll("rect[id^='node']").attr('stroke','gray')
             d3.selectAll("circle[class^='edge']").attr('style',`fill: gray;`)
             d3.selectAll("line[class^='edge']").attr('stroke','gray')
             d3.selectAll("path[class^='arrow']").attr('fill','gray')
-
-            d3.selectAll(".myGlyphMarginClass").attr("style", "backgroud: white;")
-            d3.selectAll(".myContentClass").attr("style", "backgroud: white;")
-
+            self.codeHighlight(0)
         }
       })
       })
-    }
+    },
+    codeHighlight (line){
+      console.log(line)
+      if (line == 0){
+        this.editor.deltaDecorations(this.decorations, [])
+      }else{
+        this.editor.deltaDecorations(this.decorations, [{
+            range: new monaco.Range(line,1,line,1),
+            options: {
+              isWholeLine: true,
+              className: 'myContentClass',
+              glyphMarginClassName: 'myGlyphMarginClass'
+            }
+          }])
+      }
+    },
   },
   mounted() {
     this.initData();
