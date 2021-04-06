@@ -34,12 +34,32 @@ function generateDataForGroupSummarize(dataIn1_csv, dataOut1_csv, inExpCol, inIm
         return dataOut1_csv[0].indexOf(a) - dataOut1_csv[0].indexOf(b)
     })
 
-    for(let row = 1;row < Math.min(dataIn1_csv.length,4);row++){
+    //2021/04/06
+
+    let values1 = []
+    for(let row = 1;row < dataIn1_csv.length;row++){
+        values1.push(dataIn1_csv[row][inImpCol[0]])
+    }
+    let values1_unique = Array.from(new Set(values1))
+
+    let values2 = []
+    let outImpCol = dataOut1_csv[0].indexOf(dataIn1_csv[0][inImpCol[0]])
+    for(let row = 1;row < dataOut1_csv.length;row++){
+        values2.push(dataOut1_csv[row][outImpCol])
+    }
+
+    let rows1 = [],rows2 = []
+    for(let idx = 0;idx < Math.min(values1_unique.length,3);idx++){
+        rows1.push(values1.indexOf(values1_unique[idx]) + 1)
+        rows2.push(values2.indexOf(values1_unique[idx]) + 1)
+    }
+    
+    for(let row = 0;row < rows1.length;row++){
         let tempRow = []
         for(let col = 0;col < dataIn1_csv[0].length;col++){
             if(m1[0].indexOf(dataIn1_csv[0][col]) !== -1){
                 // if(inExpOrImpCol.indexOf(col) !== -1)tempRow.push(dataIn1_csv[row][col])
-                if(allCols.indexOf(col) !== -1)tempRow.push(dataIn1_csv[row][col])
+                if(allCols.indexOf(col) !== -1)tempRow.push(dataIn1_csv[rows1[row]][col])
                 else{
                     tempRow.push("")
                 }
@@ -47,7 +67,23 @@ function generateDataForGroupSummarize(dataIn1_csv, dataOut1_csv, inExpCol, inIm
         }
         m1.push(tempRow)
     }
-    let rows2 = []
+    //
+
+    //2021/04/06 delete
+    // for(let row = 1;row < Math.min(dataIn1_csv.length,4);row++){
+    //     let tempRow = []
+    //     for(let col = 0;col < dataIn1_csv[0].length;col++){
+    //         if(m1[0].indexOf(dataIn1_csv[0][col]) !== -1){
+    //             // if(inExpOrImpCol.indexOf(col) !== -1)tempRow.push(dataIn1_csv[row][col])
+    //             if(allCols.indexOf(col) !== -1)tempRow.push(dataIn1_csv[row][col])
+    //             else{
+    //                 tempRow.push("")
+    //             }
+    //         }
+    //     }
+    //     m1.push(tempRow)
+    // }
+    // let rows2 = []
     let values = []
     let col2 = inImpCol.length === 0 ? dataOut1_csv[0].indexOf(dataIn1_csv[0][inExpCol[0]]) : dataOut1_csv[0].indexOf(dataIn1_csv[0][inImpCol[0]])
     let col1 = inImpCol.length === 0 ? m1[0].indexOf(dataIn1_csv[0][inExpCol[0]]) : m1[0].indexOf(dataIn1_csv[0][inImpCol[0]])
@@ -55,14 +91,14 @@ function generateDataForGroupSummarize(dataIn1_csv, dataOut1_csv, inExpCol, inIm
         values.push(dataOut1_csv[row][col2])
     }
     
-    for(let row = 1;row < m1.length;row++){
-        rows2.push(values.indexOf(m1[row][col1]) + 1)
-    }
+    // for(let row = 1;row < m1.length;row++){
+    //     rows2.push(values.indexOf(m1[row][col1]) + 1)
+    // }
     
     if(dataOut1_csv[0].indexOf(dataIn1_csv[0][inExpCol[0]]) === -1){
         rows2 = Array.from(new Array(Math.min(3,dataOut1_csv.length - 1)),(v,k) => k + 1)
     }
-    // console.log("rows2: ",rows2)
+
     for(let row = 0;row < rows2.length;row++){
         let tempRow = []
         for(let col = 0;col < dataOut1_csv[0].length;col++){
