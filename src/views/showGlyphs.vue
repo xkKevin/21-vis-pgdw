@@ -436,17 +436,17 @@ export default {
             //         operation_rule: `rearrange Category`,
             //         input_table_file: "t1.csv",
             //         input_table_name: "revenue",
-            //         input_explict_col:["Category"],
+            //         input_explicit_col:["Category"],
             //         output_table_file: "t3.csv",
             //         output_table_name: "revenue_sort",
             //         type: "transform_tables_sort",
             //     },
             //     // {
             //     //     operation_rule: `transform scores`,
-            //     //     output_explict_col:['P.E.'],
+            //     //     output_explicit_col:['P.E.'],
             //     //     input_table_file: "t6.csv",
             //     //     input_table_name: "scores2",
-            //     //     output_explict_col:["P.E."],
+            //     //     output_explicit_col:["P.E."],
             //     //     output_table_file: "t11.csv",
             //     //     output_table_name: "level2score",
             //     //     type: "transform_columns_mutate",
@@ -461,17 +461,17 @@ export default {
             //         operation_rule: `rearrange Category`,
             //         input_table_file: "t2.csv",
             //         input_table_name: "sales",
-            //         input_explict_col:["Category"],
+            //         input_explicit_col:["Category"],
             //         output_table_file: "t4.csv",
             //         output_table_name: "sales_sort",
             //         type: "transform_tables_sort",
             //     },
             //     // {
             //     //     operation_rule: `transform scores`,
-            //     //     output_explict_col:['P.E.'],
+            //     //     output_explicit_col:['P.E.'],
             //     //     input_table_file: "t4.csv",
             //     //     input_table_name: "scores2",
-            //     //     output_explict_col:["P.E."],
+            //     //     output_explicit_col:["P.E."],
             //     //     output_table_file: "t9.csv",
             //     //     output_table_name: "level2score",
             //     //     type: "transform_columns_mutate",
@@ -506,7 +506,7 @@ export default {
             //     {
             //       input_table_file: 't6.csv',
             //       input_table_name: "rev_sales",
-            //       input_explict_col:['Category'],
+            //       input_explicit_col:['Category'],
             //       output_table_file: "t7.csv",
             //       output_table_name: "rev_sales",
             //       operation_rule:"delete Category",
@@ -515,7 +515,7 @@ export default {
             //     // {
             //     //   input_table_file: 't19.csv',
             //     //   input_table_name: "drop_dup",
-            //     //   input_explict_col:['ID'],
+            //     //   input_explicit_col:['ID'],
             //     //   output_table_file: "t21.csv",
             //     //   output_table_name: "drop_ID",
             //     //   operation_rule:"delete ID",
@@ -637,11 +637,11 @@ export default {
 
         let rule = transform_specs[i].operation_rule;
         let dataIn1_csv, dataIn2_csv, dataOut1_csv, dataOut2_csv;
-        let input_explict_col = [],
-          output_explict_col = [];
-        let input_explict_row = [],
-          output_explict_row = [];
-        let input_implict_col = [];
+        let input_explicit_col = [],
+          output_explicit_col = [];
+        let input_explicit_row = [],
+          output_explicit_row = [];
+        let input_implicit_col = [];
         let input_table_name,
           output_table_name,
           input_table_name2,
@@ -698,37 +698,37 @@ export default {
             }
           }
         }
-        if (transform_specs[i].input_explict_col) {
+        if (transform_specs[i].input_explicit_col) {
           for (
             let col = 0;
-            col < transform_specs[i].input_explict_col.length;
+            col < transform_specs[i].input_explicit_col.length;
             col++
           ) {
-            input_explict_col.push(
+            input_explicit_col.push(
               dataIn1_csv[0].indexOf(
-                transform_specs[i].input_explict_col[col]
+                transform_specs[i].input_explicit_col[col]
               )
             );
           }
         }
-        if (transform_specs[i].output_explict_col) {
+        if (transform_specs[i].output_explicit_col) {
           for (
             let col = 0;
-            col < transform_specs[i].output_explict_col.length;
+            col < transform_specs[i].output_explicit_col.length;
             col++
           ) {
-            output_explict_col.push(
+            output_explicit_col.push(
               dataOut1_csv[0].indexOf(
-                transform_specs[i].output_explict_col[col]
+                transform_specs[i].output_explicit_col[col]
               )
             );
           }
         }
-        if (transform_specs[i].input_explict_row) {
-          input_explict_row = transform_specs[i].input_explict_row;
+        if (transform_specs[i].input_explicit_row) {
+          input_explicit_row = transform_specs[i].input_explicit_row;
         }
-        if (transform_specs[i].output_explict_row) {
-          output_explict_row = transform_specs[i].output_explict_row;
+        if (transform_specs[i].output_explicit_row) {
+          output_explicit_row = transform_specs[i].output_explicit_row;
         }
         if (transform_specs[i].input_table_name) {
           if (typeof transform_specs[i].input_table_name === "string")
@@ -751,20 +751,20 @@ export default {
         if (transform_specs[i].replace_value) {
           replace_value = transform_specs[i].replace_value;
         }
-        if (transform_specs[i].input_implict_col) {
-          if (typeof transform_specs[i].input_implict_col === "string") {
-            input_implict_col = [
-              dataIn1_csv[0].indexOf(transform_specs[i].input_implict_col),
+        if (transform_specs[i].input_implicit_col) {
+          if (typeof transform_specs[i].input_implicit_col === "string") {
+            input_implicit_col = [
+              dataIn1_csv[0].indexOf(transform_specs[i].input_implicit_col),
             ];
           } else {
             for (
               let col = 0;
-              col < transform_specs[i].input_implict_col.length;
+              col < transform_specs[i].input_implicit_col.length;
               col++
             ) {
-              input_implict_col.push(
+              input_implicit_col.push(
                 dataIn1_csv[0].indexOf(
-                  transform_specs[i].input_implict_col[col]
+                  transform_specs[i].input_implicit_col[col]
                 )
               );
             }
@@ -783,8 +783,8 @@ export default {
             res = generateDataForCreateColumns(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_col,
-              output_explict_col
+              input_explicit_col,
+              output_explicit_col
             );
             create_column(
               res.m1,
@@ -792,7 +792,7 @@ export default {
               rule,
               input_table_name,
               output_table_name,
-              input_explict_col,
+              input_explicit_col,
               i,
               this.show_table_name,
               pos,
@@ -804,8 +804,8 @@ export default {
             res = generateDataForCreateColumns_extract(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_col,
-              output_explict_col
+              input_explicit_col,
+              output_explicit_col
             );
             create_column(
               res.m1,
@@ -813,7 +813,7 @@ export default {
               rule,
               input_table_name,
               output_table_name,
-              input_explict_col,
+              input_explicit_col,
               i,
               this.show_table_name,
               pos,
@@ -825,8 +825,8 @@ export default {
             res = generateData(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_col.concat(input_implict_col),
-              output_explict_col
+              input_explicit_col.concat(input_implicit_col),
+              output_explicit_col
             );
             create_column(
               res.m1,
@@ -847,7 +847,7 @@ export default {
             res = generateDataForCreateColumns_create(
               dataIn1_csv,
               dataOut1_csv,
-              output_explict_col
+              output_explicit_col
             );
             create_column_create(
               res.m1,
@@ -891,7 +891,7 @@ export default {
             res = generateDataForInsertRows(
               dataIn1_csv,
               dataOut1_csv,
-              output_explict_row[0]
+              output_explicit_row[0]
             );
             create_row_insert(
               res.m1,
@@ -927,7 +927,7 @@ export default {
             res = generateDataForKeepColumns(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_col
+              input_explicit_col
             );
 
             delete_column(
@@ -948,7 +948,7 @@ export default {
             res = generateDataForDeleteColumn(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_col,
+              input_explicit_col,
             );
             delete_column(
               res.m1,
@@ -1009,7 +1009,7 @@ export default {
             res = generateDataForRows(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_col
+              input_explicit_col
             );
           
             delete_row(
@@ -1027,20 +1027,20 @@ export default {
             );
             break;
           // case 'delete_rows_filter_keep':
-          //   res = generateDataForFilterRowKeep(dataIn1_csv,dataOut1_csv,input_explict_row)
+          //   res = generateDataForFilterRowKeep(dataIn1_csv,dataOut1_csv,input_explicit_row)
           //   delete_row_keep(res.m1,res.m2,rule,input_table_name,output_table_name,res.inIndex,res.outIndex,res.inColors,res.outColors)
           //   break
 
           case "delete_rows_deduplicate":
-            if (input_explict_col.length === 0)
-              input_explict_col = Array.from(
+            if (input_explicit_col.length === 0)
+              input_explicit_col = Array.from(
                 new Array(dataIn1_csv[0].length),
                 (x, i) => i
               );
             res = generateDataForDeleteDuplicateRows(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_col
+              input_explicit_col
             );
 
             delete_duplicate_row_partColumn(
@@ -1062,7 +1062,7 @@ export default {
             res = generateDataForFilterRow(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_col[0]
+              input_explicit_col[0]
             );
             delete_filter(
               res.m1,
@@ -1082,7 +1082,7 @@ export default {
             res = generateDataForColumnRearrange(
               dataIn1_csv,
               dataOut1_csv,
-              output_explict_col
+              output_explicit_col
             );
             transform_tables_rearrange(
               res.m1,
@@ -1104,7 +1104,7 @@ export default {
             res = generateDataForTableSort(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_col,
+              input_explicit_col,
               rule
             );
 
@@ -1126,7 +1126,7 @@ export default {
             res = generateDataForReplace(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_col
+              input_explicit_col
             );
             transform_columns_replace_na(
               res.m1,
@@ -1134,7 +1134,7 @@ export default {
               rule,
               input_table_name,
               output_table_name,
-              input_explict_col,
+              input_explicit_col,
               res.naRow,
               i,
               this.show_table_name,
@@ -1148,7 +1148,7 @@ export default {
             res = generateDataForReplace(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_col,
+              input_explicit_col,
               replace_value
             );
             transform_columns_replace_na(
@@ -1157,7 +1157,7 @@ export default {
               rule,
               input_table_name,
               output_table_name,
-              input_explict_col,
+              input_explicit_col,
               res.naRow,
               i,
               this.show_table_name,
@@ -1170,8 +1170,8 @@ export default {
             res = generateDataForMutate_cover(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_col,
-              output_explict_col
+              input_explicit_col,
+              output_explicit_col
             );
             transform_columns_mutate(
               res.m1,
@@ -1179,8 +1179,8 @@ export default {
               rule,
               input_table_name,
               output_table_name,
-              input_explict_col,
-              output_explict_col,
+              input_explicit_col,
+              output_explicit_col,
               i,
               this.show_table_name,
               pos,
@@ -1192,8 +1192,8 @@ export default {
             res = generateDataForMutate_cover(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_col,
-              input_explict_col
+              input_explicit_col,
+              input_explicit_col
             );
             transform_columns_mutate(
               res.m1,
@@ -1201,8 +1201,8 @@ export default {
               rule,
               input_table_name,
               output_table_name,
-              input_explict_col,
-              input_explict_col,
+              input_explicit_col,
+              input_explicit_col,
               i,
               this.show_table_name,
               pos,
@@ -1214,8 +1214,8 @@ export default {
             res = generateDataForMutate_cover(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_col,
-              output_explict_col
+              input_explicit_col,
+              output_explicit_col
             );
             transform_columns_mutate(
               res.m1,
@@ -1223,8 +1223,8 @@ export default {
               rule,
               input_table_name,
               output_table_name,
-              input_explict_col,
-              output_explict_col,
+              input_explicit_col,
+              output_explicit_col,
               i,
               this.show_table_name,
               pos,
@@ -1236,7 +1236,7 @@ export default {
             res = generateDataForColumnRename(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_col
+              input_explicit_col
             );
             transform_columns_mutate(
               res.m1,
@@ -1257,8 +1257,8 @@ export default {
             res = generateDataForMergeColumns(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_col,
-              output_explict_col
+              input_explicit_col,
+              output_explicit_col
             );
             combine_columns_merge(
               res.m1,
@@ -1280,8 +1280,8 @@ export default {
             res = generateDataForMergeColumns(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_col,
-              output_explict_col
+              input_explicit_col,
+              output_explicit_col
             );
             combine_columns_merge(
               res.m1,
@@ -1308,10 +1308,10 @@ export default {
             res = generateDataForGroupSummarize(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_col,
-              input_implict_col,
-              output_explict_col,
-              // input_implict_col
+              input_explicit_col,
+              input_implicit_col,
+              output_explicit_col,
+              // input_implicit_col
             );
             // console.log("summarize res: ",res)
             
@@ -1336,7 +1336,7 @@ export default {
             res = generateDataForRowInterpolate(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_col
+              input_explicit_col
             );
             combine_rows_interpolate(
               res.m1,
@@ -1356,7 +1356,7 @@ export default {
             res = generateDataForEditRow(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_row
+              input_explicit_row
             );
             transform_rows_edit(
               res.m1,
@@ -1376,7 +1376,7 @@ export default {
             res = generateDataForSeparateSubset(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_col
+              input_explicit_col
             );
             separate_tables_subset(
               res.m1,
@@ -1398,7 +1398,7 @@ export default {
           case "separate_tables_decompose":
             res = generateDataForSeparateDecompose(
               dataIn1_csv,
-              input_explict_col
+              input_explicit_col
             );
             let xPercents = [res.m1[0].length / dataIn1_csv[0]]
             let yPercents = [res.m1.length / dataIn1_csv.length]
@@ -1424,7 +1424,7 @@ export default {
               dataIn1_csv,
               dataOut1_csv,
               dataOut2_csv,
-              input_explict_col
+              input_explicit_col
             );
             separate_tables_subset(
               res.m1,
@@ -1447,8 +1447,8 @@ export default {
           case "separate_tables_split":
             res = generateDataForSeparateSplit(
               dataIn1_csv,
-              input_explict_col,
-              input_implict_col
+              input_explicit_col,
+              input_implicit_col
             );
             separate_tables_split(
               res.m1,
@@ -1472,8 +1472,8 @@ export default {
             res = generateDataForSeparateColumn(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_col,
-              output_explict_col
+              input_explicit_col,
+              output_explicit_col
             );
             separate_columns(
               res.m1,
@@ -1494,7 +1494,7 @@ export default {
             res = generateDataForSeparateRows(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_col
+              input_explicit_col
             );
             separate_rows(
               res.m1,
@@ -1512,7 +1512,7 @@ export default {
             break;
           case "combine_tables_extend":
             res = {}
-            if(!transform_specs[i].input_explict_col){
+            if(!transform_specs[i].input_explicit_col){
               // res = generateDataForTablesExtend(
               //   dataIn1_csv,
               //   dataIn2_csv,
@@ -1538,7 +1538,7 @@ export default {
                 dataIn1_csv,
                 dataIn2_csv,
                 dataOut1_csv,
-                transform_specs[i].input_explict_col
+                transform_specs[i].input_explicit_col
               );
             }
             combine_tables_extend(
@@ -1565,7 +1565,7 @@ export default {
               dataIn1_csv,
               dataIn2_csv,
               dataOut1_csv,
-              input_explict_col,
+              input_explicit_col,
               'NA'
             );
   
@@ -1595,7 +1595,7 @@ export default {
               dataIn1_csv,
               dataIn2_csv,
               dataOut1_csv,
-              input_explict_col,
+              input_explicit_col,
               'NA'
             );
             combine_tables_full_join(
@@ -1625,7 +1625,7 @@ export default {
               dataIn1_csv,
               dataIn2_csv,
               dataOut1_csv,
-              input_explict_col,
+              input_explicit_col,
               "NA"
             );
 
@@ -1651,8 +1651,8 @@ export default {
             res = generateDataForFold(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_col,
-              output_explict_col
+              input_explicit_col,
+              output_explicit_col
             );
             transform_tables_fold(
               res.m1,
@@ -1660,7 +1660,7 @@ export default {
               rule,
               input_table_name,
               output_table_name,
-              input_explict_col.length,
+              input_explicit_col.length,
               i,
               this.show_table_name,
               pos,
@@ -1670,21 +1670,21 @@ export default {
             );
             break;
           case "transform_tables_unfold":
-            output_explict_col = [];
+            output_explicit_col = [];
             for (let col = 0; col < dataOut1_csv[0].length; col++) {
               if (dataIn1_csv[0].indexOf(dataOut1_csv[0][col]) === -1) {
-                output_explict_col.push(col);
+                output_explicit_col.push(col);
               }
             }
             res = generateDataForFold(
               dataOut1_csv,
               dataIn1_csv,
-              output_explict_col,
-              input_explict_col
+              output_explicit_col,
+              input_explicit_col
             );
             let diffVals = new Set()
             for(let row = 1;row < dataIn1_csv.length;row++){
-              diffVals.add(dataIn1_csv[row][input_explict_col[0]])
+              diffVals.add(dataIn1_csv[row][input_explicit_col[0]])
             }
             transform_tables_unfold(
               res.m2,

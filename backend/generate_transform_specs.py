@@ -278,7 +278,7 @@ def generate_transform_specs(script_name):
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             specs["output_table_name"] = output_tbl
             specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
-            specs["input_explict_col"] = remove_quote(params["none"][pi:])
+            specs["input_explicit_col"] = remove_quote(params["none"][pi:])
             if params.get('sep'):
                 specs["operation_rule"] = 'Separate Row: ' + params["sep"]
             else:
@@ -294,7 +294,7 @@ def generate_transform_specs(script_name):
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             specs["output_table_name"] = output_tbl
             specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
-            specs["input_explict_col"] = [i for i in col_states[line_num] if i in parseCondition(condition)]
+            specs["input_explicit_col"] = [i for i in col_states[line_num] if i in parseCondition(condition)]
             specs["operation_rule"] = 'Filter: ' + condition
             
             var2table[output_tbl] = specs["output_table_file"]
@@ -310,20 +310,20 @@ def generate_transform_specs(script_name):
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             specs["output_table_name"] = output_tbl
             specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
-            specs["input_explict_col"] = []
-            specs["output_explict_col"] = []
+            specs["input_explicit_col"] = []
+            specs["output_explicit_col"] = []
             if params.get('col'):
-                specs["input_explict_col"].append(params.get('col'))
+                specs["input_explicit_col"].append(params.get('col'))
             else:
-                specs["input_explict_col"].append(params['none'][pi])
+                specs["input_explicit_col"].append(params['none'][pi])
                 pi += 1
-            specs["input_explict_col"] = remove_quote(specs["input_explict_col"])
+            specs["input_explicit_col"] = remove_quote(specs["input_explicit_col"])
             if params.get('into'):
                 if params.get('into').startswith("c("):
-                    specs["output_explict_col"] = remove_quote(p_match_c.findall(params.get('into'))[0].strip().split(','))
+                    specs["output_explicit_col"] = remove_quote(p_match_c.findall(params.get('into'))[0].strip().split(','))
             else:
                 if params['none'][pi].startswith("c("):
-                    specs["output_explict_col"] = remove_quote(p_match_c.findall(params['none'][pi])[0].strip().split(','))
+                    specs["output_explicit_col"] = remove_quote(p_match_c.findall(params['none'][pi])[0].strip().split(','))
                 pi += 1
             if params.get('sep'):
                 specs["operation_rule"] = "Separate Columns: " + params.get('sep')
@@ -343,29 +343,29 @@ def generate_transform_specs(script_name):
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             specs["output_table_name"] = output_tbl
             specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
-            specs["output_explict_col"] = []
+            specs["output_explicit_col"] = []
             if params.get('key'):
-                specs["output_explict_col"].append(params.get('key'))
+                specs["output_explicit_col"].append(params.get('key'))
             else:
-                specs["output_explict_col"].append(params['none'][pi])
+                specs["output_explicit_col"].append(params['none'][pi])
                 pi += 1
             if params.get('value'):
-                specs["output_explict_col"].append(params.get('value'))
+                specs["output_explicit_col"].append(params.get('value'))
             else:
-                specs["output_explict_col"].append(params['none'][pi])
+                specs["output_explicit_col"].append(params['none'][pi])
                 pi += 1
-            specs["output_explict_col"] = remove_quote(specs["output_explict_col"])
+            specs["output_explicit_col"] = remove_quote(specs["output_explicit_col"])
             remove_col = set()
-            specs["input_explict_col"] = []
+            specs["input_explicit_col"] = []
             for i in range(pi, len(params['none'])):
                 if params['none'][i].startswith('-'):
                     remove_col.add(params['none'][i][1:])
                 else:
-                    specs["input_explict_col"].append(params['none'][i])
+                    specs["input_explicit_col"].append(params['none'][i])
             if remove_col:
                 remove_col = set(remove_quote(remove_col))
-                specs["input_explict_col"] = list(set(col_states[var2num(specs["input_table_name"])]) - remove_col)
-            specs["input_explict_col"] = remove_quote(specs["input_explict_col"])
+                specs["input_explicit_col"] = list(set(col_states[var2num(specs["input_table_name"])]) - remove_col)
+            specs["input_explicit_col"] = remove_quote(specs["input_explicit_col"])
             specs["operation_rule"] = 'Fold'
             
             var2table[output_tbl] = specs["output_table_file"]
@@ -381,18 +381,18 @@ def generate_transform_specs(script_name):
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             specs["output_table_name"] = output_tbl
             specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
-            specs["input_explict_col"] = []
+            specs["input_explicit_col"] = []
             if params.get('key'):
-                specs["input_explict_col"].append(params.get('key'))
+                specs["input_explicit_col"].append(params.get('key'))
             else:
-                specs["input_explict_col"].append(params['none'][pi])
+                specs["input_explicit_col"].append(params['none'][pi])
                 pi += 1
             if params.get('value'):
-                specs["input_explict_col"].append(params.get('value'))
+                specs["input_explicit_col"].append(params.get('value'))
             else:
-                specs["input_explict_col"].append(params['none'][pi])
+                specs["input_explicit_col"].append(params['none'][pi])
                 pi += 1
-            specs["input_explict_col"] = remove_quote(specs["input_explict_col"])
+            specs["input_explicit_col"] = remove_quote(specs["input_explicit_col"])
             specs["operation_rule"] = 'Unfold'
             
             var2table[output_tbl] = specs["output_table_file"]
@@ -421,11 +421,11 @@ def generate_transform_specs(script_name):
             var2table[output_tbl] = specs["output_table_file"]
             if remove_col:
                 specs["type"] = 'delete_columns_select_remove'
-                specs["input_explict_col"] = remove_col
+                specs["input_explicit_col"] = remove_col
                 specs["operation_rule"] = 'Delete Columns: ' + ','.join(remove_col)
             elif len(keep_col) < len(col_states[var2num(specs["input_table_name"])]):
                 specs["type"] = 'delete_columns_select_keep'
-                specs["input_explict_col"] = keep_col
+                specs["input_explicit_col"] = keep_col
                 specs["operation_rule"] = 'Keep Columns: ' + ','.join(keep_col)
 
                 rename_cols = []
@@ -433,10 +433,10 @@ def generate_transform_specs(script_name):
                     if pk in ('none'):
                         continue
                     pv = remove_quote(pv)
-                    specs["input_explict_col"].append(pv)
+                    specs["input_explicit_col"].append(pv)
                     rename_cols.append(pv)
                 if rename_cols:
-                    code1 = "%s=select(%s,%s)" % (specs["output_table_name"], specs["input_table_name"], '`%s`' % "`,`".join(specs["input_explict_col"]))
+                    code1 = "%s=select(%s,%s)" % (specs["output_table_name"], specs["input_table_name"], '`%s`' % "`,`".join(specs["input_explicit_col"]))
                     script_code = original_codes[:line_num-1]
                     script_code.append(code1)  # 将原先的那一行代码替换掉
                     output_t1 = "table%s_1.csv" % line_num
@@ -462,14 +462,14 @@ def generate_transform_specs(script_name):
                         "input_table_file": specs["output_table_file"],
                         "output_table_name": output_tbl,
                         "output_table_file": "table%d_2.csv" % line_num,
-                        "input_explict_col": rename_cols,
+                        "input_explicit_col": rename_cols,
                         "operation_rule": "Rename"
                     }
                     var2table[output_tbl] = specs_after["output_table_file"]
 
             else:
                 specs["type"] = 'transform_tables_rearrange'
-                specs["input_explict_col"] = keep_col
+                specs["input_explicit_col"] = keep_col
                 specs["operation_rule"] = 'Rearrange Columns'
                 
         
@@ -479,7 +479,7 @@ def generate_transform_specs(script_name):
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             specs["output_table_name"] = output_tbl
             specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
-            specs["output_explict_col"] = []
+            specs["output_explicit_col"] = []
             input_line_num = var2num(specs["input_table_name"])
             tmp = set()
             rule = []
@@ -488,12 +488,12 @@ def generate_transform_specs(script_name):
                 if pk == 'none' or pk not in col_states[line_num]:
                     continue
                 rule.append("%s=%s" % (pk, pv))
-                specs["output_explict_col"].append(pk)
+                specs["output_explicit_col"].append(pk)
                 tmp = tmp.union(set([i for i in col_states[input_line_num] if i in parseCondition(pv)]))
-            specs["input_explict_col"] = list(tmp)
+            specs["input_explicit_col"] = list(tmp)
             if group_states.get(input_line_num):
-                specs["input_implict_col"] = [group_states[input_line_num][-1]]
-                specs["operation_rule"] = "Group:%s, Summarize:%s" % (specs["input_implict_col"][0], ",".join(rule))
+                specs["input_implicit_col"] = [group_states[input_line_num][-1]]
+                specs["operation_rule"] = "Group:%s, Summarize:%s" % (specs["input_implicit_col"][0], ",".join(rule))
             else:
                 specs["operation_rule"] = "Summarize:" + ",".join(rule)
                  
@@ -505,17 +505,17 @@ def generate_transform_specs(script_name):
             specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             if params.get('x'):
                 specs["input_table_name"] = params['x']
-                specs["input_explict_col"] = remove_quote(params['none'])
+                specs["input_explicit_col"] = remove_quote(params['none'])
             else:
                 specs["input_table_name"] = params['none'][0]
-                specs["input_explict_col"] = remove_quote(params['none'][1:])
+                specs["input_explicit_col"] = remove_quote(params['none'][1:])
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             if params.get('name'):
-                specs["output_explict_col"] = [remove_quote(params.get('name'))]
+                specs["output_explicit_col"] = [remove_quote(params.get('name'))]
             else:
-                specs["output_explict_col"] = ['n']
+                specs["output_explicit_col"] = ['n']
 
-            specs["operation_rule"] = "Group:%s, and Count" % (','.join(specs["input_explict_col"]))
+            specs["operation_rule"] = "Group:%s, and Count" % (','.join(specs["input_explicit_col"]))
             var2table[output_tbl] = specs["output_table_file"]
 
             if params.get('sort') and params['sort'] in ('T', 'TRUE'):  # 涉及到排序，因此需要做separation，即拆成两步
@@ -548,8 +548,8 @@ def generate_transform_specs(script_name):
                     "input_table_file": specs["output_table_file"],
                     "output_table_name": output_tbl,
                     "output_table_file": "table%d_2.csv" % line_num,
-                    "input_explict_col": specs["output_explict_col"],
-                    "operation_rule": "Sort: desc(%s)" % specs["output_explict_col"][0]
+                    "input_explicit_col": specs["output_explicit_col"],
+                    "operation_rule": "Sort: desc(%s)" % specs["output_explicit_col"][0]
                 }
                 var2table[output_tbl] = specs_after["output_table_file"]
 
@@ -566,13 +566,13 @@ def generate_transform_specs(script_name):
             specs["output_table_name"] = output_tbl
             specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             if params.get('col'):
-                specs["output_explict_col"] = [remove_quote(params.get('col'))]
+                specs["output_explicit_col"] = [remove_quote(params.get('col'))]
             else:
-                specs["output_explict_col"] = [remove_quote(params['none'][pi])]
+                specs["output_explicit_col"] = [remove_quote(params['none'][pi])]
                 pi += 1
-            specs["input_explict_col"] = []
+            specs["input_explicit_col"] = []
             for i in range(pi, len(params['none'])):
-                specs["input_explict_col"].append(remove_quote(params['none'][i]))
+                specs["input_explicit_col"].append(remove_quote(params['none'][i]))
             if params.get('sep'):
                 specs["operation_rule"] = "Merge: '%s'" % params['sep']
             else:
@@ -600,23 +600,23 @@ def generate_transform_specs(script_name):
             # 暂时不支持 by=c("A"="B") 的这种情况
             if params.get('by'):
                 if params['by'].startswith("c("):
-                    specs["input_explict_col"] = remove_quote(remove_quote(p_match_c.findall(params['by'])[0].strip().split(',')))
+                    specs["input_explicit_col"] = remove_quote(remove_quote(p_match_c.findall(params['by'])[0].strip().split(',')))
                 else:
-                    specs["input_explict_col"] = [remove_quote(params['by'])]
+                    specs["input_explicit_col"] = [remove_quote(params['by'])]
             elif pi < len(params['none']):
                 if params['none'][pi].startswith("c("):
-                    specs["input_explict_col"] = remove_quote(remove_quote(p_match_c.findall(params['none'][pi])[0].strip().split(',')))
+                    specs["input_explicit_col"] = remove_quote(remove_quote(p_match_c.findall(params['none'][pi])[0].strip().split(',')))
                 else:
-                    specs["input_explict_col"] = [remove_quote(params['none'][pi])]
-            if not specs.get("input_explict_col"):
+                    specs["input_explicit_col"] = [remove_quote(params['none'][pi])]
+            if not specs.get("input_explicit_col"):
                 input1_cols = set(col_states[var2num(specs["input_table_name"][0])])
                 input2_cols = set(col_states[var2num(specs["input_table_name"][1])])
                 implicit_col = remove_quote(list(input1_cols & input2_cols))
-                specs["input_explict_col"] = implicit_col
-            if len(specs["input_explict_col"]) == 1:
-                specs["operation_rule"] = "%s on %s" % (func.replace("_", " ").title(), specs["input_explict_col"][0]) # .title 将各单词的首字母大写
+                specs["input_explicit_col"] = implicit_col
+            if len(specs["input_explicit_col"]) == 1:
+                specs["operation_rule"] = "%s on %s" % (func.replace("_", " ").title(), specs["input_explicit_col"][0]) # .title 将各单词的首字母大写
             else:
-                specs["operation_rule"] = "%s on %s" % (func.replace("_", " ").title(), ",".join(specs["input_explict_col"])) # .title 将各单词的首字母大写
+                specs["operation_rule"] = "%s on %s" % (func.replace("_", " ").title(), ",".join(specs["input_explicit_col"])) # .title 将各单词的首字母大写
             
             var2table[output_tbl] = specs["output_table_file"]
             
@@ -631,8 +631,8 @@ def generate_transform_specs(script_name):
                 pk = remove_quote(pk)
                 if pk in ('none', ".keep", ".before", ".after"):
                     continue
-                specs["output_explict_col"] = [pk]
-                specs["input_explict_col"] = [i for i in col_states[input_line_num] if i in parseCondition(pv)]
+                specs["output_explicit_col"] = [pk]
+                specs["input_explicit_col"] = [i for i in col_states[input_line_num] if i in parseCondition(pv)]
                 rule = "%s=%s" % (pk, pv)
                 specs["operation_rule"] = "Mutate: " + rule
                 if pk in col_states[input_line_num]:
@@ -641,7 +641,7 @@ def generate_transform_specs(script_name):
                         specs["type"] = 'transform_columns_mutate'
                     elif remove_quote(params.get(".keep")) == "unused":
                         # 原来的列，且删除使用的列：transform
-                        if len(specs["input_explict_col"]) > 1:
+                        if len(specs["input_explicit_col"]) > 1:
                             specs["type"] = 'combine_columns_mutate'
                         else:
                             specs["type"] = 'transform_columns_mutate'   
@@ -650,13 +650,13 @@ def generate_transform_specs(script_name):
                         # 新增的列，且保留所有的列：create
                         specs["type"] = 'create_columns_mutate'
                         if group_states.get(input_line_num):
-                            specs["input_implict_col"] = [group_states[input_line_num][-1]]
-                            specs["operation_rule"] = "Group: %s, %s" % (specs["input_implict_col"][0], specs["operation_rule"])
+                            specs["input_implicit_col"] = [group_states[input_line_num][-1]]
+                            specs["operation_rule"] = "Group: %s, %s" % (specs["input_implicit_col"][0], specs["operation_rule"])
                     if remove_quote(params.get(".keep")) == "unused":
                         # 新增的列，且删除使用的列：transform
-                        if len(specs["input_explict_col"]) > 1:
+                        if len(specs["input_explicit_col"]) > 1:
                             specs["type"] = 'combine_columns_mutate'
-                        elif len(specs["input_explict_col"]) == 1:
+                        elif len(specs["input_explicit_col"]) == 1:
                             specs["type"] = 'transform_columns_mutate'
                         else:
                             specs["type"] = 'create_columns_mutate'
@@ -673,13 +673,13 @@ def generate_transform_specs(script_name):
             specs["output_table_name"] = output_tbl
             specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             if params['none'][1].startswith("desc"):
-                specs["input_explict_col"] = [remove_quote(params['none'][1][5:-1])]
-                specs["operation_rule"] = "Sort: desc(%s)" % specs["input_explict_col"][0]
+                specs["input_explicit_col"] = [remove_quote(params['none'][1][5:-1])]
+                specs["operation_rule"] = "Sort: desc(%s)" % specs["input_explicit_col"][0]
             elif params['none'][1].startswith("-"):
-                specs["input_explict_col"] = [remove_quote(params['none'][1][1:])]
-                specs["operation_rule"] = "Sort: desc(%s)" % specs["input_explict_col"][0]
+                specs["input_explicit_col"] = [remove_quote(params['none'][1][1:])]
+                specs["operation_rule"] = "Sort: desc(%s)" % specs["input_explicit_col"][0]
             else:
-                specs["input_explict_col"] = [remove_quote(params['none'][1])]
+                specs["input_explicit_col"] = [remove_quote(params['none'][1])]
                 specs["operation_rule"] = "Sort: " + params['none'][1]
             
             var2table[output_tbl] = specs["output_table_file"]
@@ -699,14 +699,14 @@ def generate_transform_specs(script_name):
                 specs["input_table_name"].append(params['none'][pi])
                 pi += 1
             ######################################################
-            specs["input_explict_col"] = []
+            specs["input_explicit_col"] = []
             if params.get("by"):
-                specs["input_explict_col"].extend(remove_quote([params["by"]]))
+                specs["input_explicit_col"].extend(remove_quote([params["by"]]))
             else:
                 if params.get("by.x"):
-                    specs["input_explict_col"].append(remove_quote(params["by.x"]))
+                    specs["input_explicit_col"].append(remove_quote(params["by.x"]))
                 if params.get("by.y"):
-                    specs["input_explict_col"].append(remove_quote(params["by.y"]))
+                    specs["input_explicit_col"].append(remove_quote(params["by.y"]))
             ######################################################
             specs["input_table_file"] = [var2table[specs["input_table_name"][0]], var2table[specs["input_table_name"][1]]]
             specs["output_table_name"] = output_tbl
@@ -763,7 +763,7 @@ def generate_transform_specs(script_name):
             specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
             # condition = r[3].replace(params['none'][0],"").strip().strip(",").strip()
             condition = ",".join(r[3].strip().split(",")[1:]).strip()
-            specs["input_explict_col"] = [i for i in col_states[line_num] if i in parseCondition(condition)]
+            specs["input_explicit_col"] = [i for i in col_states[line_num] if i in parseCondition(condition)]
             specs["operation_rule"] = 'Filter: ' + condition
             
             var2table[output_tbl] = specs["output_table_file"]
@@ -794,7 +794,7 @@ def generate_transform_specs(script_name):
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             specs["output_table_name"] = output_tbl
             specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
-            specs["input_explict_col"] = remove_quote(params['none'][pi:])
+            specs["input_explicit_col"] = remove_quote(params['none'][pi:])
             specs["operation_rule"] = "Delete Dupliate Row"
             
             var2table[output_tbl] = specs["output_table_file"]
@@ -806,14 +806,14 @@ def generate_transform_specs(script_name):
                 specs["type"] = 'create_columns_create'
                 specs["input_table_name"] = remove_quote(params['none'][0])
                 specs["input_table_file"] = var2table[specs["input_table_name"]]
-                specs["output_explict_col"] = []
+                specs["output_explicit_col"] = []
                 for pk, pv in params.items():
                     pk = remove_quote(pk)
                     if pk in ('none', "deparse.level"):
                         continue
-                    specs["output_explict_col"].append(pk)
+                    specs["output_explicit_col"].append(pk)
 
-                specs["operation_rule"] = 'Create Columns: ' + ",".join(specs["output_explict_col"])
+                specs["operation_rule"] = 'Create Columns: ' + ",".join(specs["output_explicit_col"])
             else:
                 specs["type"] = 'create_tables'
                 specs["operation_rule"] = 'Create Manually'
@@ -844,12 +844,12 @@ def generate_transform_specs(script_name):
             specs["type"] = 'transform_columns_rename'
             specs["input_table_name"] = remove_quote(params['none'][0])
             specs["input_table_file"] = var2table[specs["input_table_name"]]
-            specs["input_explict_col"] = []
+            specs["input_explicit_col"] = []
             for pk, pv in params.items():
                 pv = remove_quote(pv)
                 if pk in ('none'):
                     continue
-                specs["input_explict_col"].append(pv)
+                specs["input_explicit_col"].append(pv)
             specs["operation_rule"] = 'Rename'
             
             var2table[output_tbl] = specs["output_table_file"]

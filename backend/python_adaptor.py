@@ -275,30 +275,30 @@ def generate_transform_specs(script_name):
             specs["input_table_file"] = var2table[specs["input_table_name"]]
             if len(funcs) >= 2:
                 if funcs[1] in col_states[pi_key]:
-                    specs["input_explict_col"] = [funcs[1]]
+                    specs["input_explicit_col"] = [funcs[1]]
             func = funcs[-1]
             
             if func == 'split':
                 specs["type"] = "separate_columns"
-                specs["operation_rule"] = "Split %s on %s" % (specs["input_explict_col"][0], params['none'][0])
+                specs["operation_rule"] = "Split %s on %s" % (specs["input_explicit_col"][0], params['none'][0])
                 
             if func == 'groupby':
                 p_res = pi_value[3].split(".")
-                specs["input_explict_col"] = [i for i in col_states[line_num] if i in p_res[0]]
-                specs["input_implict_col"] = specs["input_explict_col"]
-                specs["input_explict_col"] = list(set(col_states[line_num]) - set(specs["input_implict_col"]))
-                specs["output_explict_col"] = specs["input_explict_col"]
+                specs["input_explicit_col"] = [i for i in col_states[line_num] if i in p_res[0]]
+                specs["input_implicit_col"] = specs["input_explicit_col"]
+                specs["input_explicit_col"] = list(set(col_states[line_num]) - set(specs["input_implicit_col"]))
+                specs["output_explicit_col"] = specs["input_explicit_col"]
                 func = p_res[-1][:-1]
                 if  func in ['mean', 'max', 'mad', 'median', 'min','sum']:
                     specs["type"] = "combine_rows_summarize"
-                    specs["operation_rule"] = "Group by %s, Summarize columns by %s" % (",".join(specs["input_implict_col"]), func)  # Summarize rows
+                    specs["operation_rule"] = "Group by %s, Summarize columns by %s" % (",".join(specs["input_implicit_col"]), func)  # Summarize rows
             
             if func == 'reset_index':
                 if params.get('drop') and params.get('drop') == 'True':
                     rm_cols = set(col_states[var2num(specs["input_table_name"])]) - set(col_states[line_num])
                     if len(rm_cols):
                         specs["type"] = "delete_columns_select_remove"
-                        specs["input_explict_col"] = list(rm_cols)
+                        specs["input_explicit_col"] = list(rm_cols)
                         specs["operation_rule"] = "Delete %s" % ",".join(rm_cols)
                     else:
                         specs["type"] = 'identical_operation'
@@ -323,7 +323,7 @@ def generate_transform_specs(script_name):
         if pi_value[1]:
             if pi_value[1][0] in ['"', "'"]:
                 cols = pi_value[1].split(",")
-                specs["output_explict_col"] = []
+                specs["output_explicit_col"] = []
                 col_tmp = ""
                 for ci in cols:
                     if col_tmp:
@@ -331,7 +331,7 @@ def generate_transform_specs(script_name):
                         col_tmp = ""
                     res = remove_quote(ci)
                     if res[0]:
-                        specs["output_explict_col"].append(res[1])
+                        specs["output_explicit_col"].append(res[1])
                     else:
                         col_tmp = ci
             elif pi_value[1].startswith('loc') or pi_value[1].startswith('iloc'):
