@@ -50,15 +50,16 @@ def generate_transform_specs():
     if request.method == "GET":
         script_content = request.args.get("script_content", "")  # POST请求用 request.form.get
         language = request.args.get("language", "r")
+        data_path_lan = os.path.join(data_path, "user_data")
         if language == 'r':
-            data_path_lan = os.path.join(data_path, "r_case")
+            # data_path_lan = os.path.join(data_path, "r_case")
             adaptor = gts.generate_transform_specs
         elif language == 'python':
-            data_path_lan = os.path.join(data_path, "python_case") 
+            # data_path_lan = os.path.join(data_path, "python_case") 
             adaptor = python_adaptor.generate_transform_specs
 
-        with open(os.path.join(data_path_lan, script_file), 'w', encoding='utf-8') as f:
-            f.write(script_content)
+        # with open(os.path.join(data_path_lan, script_file), 'w', encoding='utf-8') as f:
+        #     f.write(script_content)
         
         # -------- 以下代码是用来调试的 -------- # 
         # os.chdir(os.path.join(os.getcwd(), data_path_lan)) # 修改当前工作目录  os.path.join(os.getcwd(),script_name)
@@ -69,7 +70,7 @@ def generate_transform_specs():
         # ------------------------------------ # 
         try:
             os.chdir(os.path.join(os.getcwd(), data_path_lan)) # 修改当前工作目录  os.path.join(os.getcwd(),script_name)
-            transform_specs = adaptor(script_file)  # 判断是否有异常发生
+            transform_specs = adaptor(script_content)  # 判断是否有异常发生
         except Exception as e:
             return jsonify({'error_info': str(e)})   # 如果有异常的话，将异常信息返回给前端
         finally:
@@ -98,12 +99,12 @@ def getTablesAndParse():
         if tables['type'] == "input":
             for tablename,tablecontent in tables.items():
                 if tablename != 'type':
-                    with open(data_path + "r_case/" + tablename,'w',newline='') as file_object:
+                    with open(data_path + "user_data/" + tablename,'w',newline='') as file_object:
                         file_object.write(tablecontent)
         elif tables['type'] == "output":
             for tablename,tablecontent in tables.items():
                 if tablename != 'type':
-                    with open(data_path + "r_case/" + tablename,'w',newline='') as file_object:
+                    with open(data_path + "user_data/" + tablename,'w',newline='') as file_object:
                         file_object.write(tablecontent)
 
         #使用io.StringIO和csv.reader解析从字符串中解析出csv

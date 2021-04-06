@@ -1,29 +1,36 @@
 import re, os
+import time
 
 Rscript_path = "Rscript"  # Rscript执行路径
 
 
-def deleteMatchFiles(directory, starts="", ends="", recursion = False):
+def deleteMatchFiles(directory, starts="", ends="", recursion = False, hour = 0.5):
     '''
     按特定要求删除某路径下的匹配文件，如果starts和ends都不填写，则默认删除该目录下所有文件
     recursion: 表示是否递归删除匹配的文件，默认为否，即值删除当前路径下的匹配文件
+    hour: 表示删除大于hour个小时以前的文件
     '''
+    now = time.time()
     for path, dir_list, file_list in os.walk(directory):
         if recursion: # 递归搜索并删除
             for fi in file_list:
                 if fi.startswith(starts) and fi.endswith(ends): # "table9.csv".startswith("") 为 True
                     # print(directory, path, fi)
-                    os.remove(os.path.join(path, fi))
+                    file_path = os.path.join(path, fi)
+                    if (now - os.path.getctime(file_path))/3600 >= hour:
+                        os.remove(file_path)
         else: # 非递归搜索
             if path == directory:  # 仅在当前文件下删除
                 for fi in file_list:
                     if fi.startswith(starts) and fi.endswith(ends):
                         # print(directory, path, fi)
-                        os.remove(os.path.join(path, fi))
+                        file_path = os.path.join(path, fi)
+                        if (now - os.path.getctime(file_path))/3600 >= hour:
+                            os.remove(file_path)
                 break
 
 
-def execScript(script_name):
+def execScript(script_content):
     '''
     执行数据清洗脚本，对于每一步清洗操作，都会保存这一个状态下的table，同时保存所有清洗过程的列在一个文件内
     Return:
@@ -31,9 +38,9 @@ def execScript(script_name):
         col_states：字典：key为行号，value为列；如果该行结果为table，则记录table的所有列
         group_states: 字典：key为行号，value为分组的列：如果该行结果存在分组，则记录分组的列
     '''
-    
-    script_base_name = os.path.splitext(script_name)[0]
-    script_exec_name = script_base_name + "_exec.txt"
+    str_time = str(time.time())
+    script_exec_name = str_time + "_exec.txt"
+    colnames_name = str_time+"_colnames.txt"
     
     original_codes = []  # 源脚本代码, 每个元素对应一行代码，行号从1开始
     codes = ""
@@ -43,30 +50,29 @@ def execScript(script_name):
     
     deleteMatchFiles("./", ends="_exec.txt")
     deleteMatchFiles("./", starts="L", ends=").csv")
-    if os.path.exists("colnames.txt"):
-        os.remove("colnames.txt")
+    deleteMatchFiles("./",  ends="_colnames.txt")
     
-    with open(script_name, "r") as fp:
-        line_num = 0
-        for line in fp.readlines():
-            line_num += 1
-            codes += line
-            original_codes.append(line.strip("\n"))
-            match_r = p.findall(line)
-            if len(match_r) == 0:
-                if codes[-1] != '\n':
-                    codes += '\n'
-            else:
-                if codes[-1] != '\n':
-                    codes += '\n'
-                codes += \
+    # with open(script_name, "r") as fp:
+    line_num = 0
+    for line in script_content.split("\n"):
+        line_num += 1
+        codes += line
+        original_codes.append(line.strip("\n"))
+        match_r = p.findall(line)
+        if len(match_r) == 0:
+            if codes[-1] != '\n':
+                codes += '\n'
+        else:
+            if codes[-1] != '\n':
+                codes += '\n'
+            codes += \
 '''if (is.data.frame({value}) | is.matrix({value})) {{
-        write(paste(append(colnames({value}), {line_num}, after = 0), collapse=','), "colnames.txt", append=T)
-        write.table({value}, file="L{line_num} ({value}).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
-        if (is.grouped_df({value})) {{
-            write(paste(append(group_vars({value}), "group{line_num}", after = 0), collapse=','), "colnames.txt", append=T)
-        }}
-    }}\n'''.format(value=match_r[0][0],line_num=line_num)  # matrix和dataframe是两种不一样的table结构
+    write(paste(append(colnames({value}), {line_num}, after = 0), collapse=','), "{colnames_name}", append=T)
+    write.table({value}, file="L{line_num} ({value}).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
+    if (is.grouped_df({value})) {{
+        write(paste(append(group_vars({value}), "group{line_num}", after = 0), collapse=','), "{colnames_name}", append=T)
+    }}
+}}\n'''.format(value=match_r[0][0],line_num=line_num, colnames_name=colnames_name)  # matrix和dataframe是两种不一样的table结构
 
     with open(script_exec_name, "w", encoding='utf-8') as fp:
         fp.write(codes)
@@ -77,8 +83,8 @@ def execScript(script_name):
     
     col_states = {}  # key对应代码的行号，value对应此行代码执行完之后的table中的列
     group_states = {} # key为行号，value为分组的列
-    if os.path.exists("colnames.txt"):  # 考虑执行script没有table输出的情况
-        with open("colnames.txt", "r", ) as fp:
+    if os.path.exists(colnames_name):  # 考虑执行script没有table输出的情况
+        with open(colnames_name, "r", ) as fp:
             for line in fp.readlines():
                 line = line.strip("\n")
                 states = line.split(',')
@@ -180,7 +186,7 @@ def remove_quote(params):
     return param_list_new
 
 
-def generate_transform_specs(script_name):
+def generate_transform_specs(script_content):
     # 以下是测试：
     original_codes = [
         '''A = read.table(file = "sd.csv", "sdf.sss")''',
@@ -209,7 +215,7 @@ def generate_transform_specs(script_name):
     
     group_states = {4: 'T'}
     
-    original_codes, col_states, group_states = execScript(script_name)
+    original_codes, col_states, group_states = execScript(script_content)
 
     p = re.compile("^\s*([\w\.]+?)\s*(=|<-)\s*([\w\.:]+?)\s*[(](.+)[)]")  # 设置函数名和outputname必须是以 A-Za-z0-9_. 这些符号组成的
     p_match_num = re.compile("L(.+) \(.+\).csv") # p_match_num = re.compile("table(.+)\.csv")

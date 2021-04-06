@@ -76,6 +76,20 @@
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
+            <el-button round @click="generateGlyphs" style="
+                background:#6391D7;
+                font-family: PingFangSC-Regular;
+                font-size: 18px;
+                color: #FFFFFF;
+                letter-spacing: -0.7px;
+                line-height: 17px;
+                font-weight: 400;
+                display:flex;
+                align-items: center;
+                height: 38px;
+                margin-top: 3px;
+                margin-left: 8px"
+              >Run</el-button>
           </div>
         </el-row>
         <div id="monaco" style="height:42vh; width: 98%"></div>
@@ -138,20 +152,7 @@
         <el-col style="height:49vh">
           <el-row type="flex" justify="space-between" style="height:50px;background:#F5F5F5;">
             <div id="tag3"></div>
-            <el-button round @click="generateGlyphs" style="
-            background:#6391D7;
-                font-family: PingFangSC-Regular;
-                font-size: 14px;
-                color: #FFFFFF;
-                letter-spacing: -0.7px;
-                line-height: 17px;
-                font-weight: 400;
-                display:flex;
-                align-items: center;
-                height: 38px;
-                margin-top: 5px;
-                margin-right: 16px"
-              >Run</el-button>
+
         </el-row>
            <div id="glyphs" style="height:43vh"></div>
         </el-col>
@@ -287,6 +288,7 @@ export default {
       ],
       tableHead: [
       ],
+      dataTables:{},
       show_table_name: true,
       decorations: null,
       cases:{
@@ -313,6 +315,7 @@ export default {
         // });
         this.one_case = one_case;
         if (this.language !== one_case.split("_")[0]){
+          console.log("selectCase: true");
           this.changeModel(one_case.split("_")[0])
         }
         this.getScriptData(one_case)
@@ -404,8 +407,20 @@ export default {
 
         // console.log(this.decorations);  
     },
-    getTableData(table_file) {
-      const table_path = `${request_api}/data/${this.language}_case/${table_file}?a=${Math.random()}`;
+    async getTableData(table_file) {
+     // 降低网络带宽，减少请求次数，同时避免
+      if (this.dataTables[table_file] == undefined){
+        const table_path = `${request_api}/data/user_data/${table_file}?a=${Math.random()}`;
+        await getCsv(table_path, this.dataTables, table_file)
+      }
+
+      this.table_name = table_file
+      console.log(this.dataTables);
+      this.tableData = this.dataTables[table_file].tableData
+      this.tableHead = this.dataTables[table_file].tableHead
+      
+       /*
+      const table_path = `${request_api}/data/user_data/${table_file}?a=${Math.random()}`;
       // dataIn1_csv = await getCsv(table_path);
       d3.text(table_path).then(data => {
         // console.log("text", d3.csvParseRows(data))
@@ -415,6 +430,7 @@ export default {
         let id = 0
         this.tableHead = data[0].map(value => [value, id++])
       })
+      */
       /*
       d3.csv(table_path).then((data) => {
         this.table_name = table_file;
@@ -456,6 +472,8 @@ export default {
           },
         })
         .then((response) => {
+          // 执行 run 之前先 清空当前数据
+          this.dataTables = {};
           // 生成glyphs的操作
           if (response.data.error_info) {
             this.$message({
@@ -698,21 +716,21 @@ export default {
         if (transform_specs[i].input_table_file && transform_specs[i].input_table_file[0] !== '*') {
           if (typeof transform_specs[i].input_table_file === "string") {
             dataIn1_csv = await getCsv(
-              `${request_api}/data/${this.language}_case/${transform_specs[i].input_table_file}?a=${Math.random()}`
+              `${request_api}/data/user_data/${transform_specs[i].input_table_file}?a=${Math.random()}`, this.dataTables, transform_specs[i].input_table_file
             );
             if(!tableInf[transform_specs[i].input_table_file]){
               tableInf[transform_specs[i].input_table_file] = [transform_specs[i].input_table_name,dataIn1_csv.length,dataIn1_csv[0].length]
             }
           } else {
             dataIn1_csv = await getCsv(
-              `${request_api}/data/${this.language}_case/${transform_specs[i].input_table_file[0]}?a=${Math.random()}`
+              `${request_api}/data/user_data/${transform_specs[i].input_table_file[0]}?a=${Math.random()}`, this.dataTables, transform_specs[i].input_table_file[0]
             );
             if(!tableInf[transform_specs[i].input_table_file[0]]){
               tableInf[transform_specs[i].input_table_file[0]] = [transform_specs[i].input_table_name[0],dataIn1_csv.length,dataIn1_csv[0].length]
             }
             if (transform_specs[i].input_table_file.length > 1)
               dataIn2_csv = await getCsv(
-                `${request_api}/data/${this.language}_case/${transform_specs[i].input_table_file[1]}?a=${Math.random()}`
+                `${request_api}/data/user_data/${transform_specs[i].input_table_file[1]}?a=${Math.random()}`, this.dataTables, transform_specs[i].input_table_file[1]
               );
               if(!tableInf[transform_specs[i].input_table_file[1]]){
                 tableInf[transform_specs[i].input_table_file[1]] = [transform_specs[i].input_table_name[1],dataIn2_csv.length,dataIn2_csv[0].length]
@@ -722,21 +740,21 @@ export default {
         if (transform_specs[i].output_table_file && transform_specs[i].output_table_file[0] !== '#') {
           if (typeof transform_specs[i].output_table_file === "string") {
             dataOut1_csv = await getCsv(
-              `${request_api}/data/${this.language}_case/${transform_specs[i].output_table_file}?a=${Math.random()}`
+              `${request_api}/data/user_data/${transform_specs[i].output_table_file}?a=${Math.random()}`, this.dataTables, transform_specs[i].output_table_file
             );
             if(!tableInf[transform_specs[i].output_table_file]){
               tableInf[transform_specs[i].output_table_file] = [transform_specs[i].output_table_name,dataOut1_csv.length,dataOut1_csv[0].length]
             }
           } else {
             dataOut1_csv = await getCsv(
-              `${request_api}/data/${this.language}_case/${transform_specs[i].output_table_file[0]}?a=${Math.random()}`
+              `${request_api}/data/user_data/${transform_specs[i].output_table_file[0]}?a=${Math.random()}`, this.dataTables, transform_specs[i].output_table_file[0]
             );
             if(!tableInf[transform_specs[i].output_table_file[0]]){
               tableInf[transform_specs[i].output_table_file[0]] = [transform_specs[i].output_table_name[0],dataOut1_csv.length,dataOut1_csv[0].length]
             }
             if (transform_specs[i].output_table_file.length > 1)
               dataOut2_csv = await getCsv(
-              `${request_api}/data/${this.language}_case/${transform_specs[i].output_table_file[1]}?a=${Math.random()}`
+              `${request_api}/data/user_data/${transform_specs[i].output_table_file[1]}?a=${Math.random()}`, this.dataTables, transform_specs[i].output_table_file[1]
             );
             if(!tableInf[transform_specs[i].output_table_file[1]]){
               tableInf[transform_specs[i].output_table_file[1]] = [transform_specs[i].output_table_name[1],dataOut2_csv.length,dataOut2_csv[0].length]

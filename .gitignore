@@ -27,8 +27,9 @@ pnpm-debug.log*
 /backend/data/table*.csv
 /backend/data/*/L*).csv
 /backend/data/colnames.txt
-/backend/data/*/colnames.txt
+/backend/data/*/*_colnames.txt
 /backend/data/*_exec.txt
+/backend/data/*/*_exec.txt
 /backend/data/*test.txt
 /backend/data/benchmarks
 /backend/data/repo
