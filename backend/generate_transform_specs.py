@@ -439,7 +439,7 @@ def generate_transform_specs(script_name):
                     code1 = "%s=select(%s,%s)" % (specs["output_table_name"], specs["input_table_name"], '`%s`' % "`,`".join(specs["input_explicit_col"]))
                     script_code = original_codes[:line_num-1]
                     script_code.append(code1)  # 将原先的那一行代码替换掉
-                    output_t1 = "table%s_1.csv" % line_num
+                    output_t1 = "L%d_1 (%s).csv" % (line_num, specs["output_table_name"])
                     script_code.append('''write.table({input_t}, file="{output_t1}", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)'''\
                         .format(input_t = specs["output_table_name"], output_t1=output_t1))
                     
@@ -451,9 +451,9 @@ def generate_transform_specs(script_name):
                         # 0表示执行成功，否则表示执行失败
                         raise Exception("Failed to execute the %s script!" % script_exec_name)  # 如果执行失败，抛出异常
                     
-                    os.rename(specs["output_table_file"], "table%d_2.csv" % line_num) # 重命名文件
+                    os.rename(specs["output_table_file"], "L%d_2 (%s).csv" % (line_num, specs["output_table_name"])) # 重命名文件
 
-                    specs["output_table_name"] = output_tbl + "_1"
+                    specs["output_table_name"] = output_tbl  # + "_1"
                     specs["output_table_file"] = output_t1
 
                     specs_after = {
@@ -461,7 +461,7 @@ def generate_transform_specs(script_name):
                         "input_table_name": specs["output_table_name"],
                         "input_table_file": specs["output_table_file"],
                         "output_table_name": output_tbl,
-                        "output_table_file": "table%d_2.csv" % line_num,
+                        "output_table_file": "L%d_2 (%s).csv" % (line_num, specs["output_table_name"]),
                         "input_explicit_col": rename_cols,
                         "operation_rule": "Rename"
                     }
@@ -525,7 +525,7 @@ def generate_transform_specs(script_name):
                 code1 = p_sort.sub('', original_codes[line_num-1])
                 script_code = original_codes[:line_num-1]
                 script_code.append(code1)  # 将原先的那一行代码替换掉
-                output_t1 = "table%s_1.csv" % line_num
+                output_t1 = "L%d_1 (%s).csv" % (line_num, specs["output_table_name"])   # "L%d_1 (%s).csv" % (line_num, specs["output_table_name"])
                 script_code.append('''write.table({input_t}, file="{output_t1}", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)'''\
                     .format(input_t = specs["output_table_name"], output_t1=output_t1))
                 
@@ -537,9 +537,9 @@ def generate_transform_specs(script_name):
                     # 0表示执行成功，否则表示执行失败
                     raise Exception("Failed to execute the %s script!" % script_exec_name)  # 如果执行失败，抛出异常
                 
-                os.rename(specs["output_table_file"], "table%d_2.csv" % line_num) # 重命名文件
+                os.rename(specs["output_table_file"], "L%d_2 (%s).csv" % (line_num, specs["output_table_name"])) # 重命名文件
 
-                specs["output_table_name"] = output_tbl + "_1"
+                specs["output_table_name"] = output_tbl  # + "_1"
                 specs["output_table_file"] = output_t1
 
                 specs_after = {
@@ -547,7 +547,7 @@ def generate_transform_specs(script_name):
                     "input_table_name": specs["output_table_name"],
                     "input_table_file": specs["output_table_file"],
                     "output_table_name": output_tbl,
-                    "output_table_file": "table%d_2.csv" % line_num,
+                    "output_table_file": "L%d_2 (%s).csv" % (line_num, specs["output_table_name"]),
                     "input_explicit_col": specs["output_explicit_col"],
                     "operation_rule": "Sort: desc(%s)" % specs["output_explicit_col"][0]
                 }

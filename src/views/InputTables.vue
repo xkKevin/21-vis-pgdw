@@ -1,11 +1,9 @@
 <template>
-  <div id="inputTables" >
-      <el-row type="flex" justify="space-between">
-        <!-- <div>Upload Tables</div>  -->
-      </el-row>
+  <div id="inputTables">
       <div id="upload" style="text-align:left;">
+           <!-- style="border-bottom: 1px solid black" -->
          <el-row>
-              <el-col style="margin-top:5%;height:20vh;border:none;width:8vw">
+            <el-col style="margin-top:3%;height:13vh;border:none;width: 100%; background:#F6F8FB; display: flex; flex-direction: column;">
               <el-upload
               action=""
               ref="inputfiles"
@@ -13,16 +11,22 @@
               :on-change="handleInputChange"
               :auto-upload="false"
               :show-file-list="false"
+              accept=".csv, .txt"
               multiple
               >
-                  <el-button round slot="trigger" size="small" type="primary" style="border:1px solid #699E9D;background:white;margin-left:17px">
-                    <img style="" src="@/assets/images/input.svg"/>
-                    <p style="display:inline;color: #666666;margin-left:9px;font-family: PingFangSC-Regular;font-weight: 400;">Source</p>
+                  <el-button round slot="trigger" size="small" type="primary" style="border:1px solid #699E9D;background:white;margin-left:17px; height: 32px">
+                    <div style="position:relative; top:-2px">
+                        <img style="" src="@/assets/images/input.svg"/>
+                        <span style="color: #666666;margin-left:9px;font-family: PingFangSC-Regular;font-weight: 400; font-size: 16px;">Source</span>
+                    </div>
                   </el-button>
+                  
               </el-upload>
-              <div v-for="(v,k) in inputfileList" :key="k" style="margin-left:1vw;margin-top:1vh;width:9vw">
-                <img src="@/assets/images/circle_input.svg"/>
-                {{v.name}}
+              <div style="width:100%; overflow: auto; flex: 1;">
+                <div v-for="(v,k) in inputfileList" :key="k" style="margin-left:17px;margin-top:1vh;">
+                    <img src="@/assets/images/circle_input.svg"/>
+                    {{v.name}}
+                </div>
               </div>
           </el-col>
           <!-- <el-col style="margin-top:5%;height:20vh;border:none;width:8vw">
@@ -42,11 +46,9 @@
               </el-upload>
           </el-col> -->
          </el-row>
-          
-          <hr style=""> 
-          <el-row style="background:white">
+        
+          <el-row style="background:white; padding: 1vh; text-align:center; border-bottom: 2px dashed #E6E6E6;">
               <!-- <el-button round @click="submitUpload" size="small" type="primary">upload and generate</el-button> -->
-
               <el-button round style="
                 background:#6391D7;
                 font-family: PingFangSC-Regular;
@@ -55,16 +57,13 @@
                 letter-spacing: -0.7px;
                 line-height: 17px;
                 font-weight: 400;
-                display:flex;
-                align-items: center;
-                margin-left:7vw;
                 " 
                 @click="submitUpload" size="small" type="primary">
+                <!-- <i class="el-icon-upload2"></i> -->
                   Upload
               </el-button>
           </el-row>
       </div>
-
   </div>
 </template>
 

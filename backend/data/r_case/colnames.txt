@@ -1,6 +1,11 @@
-3,ID,T,P.1,P.2,Q.1
-4,ID,T,MORPH394,P
-5,ID,T,MORPH469,Channel,P
-6,ID,T,Channel,P
-7,ID,T,Channel,P
-8,ID,Channel,T,P
+3,breaks,wool,tension
+4,breaks,wool,tension
+5,breaks,wool,tens
+6,breaks,wool,tens
+group6,tens
+7,breaks,wool,tens,count
+group7,tens
+8,breaks,wool,tens,count
+9,breaks,wool,tens,count,rate
+10,breaks,wool,tension
+11,breaks,wool,tension

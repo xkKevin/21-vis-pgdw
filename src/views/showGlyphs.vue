@@ -3,27 +3,51 @@
     
     <!-- <remote-script src="https://github.com/bumbu/svg-pan-zoom/blob/master/dist/svg-pan-zoom.min.js"></remote-script> -->
     <!-- <remote-script src="http://ariutta.github.io/svg-pan-zoom/dist/svg-pan-zoom.min.js"></remote-script> -->
-    <remote-script src="http://localhost/data/static/svg-pan-zoom.js"></remote-script>
+    <remote-script src="https://somnus.projects.zjvis.org/data/static/svg-pan-zoom.js"></remote-script>
     <el-row type="flex" justify="center" style="height:48.6vh">
-      <el-col style="width:20vw;margin-right:0.5vw;" >
-        <el-row>
+      <el-col style="width:20vw;margin-right:5px;" >
+        <el-row style="height: 100%; display: flex; flex-direction: column;">
           <el-header height="60px" style="background:black">
-            <div style="text-align: center;color:white; font-size: 1.5em; font-weight: bold; line-height:60px ">Somnus</div> 
- 
+            <div style="text-align: center;color:white; font-size: 20pt; font-family:Arial; font-weight: bold; line-height:60px ">Somnus</div> 
           </el-header>
-          <div id="tag0" style="background:#F5F5F5;height:50px"> 
-            
+          <div style="background:#F6F8FB; flex: 1; display: flex; flex-direction: column;">
+            <div id="tag0" class="tag" style="height:50px"></div>
+            <el-row style="flex: 1; height:100%; display: flex; flex-direction: column;">
+              <upload-tables></upload-tables>
+              <el-row style="background:white; padding-top: 15px; flex: 1; padding-left:1vh;">   
+                <span style="font-family: Arial; font-size: 20px;">Case:</span>
+                <el-dropdown @command="selectCase" style="margin-left: 8px">
+                  <span
+                    class="el-dropdown-link"
+                    style="
+                      width: 138px;
+                      display: inline-block;
+                      text-align: center;
+                      padding: 3px 0;
+                    "
+                  >
+                    {{ one_case }}
+                  </span>
+                  <i class="el-icon-arrow-down el-icon--right"></i>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item
+                      v-for="key in Object.keys(cases)"
+                      :key="key"
+                      :value="key"
+                      :command="key"
+                    >
+                      {{ key }}
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </el-row>
+            </el-row>
           </div>
-          <el-row style="background:#F6F8FB">
-            <upload-tables style="margin-top:2vh"></upload-tables>
-          </el-row>
-         
         </el-row>
       </el-col>
     
       <el-col
-        class="script_table"
-        style="width:40vw;margin-right:0.5vw;padding:0 0 0 0"
+        style="width:40vw; padding:0 0 0 0"
       >
         <el-row type="flex" justify="space-between" style="height:50px;background:#F5F5F5;">
           <div id="tag1" ></div>
@@ -54,13 +78,14 @@
             </el-dropdown>
           </div>
         </el-row>
-        <div id="monaco" style="height:42vh;"></div>
+        <div id="monaco" style="height:42vh; width: 98%"></div>
+        <!-- style="width:40vw; height:100%; padding:0 0 0 0; display: grid; grid-template-columns: [c1] 100%; grid-template-rows: [r1] 50px [r2] auto;" -->
       </el-col>
       <el-col
-        class="script_table"
-        style="width:40vw;padding:0 0 0 0"
+        class="table_panel"
+        style="width:40vw; flex-direction: column; display: flex;"
       >
-        <el-row type="flex" justify="space-between" style="height:50px;background:#F5F5F5;">
+        <el-row type="flex" justify="space-between" style="height: 50px; background:#F5F5F5;">
           <div id="tag2"></div>
           <div class="title_right">
             {{ table_name }}
@@ -92,8 +117,8 @@
             -->
           </div>
         </el-row>
-
-        <el-table  :data="tableData" fit height="42vh">
+        <div style="border-left: 2px solid #E6E6E6; padding:0px 20px; flex: 1; display: flex; align-items: center; ">
+        <el-table stripe :data="tableData" height="40vh" style="border: 2px solid #E6E6E6;">
           <el-table-column type="index"> </el-table-column>
            <!-- label 为 显示在table上的名字 -->
           <el-table-column
@@ -106,9 +131,10 @@
             </template>
           </el-table-column>
         </el-table>
+        </div>
       </el-col>   
     </el-row>
-    <el-row style="margin-top:1vh">
+    <el-row style="margin-top:7px">
         <el-col style="height:49vh">
           <el-row type="flex" justify="space-between" style="height:50px;background:#F5F5F5;">
             <div id="tag3"></div>
@@ -254,16 +280,6 @@ export default {
       svg:'',
       editor: null, // 文本编辑器
       table_name: "",
-      all_tables: [
-        "benchmark5.txt",
-        "benchmark19.txt",
-        "test.csv",
-        "table1.csv",
-        "table2.csv",
-        "table3.csv",
-        "table4.csv",
-        "table5.csv",
-      ],
       script_content: "", //'print("hello world!")',
       language: "r",
       all_langs: ["r", "python"],
@@ -272,17 +288,40 @@ export default {
       tableHead: [
       ],
       show_table_name: true,
-      decorations: null
+      decorations: null,
+      cases:{
+          "r_case1": "input1.csv",
+          "r_case2": "warpbreaks.csv",
+          "r_case3": "Energy-Poverty 32641 homes.csv",
+          "r_case4": "fy2018.csv",
+          "r_case5": "benchmark5.txt",
+          "r_case6": "benchmark19.txt",
+          "python_case1": "apple-iphone-revenue.csv",
+          // "python_case2": "",
+      },
+      one_case: "Select a case"
     };
   },
   components:{
     uploadTables,
   },
   methods: {
+    selectCase(one_case="r_case1"){
+        // this.$message({
+        //   message: one_case,
+        //   type: "info", // success/warning/info/error
+        // });
+        this.one_case = one_case;
+        if (this.language !== one_case.split("_")[0]){
+          this.changeModel(one_case.split("_")[0])
+        }
+        this.getScriptData(one_case)
+        this.getTableData(this.cases[one_case])
+    },
     drawTag(id,text){
       let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
       svg.setAttribute('id', `${id}svg`);
-      svg.setAttribute('width', "200px");
+      svg.setAttribute('width', "230px");
       svg.setAttribute('height', "40px");
       svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
 
@@ -293,7 +332,7 @@ export default {
       document.getElementById(id).appendChild(svg)
       let g = d3.select(`#${id}svg`).append("g")
       g.append('path')
-      .attr('d','M0,0 L0,40 L150,40 L170,0 L0,0')
+      .attr('d','M0,0 L0,40 L200,40 L230,0 L0,0')
       .attr('fill','#62ADB2')
 
       // g.append("rect")
@@ -306,17 +345,20 @@ export default {
       g.append('text')
       .attr('x',0)
       .attr('y',0)
-      .attr('dy',25)
-      .attr('dx',5)
+      .attr('dy',26)
+      .attr('dx',18)
       .attr('text-anchor', 'start')
       .attr('fill','white')
-      .attr('font-size',`20px`)
+      .attr('font-size',`19px`)
+      .attr('font-weight','bold')
+      .attr('font-family','Arial')
       .text(text)
     },
     initData() {
       this.initEditor();
-      this.getTableData(this.all_tables[0]);
-      this.getScriptData();
+      // this.getTableData(this.cases["r_case1"]);
+      // this.getScriptData();
+      this.selectCase()
     },
     initEditor() {
       // 初始化编辑器，确保dom已经渲染
@@ -385,17 +427,20 @@ export default {
       });
       */
     },
-    getScriptData(script_content = "", language = "") {
+    getScriptData(case_file = "") {
       const path = `${request_api}/getScriptData`;
       axios
-        .get(path, { params: { script_content, language } })
+        .get(path, { params: { case_file } })
         .then((response) => {
           this.script_content = response.data.script_content;
-          this.language = response.data.language;
           this.changeModel(this.language, this.script_content, false);
         })
         .catch((error) => {
           console.log(error);
+          this.$message({
+            message: error,
+            type: "error", // success/warning/info/error
+          });
         });
     },
     generateGlyphs() {
@@ -1908,6 +1953,7 @@ export default {
             d3.selectAll("circle[class^='edge']").attr('style',`fill: gray;`)
             d3.selectAll("line[class^='edge']").attr('stroke','gray')
             d3.selectAll("path[class^='arrow']").attr('fill','gray')
+            d3.selectAll(`path[class^='glyph']`).attr('stroke','gray')
             self.codeHighlight(0,self.editor,self.decorations)
         }
       })
@@ -1947,28 +1993,53 @@ export default {
 </script>
 
 <style>
+#showGlyphs{
+  border: 2px solid #E3E6F0;
+  background-color: #E3E6F0;
+}
+
+
+tr{
+  color: black;
+}
+/* thead tr   !important*/
+.el-table th {  
+  background-color: #F5F5F5;
+  color: black;
+}
+
+/* .el-table__row--striped td{
+  background-color: #F6F8FB !important;
+} */
+
 .title_right {
   display:flex; 
   align-items: center; 
-  margin-right: 16px;
+  margin-right: 20px;
+  font-family: Arial;
+  font-size: 20px;
 }
 .el-col,
 .el-header,
 .el-aside,
 .el-main,
 .el-footer {
-  border: 1px solid #000;
+  /* border: 1px solid grey; */
+  background-color: white;
 }
-.script_table,
 footer.el-footer {
   padding: 10px;
 }
 .el-dropdown {
-  border: 1px solid #000;
+  border: 1px solid grey;
+  /* background-color: lightblue; */
+  font-size: 20px;
 }
 .el-dropdown-link {
   cursor: pointer;
   color: #409eff;
+  font-family: Arial;
+  font-size: 20px;
 }
 .el-icon-arrow-down {
   font-size: 12px;

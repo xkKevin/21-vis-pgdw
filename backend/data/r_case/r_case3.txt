@@ -1,0 +1,10 @@
+library(dplyr)
+
+bailey = read.csv("Energy-Poverty 32641 homes.csv")
+landlords = dplyr::count(bailey, OWNERNME1, sort = TRUE)
+landlords = subset(landlords, n>1)
+by_owner = group_by(bailey, OWNERNME1)
+utilities = dplyr::summarise(by_owner, cost = sum(Unit.Utilities.Cost))
+ownercost = left_join(landlords, utilities, by = 'OWNERNME1')
+ownercost = rename(ownercost, "num_properties"="n")
+ownercost = mutate(ownercost, cost_per_property=cost / num_properties)

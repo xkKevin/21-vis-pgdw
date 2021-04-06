@@ -30,14 +30,15 @@ def index():
 @app.route('/getScriptData', methods=['GET'])
 def getData():
     if request.method == "GET":
-        script_content = request.args.get("script_content", "")  # POST请求用 request.form.get
-        if script_content:
-            language = request.args.get("language")
-        else:
-            with open(data_path + 'code5.txt', 'r', encoding='utf-8') as f:
+        case_file = request.args.get("case_file", "")  # POST请求用 request.form.get
+        if case_file:
+            print("%s%s/%s.txt" % (data_path, case_file[:-1], case_file))
+            with open("%s%s/%s.txt" % (data_path, case_file[:-1], case_file), 'r', encoding='utf-8') as f:
                 script_content = f.read() # 直接读取文件内容
-            language = "r"
-        return jsonify({'script_content': script_content, 'language': language})
+        else:
+            with open(data_path + 'r_case/r_case1.txt', 'r', encoding='utf-8') as f:
+                script_content = f.read() # 直接读取文件内容
+        return jsonify({'script_content': script_content})
     else:
         return jsonify({'error': "Not GET Request!"})
 

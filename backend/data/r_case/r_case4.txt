@@ -1,0 +1,10 @@
+library(dplyr)
+
+fy2018 <- read.csv('fy2018.csv')
+fy_overtime = arrange(fy2018, desc(date))
+fy_overtime = distinct(fy_overtime, emplid, name)
+fy_overtime = group_by(fy_overtime, emplid)
+fy_overtime = mutate(fy_overtime, n = row_number())
+overtime.names.2018 = filter(fy_overtime, n == 1)
+overtime.names.2018 = select(overtime.names.2018, emplid, name.standardized = name)
+fy2018 = merge(fy2018, overtime.names.2018, by = 'emplid', all = T)
