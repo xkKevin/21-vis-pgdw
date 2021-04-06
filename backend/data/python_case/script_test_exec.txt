@@ -95,7 +95,7 @@ if (isinstance(r_sum, pd.DataFrame)):
 
 
 # rev_sales2 = pd.merge([s_sum, r_sum])
-rev_sales = pd.concat([s_sum, r_sum])
+rev_sales = pd.concat([s_sum, r_sum], axis = 1)
 if (isinstance(rev_sales, pd.DataFrame)):
     columns = list(rev_sales.index.names)
     if columns[0]:

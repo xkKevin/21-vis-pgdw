@@ -43,9 +43,13 @@
   ],
   "16": [
     "iPhone",
+    "YOY growth",
+    "iPhone",
     "YOY growth"
   ],
   "17": [
+    "iPhone",
+    "YOY growth",
     "iPhone",
     "YOY growth"
   ]

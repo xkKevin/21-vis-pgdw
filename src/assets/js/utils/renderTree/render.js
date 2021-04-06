@@ -2,21 +2,28 @@ import { nodeSize, lineAttr } from '@/assets/js/config/config'
 import * as monaco from "monaco-editor";
 import * as d3 from 'd3'
 
-function codeHighlight (line,editor,decorations){
-    console.log(line)
-    if (line == 0){
-      editor.deltaDecorations(decorations, [])
-    }else{
-      editor.deltaDecorations(decorations, [{
-          range: new monaco.Range(line,1,line,1),
-          options: {
-            isWholeLine: true,
-            className: 'myContentClass',
-            glyphMarginClassName: 'myGlyphMarginClass'
-          }
+function codeHighlight(line, editor, decorations) {
+    if (line == 0) {
+        editor.deltaDecorations(decorations, [{
+            range: new monaco.Range(line, 1, line, 1),
+            options: {
+                isWholeLine: true,
+                className: 'myContentClass2',
+                glyphMarginClassName: 'myGlyphMarginClass2'
+            }
+        }])
+    } else {
+        editor.deltaDecorations(decorations, [{
+            range: new monaco.Range(line, 1, line, 1),
+            options: {
+                isWholeLine: true,
+                className: 'myContentClass',
+                glyphMarginClassName: 'myGlyphMarginClass'
+            }
         }])
     }
-  }
+}
+
 function drawNode(g, specs, nodePos, specsInf, showTableFunc) {
     let nodeName = []
     for (let idx = 0; idx < specs.length; idx++) {
@@ -176,7 +183,7 @@ function drawNode(g, specs, nodePos, specsInf, showTableFunc) {
     }
 }
 
-function drawEdge(g, specs, nodePos, editor,decorations) {
+function drawEdge(g, specs, nodePos, editor, decorations) {
 
     for (let idx = 0; idx < specs.length; idx++) {
         let defs = g.append("defs")
@@ -219,19 +226,7 @@ function drawEdge(g, specs, nodePos, editor,decorations) {
                 .attr("marker-end", `url(#arrow_${idx})`)
                 .attr('class', `edge_${idx}`)
                 .on('click', function(event) {
-                    d3.selectAll(".myGlyphMarginClass").attr("style", "backgroud: white;")
-                    d3.selectAll(".myContentClass").attr("style", "backgroud: white;")
-                    // d3.selectAll(".myGlyphMarginClass").attr("class", "null")
-                    // d3.selectAll(".myContentClass").attr("class", "null")
-                    codeHighlight(lineNum,editor,decorations)
-                    // var decorations = editor.deltaDecorations([], [{
-                    //     range: new monaco.Range(lineNum, 1, lineNum, 1),
-                    //     options: {
-                    //         isWholeLine: true,
-                    //         className: "myContentClass",
-                    //         glyphMarginClassName: 'myGlyphMarginClass'
-                    //     }
-                    // }]);
+                    codeHighlight(lineNum, editor, decorations)
                 })
         } else if (typeof(specs[idx].input_table_file) === 'string') {
             let meetingPosY = nodePos[specs[idx].input_table_file][1] + nodeSize.height / 2
@@ -300,9 +295,7 @@ function drawEdge(g, specs, nodePos, editor,decorations) {
                 // .style("stroke", "black")
                 .attr('class', `edge_${idx}`)
                 .on('click', function(event) {
-                    d3.selectAll(".myGlyphMarginClass").attr("style", "backgroud: white;")
-                    d3.selectAll(".myContentClass").attr("style", "backgroud: white;")
-                    codeHighlight(lineNum,editor,decorations)
+                    codeHighlight(lineNum, editor, decorations)
                 })
 
             g.append('line')
@@ -314,9 +307,7 @@ function drawEdge(g, specs, nodePos, editor,decorations) {
                 .attr('stroke-width', lineAttr.strokeWidth)
                 .attr('class', `edge_${idx}`)
                 .on('click', function(event) {
-                    d3.selectAll(".myGlyphMarginClass").attr("style", "backgroud: white;")
-                    d3.selectAll(".myContentClass").attr("style", "backgroud: white;")
-                    codeHighlight(lineNum,editor,decorations)
+                    codeHighlight(lineNum, editor, decorations)
                 })
 
             g.append('line')
@@ -328,9 +319,7 @@ function drawEdge(g, specs, nodePos, editor,decorations) {
                 .attr('stroke-width', lineAttr.strokeWidth)
                 .attr('class', `edge_${idx}`)
                 .on('click', function(event) {
-                    d3.selectAll(".myGlyphMarginClass").attr("style", "backgroud: white;")
-                    d3.selectAll(".myContentClass").attr("style", "backgroud: white;")
-                    codeHighlight(lineNum,editor,decorations)
+                    codeHighlight(lineNum, editor, decorations)
                 })
 
             g.append('line')
@@ -343,9 +332,7 @@ function drawEdge(g, specs, nodePos, editor,decorations) {
                 .attr("marker-end", `url(#arrow_${idx})`)
                 .attr('class', `edge_${idx}`)
                 .on('click', function(event) {
-                    d3.selectAll(".myGlyphMarginClass").attr("style", "backgroud: white;")
-                    d3.selectAll(".myContentClass").attr("style", "backgroud: white;")
-                    codeHighlight(lineNum,editor,decorations)
+                    codeHighlight(lineNum, editor, decorations)
                 })
         }
     }

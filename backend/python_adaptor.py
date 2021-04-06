@@ -211,7 +211,7 @@ def generate_transform_specs(script_name):
     var2num = lambda var: int(p_match_num.findall(var2table[var])[0]) # 根据变量找到对应的行号
     
     p_loc = re.compile("loc\s*\[\s*(.+?)\s*$")
-    
+    p_brackets = re.compile("\[(.+)\]")
     
     for pi_key, pi_value in parser_info.items():
         line_num = pi_key
@@ -233,9 +233,11 @@ def generate_transform_specs(script_name):
                 specs["operation_rule"] = 'Load table from ' + file
                 
             if func == "concat":
-                specs["input_table_name"] = remove_quote(pi_value[3][1:-1].split(","), flag=True)
+                str_tables = p_brackets.findall(pi_value[3])[0]
+
+                specs["input_table_name"] = remove_quote(str_tables.split(","), flag=True)
                 specs["input_table_file"] = [var2table[specs["input_table_name"][0]], var2table[specs["input_table_name"][1]]]
-                if 'axis' in params.keys() and params.get('axis') == 1:
+                if 'axis' in params.keys() and params.get('axis') == '1':
                     specs["type"] = "combine_tables_extend_column"
                     specs["operation_rule"] = "Extend tables along column axis"
                 else:
