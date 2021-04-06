@@ -36,7 +36,7 @@ export function separate_rows(m1, m2, rule, t1_name, t2_name,outColor,name,showT
     .attr('fill','none')
     .attr('stroke','white')
     .attr('stroke-width',"1px")
-    .attr('class',`glyph_${name}`)
+    // .attr('class',`glyph_${name}`)
 
     g.append("path")
     .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2},${parseInt(height) + 4} L${parseInt(width) / 2 + 4},${parseInt(height)}`)

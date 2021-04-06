@@ -1845,6 +1845,7 @@ export default {
       d3.selectAll("circle[class^='edge']").attr('style',`fill: gray;`)
       d3.selectAll("line[class^='edge']").attr('stroke','gray')
       d3.selectAll("path[class^='arrow']").attr('fill','gray')
+      d3.selectAll(`path[class^='glyph']`).attr('stroke','gray')
 
         let tableId = `L${e.target.position.lineNumber} (`
         let pos = null
@@ -1872,7 +1873,7 @@ export default {
           // d3.select(`#arrow_${pos}`).attr('fill',fill_color)
           d3.selectAll(`path.arrow_${pos}`).attr('fill',fill_color)
           d3.selectAll(`rect.glyph_${pos}`).attr('stroke',fill_color)
-
+          d3.selectAll(`path.glyph_${pos}`).attr('stroke',fill_color)
           if(typeof(transform_specs[pos].input_table_file) === 'string'){
             let lastIdx = transform_specs[pos].input_table_file.indexOf(" (")  // .
             d3.select(`#node_${transform_specs[pos].input_table_file.substring(0,lastIdx)}`).attr('stroke',fill_color)
