@@ -1,0 +1,10 @@
+library(tidyr)
+library(dplyr)
+
+aa = as.data.frame(sleep)
+
+bb = ungroup(trees)
+
+aa = group_split(table1, year)
+
+t_na = drop_na(trees)

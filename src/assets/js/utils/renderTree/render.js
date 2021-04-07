@@ -60,21 +60,31 @@ function drawNode(g, specs, nodePos, specsInf, showTableFunc) {
 
         if (nodeName[idx][0] !== '*' && nodeName[idx][0] !== '#') {
             nodeRect.on('click', function(event) {
-                showTableFunc(nodeName[idx])
-            })
-
-            let firstIdx = 0
-            for (let s = 0; s < nodeName[idx].length; s++) {
-                if (nodeName[idx][s] >= '0' && nodeName[idx][s] <= '9') {
-                    firstIdx = s
-                    break
+                    showTableFunc(nodeName[idx])
+                })
+                /*
+                let firstIdx = 0
+                for (let s = 0; s < nodeName[idx].length; s++) {
+                    if (nodeName[idx][s] >= '0' && nodeName[idx][s] <= '9') {
+                        firstIdx = s
+                        break
+                    }
                 }
-            }
+                console.log(firstIdx);
+                */
+            let firstIdx = 1
             let lastIdx = nodeName[idx].indexOf(" (")
+            let lineNum
+            if (lastIdx === -1) {
+                firstIdx = nodeName[idx].indexOf("/") + 1
+                lastIdx = nodeName[idx].indexOf(".csv")
+                lineNum = "∅"
+                nodeRect.attr('id', `node_${nodeName[idx].substring(firstIdx,lastIdx)}`)
+            } else {
+                lineNum = nodeName[idx].substring(1, lastIdx)
+                nodeRect.attr('id', `node_${nodeName[idx].substring(0,lastIdx)}`)
+            }
 
-            nodeRect.attr('id', `node_${nodeName[idx].substring(0,lastIdx)}`)
-
-            let lineNum = nodeName[idx].substring(firstIdx, lastIdx)
             let letterWidth = nodeSize.width / (lineNum.length + 2)
             let midInY = (nodeSize.height - letterWidth) / 2 + letterWidth
             g.append('text')

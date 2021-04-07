@@ -5,7 +5,7 @@
     <!-- <remote-script src="http://ariutta.github.io/svg-pan-zoom/dist/svg-pan-zoom.min.js"></remote-script> -->
     <remote-script src="https://somnus.projects.zjvis.org/data/static/svg-pan-zoom.js"></remote-script>
     <el-row type="flex" justify="center" style="height:48.6vh">
-      <el-col style="width:20vw;margin-right:5px;" >
+      <el-col style="width:20vw;margin-right:7px;" >
         <el-row style="height: 100%; display: flex; flex-direction: column;">
           <el-header height="60px" style="background:black">
             <div style="text-align: center;color:white; font-size: 20pt; font-family:Arial; font-weight: bold; line-height:60px ">Somnus</div> 
@@ -148,7 +148,7 @@
         </div>
       </el-col>   
     </el-row>
-    <el-row style="margin-top:7px">
+    <el-row style="margin-top:9px">
         <el-col style="height:49vh">
           <el-row type="flex" justify="space-between" style="height:50px;background:#F5F5F5;">
             <div id="tag3"></div>
@@ -298,6 +298,7 @@ export default {
           "r_case4": "fy2018.csv",
           "r_case5": "benchmark5.txt",
           "r_case6": "benchmark19.txt",
+          "r_case7": "original_tables/table1.csv",
           "python_case1": "apple-iphone-revenue.csv",
           // "python_case2": "",
       },
@@ -413,9 +414,8 @@ export default {
         const table_path = `${request_api}/data/user_data/${table_file}?a=${Math.random()}`;
         await getCsv(table_path, this.dataTables, table_file)
       }
-
-      this.table_name = table_file
-      console.log(this.dataTables);
+      this.table_name = table_file.startsWith("original_tables/") ? table_file.slice(16) : table_file
+      // console.log(this.dataTables);
       this.tableData = this.dataTables[table_file].tableData
       this.tableHead = this.dataTables[table_file].tableHead
       
@@ -1939,11 +1939,20 @@ export default {
           d3.selectAll(`path.glyph_${pos}`).attr('stroke',fill_color)
           if(typeof(transform_specs[pos].input_table_file) === 'string'){
             let lastIdx = transform_specs[pos].input_table_file.indexOf(" (")  // .
-            d3.select(`#node_${transform_specs[pos].input_table_file.substring(0,lastIdx)}`).attr('stroke',fill_color)
+            let nodeId = `#node_${transform_specs[pos].input_table_file.substring(0,lastIdx)}`
+            if (lastIdx === -1) {
+              nodeId = `#node_${transform_specs[pos].input_table_name}`
+            }
+            d3.select(nodeId).attr('stroke',fill_color)
           }else{
             for(let idx2 = 0;idx2 < transform_specs[pos].input_table_file.length;idx2++){
               let lastIdx = transform_specs[pos].input_table_file[idx2].indexOf(" (")  // .
-              d3.select(`#node_${transform_specs[pos].input_table_file[idx2].substring(0,lastIdx)}`).attr('stroke',fill_color)
+              let nodeId = `#node_${transform_specs[pos].input_table_file[idx2].substring(0,lastIdx)}`
+              if (lastIdx === -1) {
+                nodeId = `#node_${transform_specs[pos].input_table_name[idx2]}`
+              }
+              d3.select(nodeId).attr('stroke',fill_color)
+              // d3.select(`#node_${transform_specs[pos].input_table_file[idx2].substring(0,lastIdx)}`).attr('stroke',fill_color)
             }
           }
 

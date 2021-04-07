@@ -17,8 +17,8 @@ data_path = "backend/data/"
 script_file = "script_test.txt"
 
 # 注意，以下两个输出结果不一样，此时程序中涉及到的路径皆以app.root_path为准
-# print(os.getcwd()) # flask_vue
-# print(app.root_path)  # flask_vue/backend
+# print(os.getcwd()) # pgdw
+# print(app.root_path)  # pgdw/backend
 
 @app.route('/')
 def index():
@@ -68,17 +68,19 @@ def generate_transform_specs():
         # with open("transform_specs.json", "w") as fp:
         #     json.dump(transform_specs, fp, indent=2)
         # ------------------------------------ # 
+        os.chdir(os.path.join(os.getcwd(), data_path_lan)) # 修改当前工作目录  os.path.join(os.getcwd(),script_name)
+        transform_specs = adaptor(script_content)  # 判断是否有异常发生
         try:
-            os.chdir(os.path.join(os.getcwd(), data_path_lan)) # 修改当前工作目录  os.path.join(os.getcwd(),script_name)
-            transform_specs = adaptor(script_content)  # 判断是否有异常发生
+            # os.chdir(os.path.join(os.getcwd(), data_path_lan)) # 修改当前工作目录  os.path.join(os.getcwd(),script_name)
+            # transform_specs = adaptor(script_content)  # 判断是否有异常发生
+            return jsonify({'transform_specs': transform_specs})
+            # return jsonify({'transform_specs': {}})
         except Exception as e:
             return jsonify({'error_info': str(e)})   # 如果有异常的话，将异常信息返回给前端
         finally:
             os.chdir(original_cwd) # 修改回原来的工作目录
 
 
-    return jsonify({'transform_specs': transform_specs})
-    # return jsonify({'transform_specs': {}})
     
 
 

@@ -44,7 +44,7 @@ def execScript(script_content):
     
     original_codes = []  # 源脚本代码, 每个元素对应一行代码，行号从1开始
     codes = ""
-    p = re.compile("^\s*([\w\.]+?)\s*(=|<-)\s*[\w\.:]+?\s*[(]") # 设置函数名和outputname必须是以 A-Za-z0-9_. 这些符号组成的，其他符号将不会匹配，因此可以做到过滤注释
+    p = re.compile("^\s*([\w\.]+?)\s*(=|<-)\s*([\w\.:]+?)\s*[(]") # 设置函数名和outputname必须是以 A-Za-z0-9_. 这些符号组成的，其他符号将不会匹配，因此可以做到过滤注释
     
     # deleteMatchFiles("./", starts="table", ends=".csv")
     
@@ -65,14 +65,26 @@ def execScript(script_content):
         else:
             if codes[-1] != '\n':
                 codes += '\n'
-            codes += \
-'''if (is.data.frame({value}) | is.matrix({value})) {{
-    write(paste(append(colnames({value}), {line_num}, after = 0), collapse=','), "{colnames_name}", append=T)
-    write.table({value}, file="L{line_num} ({value}).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
-    if (is.grouped_df({value})) {{
-        write(paste(append(group_vars({value}), "group{line_num}", after = 0), collapse=','), "{colnames_name}", append=T)
+            if match_r[0][2] == "group_split":
+                codes += \
+'''index_i = 1
+    for (ti in {value}){{
+    if (is.data.frame(ti) | is.matrix(ti)) {{
+        line_num = paste({line_num}, index_i, sep="_")
+        write(paste(append(colnames(ti), line_num, after = 0), collapse=','), "{colnames_name}", append=T)
+        write.table(ti, file=paste("L",line_num, " (", "{value}", "_", index_i, ").csv", sep=""), sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
+        index_i = index_i + 1
     }}
-}}\n'''.format(value=match_r[0][0],line_num=line_num, colnames_name=colnames_name)  # matrix和dataframe是两种不一样的table结构
+}}'''.format(value=match_r[0][0],line_num=line_num, colnames_name=colnames_name)
+            else:
+                codes += \
+    '''if (is.data.frame({value}) | is.matrix({value})) {{
+        write(paste(append(colnames({value}), {line_num}, after = 0), collapse=','), "{colnames_name}", append=T)
+        write.table({value}, file="L{line_num} ({value}).csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
+        if (is.grouped_df({value})) {{
+            write(paste(append(group_vars({value}), "group{line_num}", after = 0), collapse=','), "{colnames_name}", append=T)
+        }}
+    }}\n'''.format(value=match_r[0][0],line_num=line_num, colnames_name=colnames_name)  # matrix和dataframe是两种不一样的table结构
 
     with open(script_exec_name, "w", encoding='utf-8') as fp:
         fp.write(codes)
@@ -91,7 +103,10 @@ def execScript(script_content):
                 if states[0].startswith("group"):
                     group_states[int(states[0][5:])] = states[1:]
                 else:
-                    col_states[int(states[0])] = states[1:]
+                    if "_" in states[0]:
+                        col_states[states[0]] = states[1:]
+                    else:
+                        col_states[int(states[0])] = states[1:]
     
     return original_codes, col_states, group_states
 
@@ -186,6 +201,15 @@ def remove_quote(params):
     return param_list_new
 
 
+original_tables = {}
+
+original_tables_file = "original_tables/"
+# print(os.getcwd()) # pgdw
+for path, dir_list, file_list in os.walk("./backend/data/user_data/original_tables/"):
+    for fi in file_list:
+        original_tables[fi[:-4]] = original_tables_file + fi
+
+
 def generate_transform_specs(script_content):
     # 以下是测试：
     original_codes = [
@@ -217,6 +241,8 @@ def generate_transform_specs(script_content):
     
     original_codes, col_states, group_states = execScript(script_content)
 
+    print(col_states)
+
     p = re.compile("^\s*([\w\.]+?)\s*(=|<-)\s*([\w\.:]+?)\s*[(](.+)[)]")  # 设置函数名和outputname必须是以 A-Za-z0-9_. 这些符号组成的
     p_match_num = re.compile("L(.+) \(.+\).csv") # p_match_num = re.compile("table(.+)\.csv")
     p_match_c = re.compile("c\s*\((.+)\)")
@@ -230,7 +256,7 @@ def generate_transform_specs(script_content):
             result.append([])
 
     transform_specs = []
-    var2table = {} # 用来记录变量对应的table file名称
+    var2table = original_tables # 用来记录变量对应的table file名称
     var2num = lambda var: int(p_match_num.findall(var2table[var])[0]) # 根据变量找到对应的行号
     line_num = 0  # script的行号，从1开始
     
@@ -240,7 +266,7 @@ def generate_transform_specs(script_content):
 
     for r in result:
         line_num += 1
-        if not (r and col_states.get(line_num)):
+        if not (r and col_states.get(line_num) or col_states.get(str(line_num)+"_1")):
             continue
         
         output_tbl = r[0]
@@ -871,11 +897,37 @@ def generate_transform_specs(script_content):
             else:
                 specs["operation_rule"] = func  # 函数名加参数
             # specs["operation_rule"] = "%s(%s)" % (func, r[3])  # 函数名加参数
-            var2table[output_tbl] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
+            var2table[output_tbl] = specs["output_table_file"]
+
+        elif func == "group_split":
+            print(output_tbl, params, col_states)
+            specs["type"] = 'separate_tables_decompose'
+            specs["input_table_name"] = remove_quote(params['none'][0])
+            specs["input_table_file"] = var2table[specs["input_table_name"]]
+            specs["output_table_name"] = []
+            specs["output_table_file"] = []
+            for i in range(1,20):
+                index_id = "%d_%d" % (line_num, i)
+                if col_states.get(index_id):
+                    specs["output_table_name"].append("%s_%d" % (output_tbl, i))
+                    specs["output_table_file"].append("L%s (%s).csv" % (index_id, specs["output_table_name"][-1]))
+                    var2table[specs["output_table_name"][-1]] = specs["output_table_file"][-1]
+                else:
+                    break
+            specs["input_explicit_col"] = [remove_quote(params['none'][1])]
+            specs["operation_rule"] = "Decompose by %s" % specs["input_explicit_col"][0]
+
 
         else: # default, could also just omit condition or 'if True'
             print("The function, %s, is not currently supported!" % func)
-            var2table[output_tbl] = "L%d (%s).csv" % (line_num, specs["output_table_name"])
+            specs["type"] = 'identical_operation'
+            specs["input_table_name"] = remove_quote(params['none'][0])
+            specs["input_table_file"] = var2table[specs["input_table_name"]]
+            specs["output_table_name"] = output_tbl
+            specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"]) 
+            specs["operation_rule"] = func
+
+            var2table[output_tbl] = "L%d (%s).csv" % (line_num, output_tbl)
             
         # print(func, specs)
         if specs_before:
