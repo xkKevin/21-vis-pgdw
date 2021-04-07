@@ -99,13 +99,14 @@ function drawNode(g, specs, nodePos, specsInf, showTableFunc) {
                 .on('click', function(event) {
                     showTableFunc(nodeName[idx])
                 })
-                //最多显示四个字符
-            let letters = 6
+                //以8个字符为临界点
+            let letters = 8
+            let font_size = nodeSize.width / 1.33 / letters
             let showText = ''
-            if (letters >= specsInf[nodeName[idx]][0].length) {
+            if (letters + 1 >= specsInf[nodeName[idx]][0].length) { // 可显示9个字符
                 showText = specsInf[nodeName[idx]][0]
             } else {
-                showText = specsInf[nodeName[idx]][0].slice(0, 4)
+                showText = specsInf[nodeName[idx]][0].slice(0, letters - 1)
                 showText += '…'
             }
 
@@ -114,7 +115,7 @@ function drawNode(g, specs, nodePos, specsInf, showTableFunc) {
                 .attr('y', nodePos[nodeName[idx]][1] + nodeSize.height / 2 - 5)
                 .attr('text-anchor', 'start')
                 .attr('fill', 'balck')
-                .attr('font-size', `${nodeSize.width / 1.7 /letters}px`)
+                .attr('font-size', `${font_size}px`)
                 .text(showText)
                 .append("svg:title")
                 .text(specsInf[nodeName[idx]][0])
@@ -142,18 +143,18 @@ function drawNode(g, specs, nodePos, specsInf, showTableFunc) {
 
             let rowsAndCols = `${specsInf[nodeName[idx]][1] - 1}R*${specsInf[nodeName[idx]][2]}C`
             let showRowsAndCols = ''
-            if (letters >= rowsAndCols.length) {
+            if (letters + 1 >= rowsAndCols.length) {
                 showRowsAndCols = rowsAndCols
             } else {
-                showRowsAndCols = rowsAndCols.slice(0, 4)
+                showRowsAndCols = rowsAndCols.slice(0, letters - 1)
                 showRowsAndCols += '…'
             }
             g.append('text')
                 .attr('x', nodePos[nodeName[idx]][0] + nodeSize.width / 2)
-                .attr('y', nodePos[nodeName[idx]][1] + nodeSize.height - 5)
+                .attr('y', nodePos[nodeName[idx]][1] + nodeSize.height - 6)
                 .attr('text-anchor', 'start')
                 .attr('fill', 'gray')
-                .attr('font-size', `${nodeSize.width / 1.7 / (letters)}px`)
+                .attr('font-size', `${font_size}px`)
                 .text(showRowsAndCols)
                 .on('click', function(event) {
                     showTableFunc(nodeName[idx])
