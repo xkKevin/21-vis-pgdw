@@ -188,11 +188,17 @@ export default {
 
                 Promise.all([p1,p2]).then(()=>{
                     if(flag1 && flag2){
-                        alert("upload success")
+                        this.$message({
+                            message: "File(s) upload succeeded",
+                            type: "success", // success/warning/info/error
+                        });
                         this.$emit("uploadSuccess");
                     }
                     else{
-                        alert("upload fail")
+                        this.$message({
+                            message: "File(s) upload failed",
+                            type: "error", // success/warning/info/error
+                        });
                     }
                 })
             };

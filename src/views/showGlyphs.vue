@@ -1,10 +1,11 @@
 <template>
-  <div id="showGlyphs" style="">
+  <div id="showGlyphs">
     
     <!-- <remote-script src="https://github.com/bumbu/svg-pan-zoom/blob/master/dist/svg-pan-zoom.min.js"></remote-script> -->
     <!-- <remote-script src="http://ariutta.github.io/svg-pan-zoom/dist/svg-pan-zoom.min.js"></remote-script> -->
     <remote-script src="https://somnus.projects.zjvis.org/data/static/svg-pan-zoom.js"></remote-script>
-    <el-row type="flex" justify="center" style="height:48.6vh">
+    <!-- <remote-script src="https://pv.sohu.com/cityjson?ie=utf-8"></remote-script> -->
+    <el-row type="flex" justify="center" style="height:45.6vh">
       <el-col style="width:20vw;margin-right:7px;" >
         <el-row style="height: 100%; display: flex; flex-direction: column;">
           <el-header height="60px" style="background:black">
@@ -149,7 +150,7 @@
       </el-col>   
     </el-row>
     <el-row style="margin-top:9px">
-        <el-col style="height:49vh">
+        <el-col style="height:52vh">
           <el-row type="flex" justify="space-between" style="height:50px;background:#F5F5F5;">
             <div id="tag3"></div>
 
@@ -2007,6 +2008,31 @@ export default {
           }])
       }
     },
+    record_log (){
+      // console.log("out", returnCitySN);
+      const path = 'https://freenli.projects.zjvis.org/access_log/'
+      // const data = {
+      //   "ip":returnCitySN.cip,
+      //   "id":returnCitySN.cid, 
+      //   "location":returnCitySN.cname, 
+      //   'type': 'somnus'
+      // }
+      let data = new FormData();
+      data.append('ip', returnCitySN.cip);
+      data.append('id',returnCitySN.cid);
+      data.append('location',returnCitySN.cname);
+      data.append('type','somnus');
+      axios
+        .post(path, data)
+        .then((response) => {
+          if (!response.data.result){
+            console.log(response.data.error);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   },
   mounted() {
     this.initData();
@@ -2015,6 +2041,7 @@ export default {
     this.drawTag("tag1","Script Panel")
     this.drawTag("tag2","Table Panel")
     this.drawTag("tag3","Graph Panel")
+    this.record_log()
   },
 };
 </script>
