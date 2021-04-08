@@ -244,6 +244,17 @@ function drawEdge(g, specs, nodePos, editor, decorations) {
             let meetingPosX = nodePos[specs[idx].input_table_file][0] + nodeSize.width +
                 0.8 * (Math.min(nodePos[specs[idx].output_table_file[0]][0], nodePos[specs[idx].output_table_file[1]][0]) -
                     nodePos[specs[idx].input_table_file][0] - nodeSize.width)
+            
+            let str = typeof(specs[idx].output_table_file) === 'string' ? specs[idx].output_table_file : specs[idx].output_table_file[0]
+            let firstIdx = 0
+            for (let s = 0; s < str.length; s++) {
+                if (str[s] >= '0' && str[s] <= '9') {
+                    firstIdx = s
+                    break
+                }
+            }
+            let lastIdx = str.indexOf("_") === -1 ? str.indexOf(".") : str.indexOf("_")
+            let lineNum = parseInt(str.substring(firstIdx, lastIdx))
 
             g.append("circle")
                 .attr("cx", meetingPosX)
@@ -252,6 +263,9 @@ function drawEdge(g, specs, nodePos, editor, decorations) {
                 .style("fill", lineAttr.color)
                 // .style("stroke", lineAttr.color)
                 .attr('class', `edge_${idx}`)
+                .on('click', function(event) {
+                    codeHighlight(lineNum, editor, decorations)
+                })
 
             g.append('line')
                 .attr('x1', nodePos[specs[idx].input_table_file][0] + nodeSize.width)
@@ -261,6 +275,9 @@ function drawEdge(g, specs, nodePos, editor, decorations) {
                 .attr('stroke', lineAttr.color)
                 .attr('stroke-width', lineAttr.strokeWidth)
                 .attr('class', `edge_${idx}`)
+                .on('click', function(event) {
+                    codeHighlight(lineNum, editor, decorations)
+                })
 
             g.append('line')
                 .attr('x1', meetingPosX)
@@ -271,6 +288,9 @@ function drawEdge(g, specs, nodePos, editor, decorations) {
                 .attr('stroke-width', lineAttr.strokeWidth)
                 .attr("marker-end", `url(#arrow_${idx})`)
                 .attr('class', `edge_${idx}`)
+                .on('click', function(event) {
+                    codeHighlight(lineNum, editor, decorations)
+                })
 
             g.append('line')
                 .attr('x1', meetingPosX)
@@ -281,6 +301,9 @@ function drawEdge(g, specs, nodePos, editor, decorations) {
                 .attr('stroke-width', lineAttr.strokeWidth)
                 .attr("marker-end", `url(#arrow_${idx})`)
                 .attr('class', `edge_${idx}`)
+                .on('click', function(event) {
+                    codeHighlight(lineNum, editor, decorations)
+                })
         } else {
             let meetingPosY = nodePos[specs[idx].output_table_file][1] + nodeSize.height / 2
             let meetingPosX = Math.max(nodePos[specs[idx].input_table_file[0]][0], nodePos[specs[idx].input_table_file[1]][0]) +

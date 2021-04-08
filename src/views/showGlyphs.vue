@@ -1857,13 +1857,22 @@ export default {
             break
         }
         d3.select(`#glyph${i}`).on('click', (e) => {
-            let last = 1
+          let last = 1
+          if(typeof(transform_specs[i].output_table_file) === 'string'){
             while(transform_specs[i].output_table_file[last] >='0' && transform_specs[i].output_table_file[last] <= '9'){
               last++
             }
             // console.log(transform_specs[i].output_table_file)
             let lineNum = parseInt(transform_specs[i].output_table_file.substring(1,last))
             this.codeHighlight(lineNum,this.editor,this.decorations)
+          }else{
+            while(transform_specs[i].output_table_file[0][last] >='0' && transform_specs[i].output_table_file[0][last] <= '9'){
+            last++
+          }
+          // console.log(transform_specs[i].output_table_file)
+          let lineNum = parseInt(transform_specs[i].output_table_file[0].substring(1,last))
+          this.codeHighlight(lineNum,this.editor,this.decorations)
+          } 
         })
       }
 
@@ -1909,66 +1918,122 @@ export default {
       d3.selectAll("line[class^='edge']").attr('stroke','gray')
       d3.selectAll("path[class^='arrow']").attr('fill','gray')
       d3.selectAll(`path[class^='glyph']`).attr('stroke','gray')
-
-        let tableId = `L${e.target.position.lineNumber} (`
-        let pos = null
-        for(let idx = 0;idx < transform_specs.length;idx++){
-          if(typeof(transform_specs[idx].output_table_file) === 'string'){
-            if(transform_specs[idx].output_table_file.startsWith(tableId)){
+      
+      let tableId = `L${e.target.position.lineNumber} (`
+      let pos = null
+      let fill_color = "#72BDBC"
+      for(let idx = 0;idx < transform_specs.length;idx++){
+        if(typeof(transform_specs[idx].output_table_file) === 'string'){
+          if(transform_specs[idx].output_table_file.startsWith(tableId)){
+            pos = idx
+            break
+          }
+        }else{
+          for(let idx2 = 0;idx2 < transform_specs[idx].output_table_file.length;idx2++){
+            if(transform_specs[idx].output_table_file[idx2].startsWith(tableId)){
               pos = idx
               break
             }
+          }
+        }
+      }
+
+      if(pos === null){
+        let tableId2 = `L${e.target.position.lineNumber}_`
+        let poses = []
+        for(let idx = 0;idx < transform_specs.length;idx++){
+          if(typeof(transform_specs[idx].output_table_file) === 'string'){
+            if(transform_specs[idx].output_table_file.startsWith(tableId2)){
+              poses.push(idx)
+            }
           }else{
             for(let idx2 = 0;idx2 < transform_specs[idx].output_table_file.length;idx2++){
-              if(transform_specs[idx].output_table_file[idx2].startsWith(tableId)){
-                pos = idx
-                break
+              if(transform_specs[idx].output_table_file[idx2].startsWith(tableId2)){
+                poses.push(idx)
               }
             }
           }
         }
-        let fill_color = "#72BDBC"
-        if (pos != null){
-          // this.lastLine = pos
 
-          d3.selectAll(`line.edge_${pos}`).attr('stroke',fill_color)
-          d3.selectAll(`circle.edge_${pos}`).attr('style',`fill: ${fill_color};`)
+        for(let posIdx = 0;posIdx < poses.length;posIdx++){
+          
+          d3.selectAll(`line.edge_${poses[posIdx]}`).attr('stroke',fill_color)
+          d3.selectAll(`circle.edge_${poses[posIdx]}`).attr('style',`fill: ${fill_color};`)
           // d3.select(`#arrow_${pos}`).attr('fill',fill_color)
-          d3.selectAll(`path.arrow_${pos}`).attr('fill',fill_color)
-          d3.selectAll(`rect.glyph_${pos}`).attr('stroke',fill_color)
-          d3.selectAll(`path.glyph_${pos}`).attr('stroke',fill_color)
-          if(typeof(transform_specs[pos].input_table_file) === 'string'){
-            let lastIdx = transform_specs[pos].input_table_file.indexOf(" (")  // .
-            let nodeId = `#node_${transform_specs[pos].input_table_file.substring(0,lastIdx)}`
+          d3.selectAll(`path.arrow_${poses[posIdx]}`).attr('fill',fill_color)
+          d3.selectAll(`rect.glyph_${poses[posIdx]}`).attr('stroke',fill_color)
+          d3.selectAll(`path.glyph_${poses[posIdx]}`).attr('stroke',fill_color)
+          if(typeof(transform_specs[poses[posIdx]].input_table_file) === 'string'){
+            let lastIdx = transform_specs[poses[posIdx]].input_table_file.indexOf(" (")  // .
+            let nodeId = `#node_${transform_specs[poses[posIdx]].input_table_file.substring(0,lastIdx)}`
             if (lastIdx === -1) {
-              nodeId = `#node_${transform_specs[pos].input_table_name}`
+              nodeId = `#node_${transform_specs[poses[posIdx]].input_table_name}`
             }
             d3.select(nodeId).attr('stroke',fill_color)
           }else{
-            for(let idx2 = 0;idx2 < transform_specs[pos].input_table_file.length;idx2++){
-              let lastIdx = transform_specs[pos].input_table_file[idx2].indexOf(" (")  // .
-              let nodeId = `#node_${transform_specs[pos].input_table_file[idx2].substring(0,lastIdx)}`
+            for(let idx2 = 0;idx2 < transform_specs[poses[posIdx]].input_table_file.length;idx2++){
+              let lastIdx = transform_specs[poses[posIdx]].input_table_file[idx2].indexOf(" (")  // .
+              let nodeId = `#node_${transform_specs[poses[posIdx]].input_table_file[idx2].substring(0,lastIdx)}`
               if (lastIdx === -1) {
-                nodeId = `#node_${transform_specs[pos].input_table_name[idx2]}`
+                nodeId = `#node_${transform_specs[poses[posIdx]].input_table_name[idx2]}`
               }
               d3.select(nodeId).attr('stroke',fill_color)
               // d3.select(`#node_${transform_specs[pos].input_table_file[idx2].substring(0,lastIdx)}`).attr('stroke',fill_color)
             }
           }
 
-          if(typeof(transform_specs[pos].output_table_file) === 'string'){
-            let lastIdx = transform_specs[pos].output_table_file.indexOf(" (")  // .
-            d3.select(`#node_${transform_specs[pos].output_table_file.substring(0,lastIdx)}`).attr('stroke',fill_color)
+          if(typeof(transform_specs[poses[posIdx]].output_table_file) === 'string'){
+            let lastIdx = transform_specs[poses[posIdx]].output_table_file.indexOf(" (")  // .
+            d3.select(`#node_${transform_specs[poses[posIdx]].output_table_file.substring(0,lastIdx)}`).attr('stroke',fill_color)
           }else{
-            for(let idx2 = 0;idx2 < transform_specs[pos].output_table_file.length;idx2++){
-              let lastIdx = transform_specs[pos].output_table_file[idx2].indexOf(" (")  // .
-              d3.select(`#node_${transform_specs[pos].output_table_file[idx2].substring(0,lastIdx)}`).attr('stroke',fill_color)
+            for(let idx2 = 0;idx2 < transform_specs[poses[posIdx]].output_table_file.length;idx2++){
+              let lastIdx = transform_specs[poses[posIdx]].output_table_file[idx2].indexOf(" (")  // .
+              d3.select(`#node_${transform_specs[poses[posIdx]].output_table_file[idx2].substring(0,lastIdx)}`).attr('stroke',fill_color)
             }
           }
         }
-        
-      });
-    },
+      }
+      
+      if (pos != null){
+        // this.lastLine = pos
+
+        d3.selectAll(`line.edge_${pos}`).attr('stroke',fill_color)
+        d3.selectAll(`circle.edge_${pos}`).attr('style',`fill: ${fill_color};`)
+        // d3.select(`#arrow_${pos}`).attr('fill',fill_color)
+        d3.selectAll(`path.arrow_${pos}`).attr('fill',fill_color)
+        d3.selectAll(`rect.glyph_${pos}`).attr('stroke',fill_color)
+        d3.selectAll(`path.glyph_${pos}`).attr('stroke',fill_color)
+        if(typeof(transform_specs[pos].input_table_file) === 'string'){
+          let lastIdx = transform_specs[pos].input_table_file.indexOf(" (")  // .
+          let nodeId = `#node_${transform_specs[pos].input_table_file.substring(0,lastIdx)}`
+          if (lastIdx === -1) {
+            nodeId = `#node_${transform_specs[pos].input_table_name}`
+          }
+          d3.select(nodeId).attr('stroke',fill_color)
+        }else{
+          for(let idx2 = 0;idx2 < transform_specs[pos].input_table_file.length;idx2++){
+            let lastIdx = transform_specs[pos].input_table_file[idx2].indexOf(" (")  // .
+            let nodeId = `#node_${transform_specs[pos].input_table_file[idx2].substring(0,lastIdx)}`
+            if (lastIdx === -1) {
+              nodeId = `#node_${transform_specs[pos].input_table_name[idx2]}`
+            }
+            d3.select(nodeId).attr('stroke',fill_color)
+            // d3.select(`#node_${transform_specs[pos].input_table_file[idx2].substring(0,lastIdx)}`).attr('stroke',fill_color)
+          }
+        }
+
+        if(typeof(transform_specs[pos].output_table_file) === 'string'){
+          let lastIdx = transform_specs[pos].output_table_file.indexOf(" (")  // .
+          d3.select(`#node_${transform_specs[pos].output_table_file.substring(0,lastIdx)}`).attr('stroke',fill_color)
+        }else{
+          for(let idx2 = 0;idx2 < transform_specs[pos].output_table_file.length;idx2++){
+            let lastIdx = transform_specs[pos].output_table_file[idx2].indexOf(" (")  // .
+            d3.select(`#node_${transform_specs[pos].output_table_file[idx2].substring(0,lastIdx)}`).attr('stroke',fill_color)
+          }
+        }
+      }  
+    });
+  },
     initEvent (){
       let self = this
       this.$nextTick(function () {
