@@ -1108,7 +1108,7 @@ export default {
               dataOut1_csv,
               input_explicit_col
             );
-
+            console.log("partition: ",res.m2[0].length / dataOut1_csv[0].length)
             delete_duplicate_row_partColumn(
               res.m1,
               res.m2,
@@ -1473,7 +1473,7 @@ export default {
               dataIn1_csv,
               input_explicit_col
             );
-            let xPercents = [res.m1[0].length / dataIn1_csv[0]]
+            let xPercents = [res.m1[0].length / dataIn1_csv[0].length]
             let yPercents = [res.m1.length / dataIn1_csv.length]
             for(let idx = 0;idx < res.tables.length;idx++){
               xPercents.push(1)

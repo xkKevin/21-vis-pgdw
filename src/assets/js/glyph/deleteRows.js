@@ -18,7 +18,7 @@ function delete_row(m1,m2,rule,t1_name,t2_name,outColors,name,showTableName,pos,
 
     let width = svgSize.width
     let height = svgSize.height
-    let colWidth = width / (m2[0].length * 2 + 2)
+    let colWidth = width / (m2[0].length * 2 + 1)
     let colHeight = showOperation ? height / (m1.length + 3) : height / (m1.length + 2.5) 
     let colFontSize = fontSize.colFontSize
     let cellFontSize = fontSize.cellFontSize
@@ -56,7 +56,7 @@ function delete_row(m1,m2,rule,t1_name,t2_name,outColors,name,showTableName,pos,
     drawPcentBar(g,[0,colHeight],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])
 
     let arrowUrl = require('../../images/arrow.svg')
-    drawIcon(g,[(m1[0].length + 0.2) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth,colHeight,arrowUrl)
+    drawIcon(g,[(m1[0].length + 0.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth,colHeight,arrowUrl)
     drawTableForRow(g,m2,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,outColors)
     drawPcentBar(g,[(m1[0].length + 1) * colWidth,colHeight],m2[0].length * colWidth,m2.length * colHeight,colHeight,xPercents[1],yPercents[1])
     

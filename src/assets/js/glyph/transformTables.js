@@ -108,7 +108,7 @@ function transform_tables_sort(m1, m2, rule, t1_name, t2_name,outColor,name,show
     drawPcentBar(g,[0,colHeight],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])
     // 添加箭头
     let arrowUrl = require('../../images/arrow.svg')
-    drawIcon(g,[(m1[0].length + 0.2) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
+    drawIcon(g,[(m1[0].length + 0.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
     
     let sortedCol = 0
     for(let col = 0;col < m2[0].length;col++){
@@ -119,7 +119,7 @@ function transform_tables_sort(m1, m2, rule, t1_name, t2_name,outColor,name,show
     }
     drawTableForRow(g,m2,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,outColor,[],[],sortedCol)
     drawPcentBar(g,[(m1[0].length + 1) * colWidth,colHeight],m2[0].length * colWidth,m2.length * colHeight,colHeight,xPercents[1],yPercents[1])
-    let orderUrl = rule.indexOf("desc") === -1 ? require('../../images/asce.png') : require('../../images/desc.png')
+    let orderUrl = rule.indexOf("desc") === -1 ? require('../../images/asce.svg') : require('../../images/desc.svg')
    
     drawIcon(g,[(m1[0].length + 1 + sortedCol + 0.6) * colWidth,1.3 * colHeight],0.5 * colWidth,0.5 * colHeight,orderUrl)
     let yOfLine = (m1.length + 2) * colHeight
