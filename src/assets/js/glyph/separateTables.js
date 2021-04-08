@@ -61,7 +61,7 @@ function separate_tables_subset(m1,m2,m3,rule,t1_name,t2_name,t3_name,outColor1,
     if(showOperation)drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
 }
 
-function separate_tables_decompose(m1,m2s,rule,t1_name,name,showTableName,pos,xPercents,yPercents){
+function separate_tables_decompose(m1,m2s,rule,t1_name,t2names,name,showTableName,pos,xPercents,yPercents){
     if(!showTableName){
         t1_name = ''
     }
@@ -103,10 +103,13 @@ function separate_tables_decompose(m1,m2s,rule,t1_name,name,showTableName,pos,xP
     let arrowUrl = require('../../images/arrow.svg')
     drawIcon(g,[(m1[0].length + 0.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2 + (m2s.length - 1) / 2 * colHeight * 2],0.8 * colWidth, colHeight,arrowUrl)
 
-    for(let idx = 0;idx < m2s.length;idx++){
-        drawTableForRow(g,m2s[idx],[(m1[0].length + 1) * colWidth,colHeight + 3 * idx * colHeight],colWidth,colHeight,'',colFontSize,cellFontSize,[idx])
-        drawPcentBar(g,[(m1[0].length + 1) * colWidth,colHeight + 3 * idx * colHeight],m2s[idx][0].length * colWidth,m2s[idx].length * colHeight,colHeight,xPercents[idx + 1],yPercents[idx + 1])
-    }
+    // for(let idx = 0;idx < m2s.length;idx++){
+    drawTableForRow(g,m2s[0],[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2names[0],colFontSize,cellFontSize,[0,1])
+    drawPcentBar(g,[(m1[0].length + 1) * colWidth,colHeight],m2s[0][0].length * colWidth,m2s[0].length * colHeight,colHeight,xPercents[1],yPercents[1])
+    // }
+    drawTableForRow(g,m2s[1],[(m1[0].length + 1) * colWidth,colHeight + 4 * colHeight],colWidth,colHeight,t2names[1],colFontSize,cellFontSize,[2])
+    drawPcentBar(g,[(m1[0].length + 1) * colWidth,colHeight + 4 * colHeight],m2s[1][0].length * colWidth,m2s[1].length * colHeight,colHeight,xPercents[2],yPercents[2])
+
 
     let yOfLine = (m1.length + 2 + m2s.length) * colHeight
 

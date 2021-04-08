@@ -116,16 +116,29 @@ function generateDataForSeparateDecompose(dataIn1_csv, inExpOrImpCol){
         return dataIn1_csv[0].indexOf(a) - dataIn1_csv[0].indexOf(b)
     })
 
-    let rows = [],vals = []
+    let vals = []
+    let sameRows = [],diffRow = -1
     for(let row = 1;row < dataIn1_csv.length;row++){
-        if(vals.indexOf(dataIn1_csv[row][inExpOrImpCol[0]]) === -1){
-            rows.push(row)
-            vals.push(dataIn1_csv[row][inExpOrImpCol[0]])
-        }
-        if(rows.length === 3)break
+        vals.push(dataIn1_csv[row][inExpOrImpCol[0]])
+        // if(vals.indexOf(dataIn1_csv[row][inExpOrImpCol[0]]) !== -1 && sameRows.length === 0){
+        //     rows = []
+        //     vals.push(dataIn1_csv[row][inExpOrImpCol[0]])
+        // }
+        // if(vals.indexOf(dataIn1_csv[row][inExpOrImpCol[0]]) === -1){
+        //     rows.push(row)
+        //     vals.push(dataIn1_csv[row][inExpOrImpCol[0]])
+        // }
+        // if(rows.length === 3)break
     }
-
-    let tables = []
+    for(let idx = 0;idx < vals.length;idx++){
+        if(vals.indexOf(vals[idx]) !== idx && sameRows.length === 0){
+            sameRows = [vals.indexOf(vals[idx]) + 1,idx + 1]
+        }else if(diffRow === -1 && sameRows.length === 2 && vals[idx] !== vals[sameRows[0]]){
+            diffRow = idx + 1
+            break
+        }
+    }
+    let tables = [],rows = [sameRows[0],sameRows[1],diffRow].sort()
     for(let idx = 0;idx < rows.length;idx++){
         let tempTable = [Array.from(m2[0])]
         let tempRow = []
@@ -141,8 +154,38 @@ function generateDataForSeparateDecompose(dataIn1_csv, inExpOrImpCol){
         }
         tempTable.push(Array.from(tempRow))
         m1.push(Array.from(tempRow))
-        tables.push(tempTable)
+        // tables.push(tempTable)
     }
+    let tempTable1 = [Array.from(m2[0])],tempTable2 = [Array.from(m2[0])]
+    for(let idx = 0;idx < sameRows.length;idx++){ 
+        let tempRow = []   
+        for(let col = 0;col < dataIn1_csv[0].length;col++){
+            if(m1[0].indexOf(dataIn1_csv[0][col]) !== -1){
+                if(col === inExpOrImpCol[0])tempRow.push(dataIn1_csv[rows[idx]][col])
+                else
+                    tempRow.push('')
+            }
+        }
+        tempTable1.push(tempRow)
+    }
+    for (let col = 0;col < m1[0].length;col++){
+        if(tempTable1[0][col] !== dataIn1_csv[0][inExpOrImpCol[0]])tempTable1[0][col] = ''
+    }
+    let tempRow = []
+    for(let col = 0;col < dataIn1_csv[0].length;col++){
+        if(m1[0].indexOf(dataIn1_csv[0][col]) !== -1){
+            if(col === inExpOrImpCol[0])tempRow.push(dataIn1_csv[diffRow][col])
+            else
+                tempRow.push('')
+        }
+    }
+    tempTable2.push(tempRow)
+    for (let col = 0;col < m1[0].length;col++){
+        if(tempTable2[0][col] !== dataIn1_csv[0][inExpOrImpCol[0]])tempTable2[0][col] = ''
+    }
+
+    tables.push(tempTable1)
+    tables.push(tempTable2)
 
     for(let col = 0;col < m1[0].length;col++){
         if(m1[0][col] !== dataIn1_csv[0][inExpOrImpCol[0]]){

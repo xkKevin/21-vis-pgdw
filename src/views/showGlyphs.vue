@@ -1485,6 +1485,7 @@ export default {
               res.tables,
               rule,
               input_table_name,
+              [output_table_name,output_table_name2],
               i,
               this.show_table_name,
               pos,
