@@ -227,7 +227,7 @@ function generateDataForLeftJoin_2(dataIn1_csv,dataIn2_csv,dataOut1_csv,inExpCol
         }
         
         for(let row = 1;row < dataIn2_csv.length;row++){
-            if(row !== rows2[0] && !cmpRows(dataIn2_csv[rows2[0]],dataIn2_csv[row],inExpCols)){
+            if(row !== rows2[0] && !cmpRows(dataIn2_csv[rows2[0]],dataIn2_csv[row],inExpCols) && dataIn2_csv[row][dataIn2_csv[0].indexOf(dataIn1_csv[0][inExpCols[0]])] !== ''){
                 rows2.push(row)
                 break
             }
