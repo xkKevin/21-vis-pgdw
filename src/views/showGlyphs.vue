@@ -5,7 +5,7 @@
     <!-- <remote-script src="http://ariutta.github.io/svg-pan-zoom/dist/svg-pan-zoom.min.js"></remote-script> -->
     <remote-script src="https://somnus.projects.zjvis.org/data/static/svg-pan-zoom.js"></remote-script>
     <!-- <remote-script src="https://pv.sohu.com/cityjson?ie=utf-8"></remote-script> -->
-    <el-row type="flex" justify="center" style="height:45.6vh">
+    <el-row type="flex" justify="center" style="height:45vh">
       <el-col style="width:20vw;margin-right:7px;" >
         <el-row style="height: 100%; display: flex; flex-direction: column;">
           <el-header height="60px" style="background:black">
@@ -48,7 +48,7 @@
       </el-col>
     
       <el-col
-        style="width:40vw; padding:0 0 0 0"
+        style="width:40vw; padding:0 0 0 0; height: 100%; display: flex; flex-direction: column;"
       >
         <el-row type="flex" justify="space-between" style="height:50px;background:#F5F5F5;">
           <div id="tag1" ></div>
@@ -93,12 +93,14 @@
               >Run</el-button>
           </div>
         </el-row>
-        <div id="monaco" style="height:42vh; width: 98%"></div>
+        <div style="flex: 1; display: flex; align-items: center;">
+          <div id="monaco" style="height: 38vh; width: 98%"></div>
+        </div>
         <!-- style="width:40vw; height:100%; padding:0 0 0 0; display: grid; grid-template-columns: [c1] 100%; grid-template-rows: [r1] 50px [r2] auto;" -->
       </el-col>
       <el-col
         class="table_panel"
-        style="width:40vw; flex-direction: column; display: flex;"
+        style="width:40vw; display: flex; flex-direction: column; height:100%"
       >
         <el-row type="flex" justify="space-between" style="height: 50px; background:#F5F5F5;">
           <div id="tag2"></div>
@@ -133,7 +135,7 @@
           </div>
         </el-row>
         <div style="border-left: 2px solid #E6E6E6; padding:0px 20px; flex: 1; display: flex; align-items: center; ">
-        <el-table stripe :data="tableData" height="40vh" style="border: 2px solid #E6E6E6;">
+        <el-table v-loading="table_loading" element-loading-spinner="el-icon-loading" element-loading-text="Loading" stripe :data="tableData" height="38vh" style="border: 2px solid #E6E6E6;">
           <el-table-column type="index"> </el-table-column>
            <!-- label 为 显示在table上的名字 -->
           <el-table-column
@@ -150,12 +152,12 @@
       </el-col>   
     </el-row>
     <el-row style="margin-top:9px">
-        <el-col style="height:52vh">
+        <el-col style="height:52.6vh">
           <el-row type="flex" justify="space-between" style="height:50px;background:#F5F5F5;">
             <div id="tag3"></div>
 
         </el-row>
-           <div id="glyphs" style="height:43vh"></div>
+           <div id="glyphs" style="height:43vh" v-loading="glyph_running" element-loading-spinner="el-icon-loading" element-loading-text="Running"></div>
         </el-col>
     </el-row>
   </div>
@@ -285,6 +287,8 @@ export default {
       script_content: "", //'print("hello world!")',
       language: "r",
       all_langs: ["r", "python"],
+      glyph_running: false,
+      table_loading: false,
       tableData: [
       ],
       tableHead: [
@@ -309,19 +313,19 @@ export default {
   components:{
     uploadTables,
   },
+  watch: {
+    one_case: function (){
+      if (this.language !== this.one_case.split("_")[0]){
+            console.log("selectCase: true");
+            this.changeModel(this.one_case.split("_")[0])
+          }
+          this.getScriptData(this.one_case)
+          this.getTableData(this.cases[this.one_case])
+      }
+  },
   methods: {
     selectCase(one_case="r_case1"){
-        // this.$message({
-        //   message: one_case,
-        //   type: "info", // success/warning/info/error
-        // });
         this.one_case = one_case;
-        if (this.language !== one_case.split("_")[0]){
-          console.log("selectCase: true");
-          this.changeModel(one_case.split("_")[0])
-        }
-        this.getScriptData(one_case)
-        this.getTableData(this.cases[one_case])
     },
     drawTag(id,text){
       let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -410,16 +414,17 @@ export default {
         // console.log(this.decorations);  
     },
     async getTableData(table_file) {
+      this.table_loading = true
      // 降低网络带宽，减少请求次数，同时避免
       if (this.dataTables[table_file] == undefined){
-        const table_path = `${request_api}/data/user_data/${table_file}?a=${Math.random()}`;
+        const table_path = `${request_api}/data/user_data/${table_file}?a=${Math.random()}`
         await getCsv(table_path, this.dataTables, table_file)
       }
       this.table_name = table_file.startsWith("original_tables/") ? table_file.slice(16) : table_file
       // console.log(this.dataTables);
       this.tableData = this.dataTables[table_file].tableData
       this.tableHead = this.dataTables[table_file].tableHead
-      
+      this.table_loading = false
        /*
       const table_path = `${request_api}/data/user_data/${table_file}?a=${Math.random()}`;
       // dataIn1_csv = await getCsv(table_path);
@@ -462,9 +467,9 @@ export default {
     },
     generateGlyphs() {
       // console.log(this.editor.getValue(), this.language);
-      
       const path = `${request_api}/generate_transform_specs`;
       let specsToHandle = []
+      this.glyph_running = true
       axios
         .get(path, {
           params: {
@@ -473,6 +478,7 @@ export default {
           },
         })
         .then((response) => {
+          this.glyph_running = false
           // 执行 run 之前先 清空当前数据
           this.dataTables = {};
           // 生成glyphs的操作
@@ -487,113 +493,114 @@ export default {
             // Object.assign(specsToHandle,response.data.transform_specs)
             
             specsToHandle = Array.from(response.data.transform_specs)
-
-            // specsToHandle = [
-            //   {
-            //         operation_rule: `Load: "apple-iphone-revenue.csv"`,
-            //         output_table_file: "t1.csv",
-            //         output_table_name: "revenue",
-            //         type: "create_tables",
-            //     },
+            /*
+            specsToHandle = [
+              {
+                    operation_rule: `Load: "apple-iphone-revenue.csv"`,
+                    output_table_file: "t1.csv",
+                    output_table_name: "revenue",
+                    type: "create_tables",
+                },
                
-            //     {
-            //         operation_rule: `rearrange Category`,
-            //         input_table_file: "t1.csv",
-            //         input_table_name: "revenue",
-            //         input_explicit_col:["Category"],
-            //         output_table_file: "t3.csv",
-            //         output_table_name: "revenue_sort",
-            //         type: "transform_tables_sort",
-            //     },
-            //     // {
-            //     //     operation_rule: `transform scores`,
-            //     //     output_explicit_col:['P.E.'],
-            //     //     input_table_file: "t6.csv",
-            //     //     input_table_name: "scores2",
-            //     //     output_explicit_col:["P.E."],
-            //     //     output_table_file: "t11.csv",
-            //     //     output_table_name: "level2score",
-            //     //     type: "transform_columns_mutate",
-            //     // },
-            //     {
-            //         operation_rule: `Load: "apple-iphone-unit-sales.csv"`,
-            //         output_table_file: "t2.csv",
-            //         output_table_name: "sales",
-            //         type: "create_tables",
-            //     },
-            //      {
-            //         operation_rule: `rearrange Category`,
-            //         input_table_file: "t2.csv",
-            //         input_table_name: "sales",
-            //         input_explicit_col:["Category"],
-            //         output_table_file: "t4.csv",
-            //         output_table_name: "sales_sort",
-            //         type: "transform_tables_sort",
-            //     },
-            //     // {
-            //     //     operation_rule: `transform scores`,
-            //     //     output_explicit_col:['P.E.'],
-            //     //     input_table_file: "t4.csv",
-            //     //     input_table_name: "scores2",
-            //     //     output_explicit_col:["P.E."],
-            //     //     output_table_file: "t9.csv",
-            //     //     output_table_name: "level2score",
-            //     //     type: "transform_columns_mutate",
-            //     // },
+                {
+                    operation_rule: `rearrange Category`,
+                    input_table_file: "t1.csv",
+                    input_table_name: "revenue",
+                    input_explicit_col:["Category"],
+                    output_table_file: "t3.csv",
+                    output_table_name: "revenue_sort",
+                    type: "transform_tables_sort",
+                },
+                // {
+                //     operation_rule: `transform scores`,
+                //     output_explicit_col:['P.E.'],
+                //     input_table_file: "t6.csv",
+                //     input_table_name: "scores2",
+                //     output_explicit_col:["P.E."],
+                //     output_table_file: "t11.csv",
+                //     output_table_name: "level2score",
+                //     type: "transform_columns_mutate",
+                // },
+                {
+                    operation_rule: `Load: "apple-iphone-unit-sales.csv"`,
+                    output_table_file: "t2.csv",
+                    output_table_name: "sales",
+                    type: "create_tables",
+                },
+                 {
+                    operation_rule: `rearrange Category`,
+                    input_table_file: "t2.csv",
+                    input_table_name: "sales",
+                    input_explicit_col:["Category"],
+                    output_table_file: "t4.csv",
+                    output_table_name: "sales_sort",
+                    type: "transform_tables_sort",
+                },
+                // {
+                //     operation_rule: `transform scores`,
+                //     output_explicit_col:['P.E.'],
+                //     input_table_file: "t4.csv",
+                //     input_table_name: "scores2",
+                //     output_explicit_col:["P.E."],
+                //     output_table_file: "t9.csv",
+                //     output_table_name: "level2score",
+                //     type: "transform_columns_mutate",
+                // },
 
-            //     {
-            //         operation_rule: `concat tables`,
-            //         input_table_file: ["t3.csv","t4.csv"],
-            //         input_table_name: ["revenue_sort","sales_sort"],
-            //         output_table_file: "t5.csv",
-            //         output_table_name: "rev_sales",
-            //         axis:0,
-            //         type: "combine_tables_concat_python",
-            //     },
-            //     // {
-            //     //     operation_rule: `drop duplicated rows`,
-            //     //     input_table_file: 't14.csv',
-            //     //     input_table_name: "all_scores",
-            //     //     output_table_file: "t17.csv",
-            //     //     output_table_name: "drop_dup",
-            //     //     // axis:0,
-            //     //     type:'delete_rows_deduplicate',
-            //     // },
-            //     {
-            //       input_table_file: 't5.csv',
-            //       input_table_name: "rev_sales",
-            //       output_table_file: "t6.csv",
-            //       output_table_name: "rev_sales",
-            //       operation_rule:"reset_index",
-            //       type:"identical_operation"
-            //     },
-            //     {
-            //       input_table_file: 't6.csv',
-            //       input_table_name: "rev_sales",
-            //       input_explicit_col:['Category'],
-            //       output_table_file: "t7.csv",
-            //       output_table_name: "rev_sales",
-            //       operation_rule:"delete Category",
-            //       type:"delete_columns_select_remove"
-            //     },
-            //     // {
-            //     //   input_table_file: 't19.csv',
-            //     //   input_table_name: "drop_dup",
-            //     //   input_explicit_col:['ID'],
-            //     //   output_table_file: "t21.csv",
-            //     //   output_table_name: "drop_ID",
-            //     //   operation_rule:"delete ID",
-            //     //   type:"delete_columns_select_remove"
-            //     // },
-            //     {
-            //       input_table_file: 't7.csv',
-            //       input_table_name: "Category",
-            //       output_table_file: "t8.csv",
-            //       output_table_name: "Category",
-            //       operation_rule:"caculate mean",
-            //       type:'create_rows_summarize'
-            //     } 
-            // ]
+                {
+                    operation_rule: `concat tables`,
+                    input_table_file: ["t3.csv","t4.csv"],
+                    input_table_name: ["revenue_sort","sales_sort"],
+                    output_table_file: "t5.csv",
+                    output_table_name: "rev_sales",
+                    axis:0,
+                    type: "combine_tables_concat_python",
+                },
+                // {
+                //     operation_rule: `drop duplicated rows`,
+                //     input_table_file: 't14.csv',
+                //     input_table_name: "all_scores",
+                //     output_table_file: "t17.csv",
+                //     output_table_name: "drop_dup",
+                //     // axis:0,
+                //     type:'delete_rows_deduplicate',
+                // },
+                {
+                  input_table_file: 't5.csv',
+                  input_table_name: "rev_sales",
+                  output_table_file: "t6.csv",
+                  output_table_name: "rev_sales",
+                  operation_rule:"reset_index",
+                  type:"identical_operation"
+                },
+                {
+                  input_table_file: 't6.csv',
+                  input_table_name: "rev_sales",
+                  input_explicit_col:['Category'],
+                  output_table_file: "t7.csv",
+                  output_table_name: "rev_sales",
+                  operation_rule:"delete Category",
+                  type:"delete_columns_select_remove"
+                },
+                // {
+                //   input_table_file: 't19.csv',
+                //   input_table_name: "drop_dup",
+                //   input_explicit_col:['ID'],
+                //   output_table_file: "t21.csv",
+                //   output_table_name: "drop_ID",
+                //   operation_rule:"delete ID",
+                //   type:"delete_columns_select_remove"
+                // },
+                {
+                  input_table_file: 't7.csv',
+                  input_table_name: "Category",
+                  output_table_file: "t8.csv",
+                  output_table_name: "Category",
+                  operation_rule:"caculate mean",
+                  type:'create_rows_summarize'
+                } 
+            ]
+            */
 
             let nullInfileCount = '*',nullOutfileCount = '#'
             specsToHandle.forEach(spec => {
@@ -656,6 +663,7 @@ export default {
           }
         })
         .catch((error) => {
+          this.glyph_running = false
           console.log(error);
         });
     },

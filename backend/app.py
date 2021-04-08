@@ -68,11 +68,11 @@ def generate_transform_specs():
         # with open("transform_specs.json", "w") as fp:
         #     json.dump(transform_specs, fp, indent=2)
         # ------------------------------------ # 
-        os.chdir(os.path.join(os.getcwd(), data_path_lan)) # 修改当前工作目录  os.path.join(os.getcwd(),script_name)
-        transform_specs = adaptor(script_content)  # 判断是否有异常发生
+        # os.chdir(os.path.join(os.getcwd(), data_path_lan)) # 修改当前工作目录  os.path.join(os.getcwd(),script_name)
+        # transform_specs = adaptor(script_content)  # 判断是否有异常发生
         try:
-            # os.chdir(os.path.join(os.getcwd(), data_path_lan)) # 修改当前工作目录  os.path.join(os.getcwd(),script_name)
-            # transform_specs = adaptor(script_content)  # 判断是否有异常发生
+            os.chdir(os.path.join(os.getcwd(), data_path_lan)) # 修改当前工作目录  os.path.join(os.getcwd(),script_name)
+            transform_specs = adaptor(script_content)  # 判断是否有异常发生
             return jsonify({'transform_specs': transform_specs})
             # return jsonify({'transform_specs': {}})
         except Exception as e:

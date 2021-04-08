@@ -8,10 +8,10 @@ table_del2 = rename(table_del1, cases2 = cases)
 table_select1 = select(table_del2, -year2)
 table_select2 = select(table_select1, -cases2)
 
-# The transformation, Decompose, results a divergence edge
+# The transformation, Decompose, results in a divergence edge
 split_year = group_split(table2, year)
 
-# The table, trees, are used as input tables twice
+# The table, trees, is used as input tables twice
 trees_ungroup = ungroup(trees)
 t_na = drop_na(trees)
-# Note that some funcitons, such as drop_na, have not been supported yet, which have no corresponding glyph.
+# Note that some functions, such as drop_na, have not been supported yet, which have no corresponding glyph
