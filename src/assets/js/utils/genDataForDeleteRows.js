@@ -335,50 +335,44 @@ function generateDataForDeleteDuplicateRows(dataIn1_csv, dataOut1_csv, inExpCols
             m2[0][col] = ''
         }
     }
-    if(inExpCols.length === dataIn1_csv[0].length){
-        for(let row = 0;row < m1.length;row++){
-            let tempRow = []
-            for(let col = 0;col < Math.min(3,m1[0].length);col++){
-                if(row === 0)tempRow.push("")
-                else    
-                    tempRow.push(m1[row][col])
-            }
-            m1[row] = tempRow
-        }
+    // if(inExpCols.length === dataIn1_csv[0].length){
+    //     for(let row = 0;row < m1.length;row++){
+    //         let tempRow = []
+    //         for(let col = 0;col < Math.min(3,m1[0].length);col++){
+    //             if(row === 0)tempRow.push("")
+    //             else    
+    //                 tempRow.push(m1[row][col])
+    //         }
+    //         m1[row] = tempRow
+    //     }
        
-        for(let row = 0;row < m2.length;row++){
-            let tempRow = []
-            for(let col = 0;col < Math.min(3,m2[0].length);col++){
-                if(row === 0)tempRow.push("")
-                else    
-                    tempRow.push(m2[row][col])
-            }
-            m2[row] = tempRow
-        }
-    }else{
-        if(dataIn1_csv[0].length !== dataOut1_csv[0].length){
-            for(let row = m2.length - 1;row >= 0;row--){
-                let tempRow = []
-                for(let col = 0;col < Math.min(3,m2[0].length);col++){
-                    if(m2[0][col] !== ''){ 
-                        tempRow.push(m2[row][col])
-                    } 
-                }
-                m2[row] = tempRow
-            }
-        }
-    }
+    //     for(let row = 0;row < m2.length;row++){
+    //         let tempRow = []
+    //         for(let col = 0;col < Math.min(3,m2[0].length);col++){
+    //             if(row === 0)tempRow.push("")
+    //             else    
+    //                 tempRow.push(m2[row][col])
+    //         }
+    //         m2[row] = tempRow
+    //     }
+    // }else{
+    //     if(dataIn1_csv[0].length !== dataOut1_csv[0].length){
+    //         for(let row = m2.length - 1;row >= 0;row--){
+    //             let tempRow = []
+    //             for(let col = 0;col < Math.min(3,m2[0].length);col++){
+    //                 if(m2[0][col] !== ''){ 
+    //                     tempRow.push(m2[row][col])
+    //                 } 
+    //             }
+    //             m2[row] = tempRow
+    //         }
+    //     }
+    // }
     if(inExpCols.length === dataIn1_csv[0].length){
-        // for(let col = 0; col < m1[0].length;col++){
-        //     m1[0][col] = ''
-        //     m2[0][col] = ''
-        // }
-        for(let row = 0;row < m1.length;row++){
-            m1[row] = Array.from(new Array(Math.min(3,m1[row].length)),()=>'')
-        }
-        for(let row = 0;row < m2.length;row++){
-            m2[row] = Array.from(new Array(Math.min(3,m2[row].length)),()=>'')
-        }
+   
+        m1[0] = Array.from(new Array(Math.min(3,m1[0].length)),()=>'')
+        m2[0] = Array.from(new Array(Math.min(3,m2[0].length)),()=>'')
+        
     }
     return {m1,m2,inColors,outColors}
 }
