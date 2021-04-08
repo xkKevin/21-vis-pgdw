@@ -213,7 +213,7 @@ function generateDataForDeleteDuplicateRows(dataIn1_csv, dataOut1_csv, inExpCols
 
     contextualCols.forEach(val => {
         m1[0].push(val)
-        m2[0].push(val)
+        // m2[0].push(val)
     })
 
     m1[0].sort(function(a,b){
@@ -292,6 +292,7 @@ function generateDataForDeleteDuplicateRows(dataIn1_csv, dataOut1_csv, inExpCols
         let rows = [duplicated_rows[0],duplicated_rows[1],dataIn1_csv.length - 1]
         for(let row = 0;row < rows.length;row++){
             let tempRow = []
+            let tempRow2 = []
             for(let col = 0;col < dataIn1_csv[0].length;col++){
                 if(m1[0].indexOf(dataIn1_csv[0][col]) !== -1){
                     if(inExpCols.indexOf(col) !== -1 && duplicated_rows.indexOf(rows[row]) !== -1)
@@ -301,7 +302,16 @@ function generateDataForDeleteDuplicateRows(dataIn1_csv, dataOut1_csv, inExpCols
                 }
             }
             m1.push(tempRow)
-            if(row !== 0)m2.push(tempRow)
+           
+            for(let col = 0;col < dataIn1_csv[0].length;col++){
+                if(m2[0].indexOf(dataIn1_csv[0][col]) !== -1){
+                    if(duplicated_rows.indexOf(rows[row]) !== -1)tempRow2.push(dataIn1_csv[rows[row]][col])
+                    else{
+                        tempRow2.push('')
+                    }
+                }
+            }
+            if(row !== 0)m2.push(tempRow2)
         }
         
         if(dataIn1_csv[0].length === inExpCols.length){
@@ -332,8 +342,11 @@ function generateDataForDeleteDuplicateRows(dataIn1_csv, dataOut1_csv, inExpCols
     for(let col = 0;col < m1[0].length;col++){
         if(inExpCols.indexOf(dataIn1_csv[0].indexOf(m1[0][col])) === -1){
             m1[0][col] = ''
-            m2[0][col] = ''
+            // m2[0][col] = ''
         }
+    }
+    for(let col = 0;col < m2[0].length;col++){
+        if(inExpCols.indexOf(dataIn1_csv[0].indexOf(dataOut1_csv[0][col])) === -1)m2[0][col] = ''
     }
     // if(inExpCols.length === dataIn1_csv[0].length){
     //     for(let row = 0;row < m1.length;row++){
