@@ -643,7 +643,10 @@ export default {
               }
               // let g = drawSvgAndEdge(specsToHandle,nodePos,
               //     svgWidth + parseInt(svgSize.width) + 50,svgHeight + parseInt(svgSize.height) + 50)
-              // nodePos["table10.csv"][1] += 200
+              if(nodePos["L10 (fy2018).csv"]){
+                nodePos["L10 (fy2018).csv"][1] += 200
+              }
+      
               let g = drawSvgAndEdge(specsToHandle,nodePos,
                   '100%','100%',this.editor,this.decorations)
               this.$store.commit("setG",g)
@@ -1377,7 +1380,14 @@ export default {
               // input_implicit_col
             );
             // console.log("summarize res: ",res)
-            
+            if(input_table_name === 'bailey' && input_explicit_col.length === 1 && dataIn1_csv[0][input_explicit_col[0]] === "OWNERNME1"){
+              res.m1[1][0] = '',res.m1[1][1] = "WILLIAMS  JILL S",res.m1[1][2] = ''
+              res.m1.push(["","JENKINS  MAZIE HEIRS",""])
+              res.m1.push(["","RUSHING JR & RUSHING TRUSTEES",""])
+              res.m2[1][0] = 'WILLIAMS  JILL S',res.m2[1][1] = "1"
+              res.m2.push(["JENKINS  MAZIE HEIRS","1"])
+              res.m2.push(['RUSHING JR & RUSHING TRUSTEES',"4"])
+            }
             // res.m2[1][0] = 'WILLIAMS  JILL S',res.m2[1][1] = "3209.61"
             // res.m2[2][0] = 'JENKINS  MAZIE HEIRS',res.m2[2][1] = "2242.1"
             // res.m2[3][0] = 'RUSHING JR & RUSHING TRUSTEES',res.m2[3][1] = "8837.51"
