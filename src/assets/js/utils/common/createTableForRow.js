@@ -3,50 +3,50 @@
 //insertPos表示插入行的位置
 //keepPos表示保存行的位置
 //deletePos表示删除列的位置
-import {tableRender} from '@/assets/js/config/config'
-export function drawTableForRow(g,matrix,pos,colWidth,colHeight,table_name,colFontSize = 1.5,cellFontSize = 1,rowColor = [],naRow = [],naCol = [],sortCol = '') {
+import { tableRender } from '@/assets/js/config/config'
+export function drawTableForRow(g, matrix, pos, colWidth, colHeight, table_name, colFontSize = 1.5, cellFontSize = 1, rowColor = [], naRow = [], naCol = [], sortCol = '') {
     let colors = tableRender.colors
-    // g.append('text')
-    //     .attr('x',pos[0])
-    //     .attr('y',pos[1] - colHeight)
-    //     .attr('dy',colHeight / 3 * 2)
-    //     .attr('text-anchor', 'start')
-    //     .text(table_name)
-    //     .attr('fill','black')
-    //     .attr('font-size',`${colWidth / 4}px`)
+        // g.append('text')
+        //     .attr('x',pos[0])
+        //     .attr('y',pos[1] - colHeight)
+        //     .attr('dy',colHeight / 3 * 2)
+        //     .attr('text-anchor', 'start')
+        //     .text(table_name)
+        //     .attr('fill','black')
+        //     .attr('font-size',`${colWidth / 4}px`)
 
     let showText = ''
-    if(7 * matrix[0].length >= table_name.length){
+    if (7 * matrix[0].length >= table_name.length) {
         showText = table_name
-    }else{
-        showText = table_name.slice(0,7 * matrix[0].length - 1)
+    } else {
+        showText = table_name.slice(0, 7 * matrix[0].length - 1)
         showText += '…'
     }
 
     g.append('text')
-    .attr('x',pos[0])
-    .attr('y',pos[1] - colHeight)
-    .attr('dy',colHeight / 3 * 2)
-    .attr('text-anchor', 'start')
-    .attr('fill','balck')
-    .attr('font-size',`${colWidth / 5}px`)
-    .text(showText)
-    .append("svg:title")
-    .text(table_name)
-    for(let row = 0; row < matrix.length; row++){
+        .attr('x', pos[0])
+        .attr('y', pos[1] - colHeight)
+        .attr('dy', colHeight / 3 * 2)
+        .attr('text-anchor', 'start')
+        .attr('fill', 'balck')
+        .attr('font-size', `${colWidth / 5}px`)
+        .text(showText)
+        .append("svg:title")
+        .text(table_name)
+    for (let row = 0; row < matrix.length; row++) {
         //dCol表示删除列时，output glyph中当前列需要左移的位置
-        if(row === 0){
-            for(let col = 0; col < matrix[0].length; col ++){
-            
+        if (row === 0) {
+            for (let col = 0; col < matrix[0].length; col++) {
+
                 g.append('rect')
-                    .attr('width',colWidth)
-                    .attr('height',colHeight)
-                    .attr('fill',tableRender.firstRowColor)
-                    .attr('opacity',tableRender.opacity)
-                    .attr('stroke-width','1px')
-                    .attr('stroke',tableRender.strokeColor)
-                    .attr('x',pos[0] + col * colWidth)
-                    .attr('y',pos[1] + row * colHeight)
+                    .attr('width', colWidth)
+                    .attr('height', colHeight)
+                    .attr('fill', tableRender.firstRowColor)
+                    .attr('opacity', tableRender.opacity)
+                    .attr('stroke-width', '1px')
+                    .attr('stroke', tableRender.strokeColor)
+                    .attr('x', pos[0] + col * colWidth)
+                    .attr('y', pos[1] + row * colHeight)
 
                 // g.append('text')
                 //     .attr('x',pos[0] + col * colWidth)
@@ -58,110 +58,110 @@ export function drawTableForRow(g,matrix,pos,colWidth,colHeight,table_name,colFo
                 //         matrix[row][col].slice(0,maxCharsPerCol) : matrix[row][col])
                 //     .attr('fill','white')
                 //     .attr('font-size',`${colFontSize}px`)
-                if(sortCol === col){
-                    if(matrix[row][col].length <= 6){
+                // 0.38 * colWidth
+                if (sortCol === col) {
+                    if (matrix[row][col].length <= 6) {
                         g.append('text')
-                        .attr('x',pos[0] + col * colWidth)
-                        .attr('y',pos[1] + row * colHeight)
-                        .attr('dx',colWidth / 10)
-                        .attr('dy',colHeight / 3 * 2)
-                        .attr('text-anchor', 'start')
-                        .text(matrix[row][col])
-                        .attr('fill','white')
-                        .attr('font-size',`${colWidth / 5}px`)
-                    }else{
-                        let textToShow = matrix[row][col].slice(0,5)
+                            .attr('x', pos[0] + col * colWidth)
+                            .attr('y', pos[1] + row * colHeight)
+                            .attr('dx', 0.78 * colWidth / 2)
+                            .attr('dy', colHeight / 3 * 2)
+                            .attr('text-anchor', 'middle')
+                            .text(matrix[row][col])
+                            .attr('fill', 'white')
+                            .attr('font-size', `${colWidth / 5}px`)
+                    } else {
+                        let textToShow = matrix[row][col].slice(0, 5)
                         g.append('text')
-                        .attr('x',pos[0] + col * colWidth)
-                        .attr('y',pos[1] + row * colHeight)
-                        .attr('dx',colWidth / 10)
-                        .attr('dy',colHeight / 3 * 2)
-                        .attr('text-anchor', 'start')
-                        .text(textToShow + '…')
-                        .attr('fill','white')
-                        .attr('font-size',`${colWidth / 5}px`)
-                        .append("svg:title")
-                        .text(matrix[row][col])
+                            .attr('x', pos[0] + col * colWidth)
+                            .attr('y', pos[1] + row * colHeight)
+                            .attr('dx', 0.78 * colWidth / 2)
+                            .attr('dy', colHeight / 3 * 2)
+                            .attr('text-anchor', 'middle')
+                            .text(textToShow + '…')
+                            .attr('fill', 'white')
+                            .attr('font-size', `${colWidth / 5}px`)
+                            .append("svg:title")
+                            .text(matrix[row][col])
                     }
-                }else{
-                    if(matrix[row][col].length <= 6){
+                } else {
+                    if (matrix[row][col].length <= 6) {
                         g.append('text')
-                        .attr('x',pos[0] + col * colWidth)
-                        .attr('y',pos[1] + row * colHeight)
-                        .attr('dx',colWidth / 2)
-                        .attr('dy',colHeight / 3 * 2)
-                        .attr('text-anchor', 'middle')
-                        .text(matrix[row][col])
-                        .attr('fill','white')
-                        .attr('font-size',`${colWidth / 5}px`)
-                    }else{
-                        let textToShow = matrix[row][col].slice(0,5)
+                            .attr('x', pos[0] + col * colWidth)
+                            .attr('y', pos[1] + row * colHeight)
+                            .attr('dx', colWidth / 2)
+                            .attr('dy', colHeight / 3 * 2)
+                            .attr('text-anchor', 'middle')
+                            .text(matrix[row][col])
+                            .attr('fill', 'white')
+                            .attr('font-size', `${colWidth / 5}px`)
+                    } else {
+                        let textToShow = matrix[row][col].slice(0, 5)
                         g.append('text')
-                        .attr('x',pos[0] + col * colWidth)
-                        .attr('y',pos[1] + row * colHeight)
-                        .attr('dx',colWidth / 2)
-                        .attr('dy',colHeight / 3 * 2)
-                        .attr('text-anchor', 'middle')
-                        .text(textToShow + '…')
-                        .attr('fill','white')
-                        .attr('font-size',`${colWidth / 5}px`)
-                        .append("svg:title")
-                        .text(matrix[row][col])
+                            .attr('x', pos[0] + col * colWidth)
+                            .attr('y', pos[1] + row * colHeight)
+                            .attr('dx', colWidth / 2)
+                            .attr('dy', colHeight / 3 * 2)
+                            .attr('text-anchor', 'middle')
+                            .text(textToShow + '…')
+                            .attr('fill', 'white')
+                            .attr('font-size', `${colWidth / 5}px`)
+                            .append("svg:title")
+                            .text(matrix[row][col])
                     }
-                }   
+                }
             }
-        }
-        else{
-            for(let col = 0; col < matrix[0].length; col ++){
+        } else {
+            for (let col = 0; col < matrix[0].length; col++) {
                 let color = rowColor.length == 0 ? colors[row - 1] : colors[rowColor[row - 1]]
-                if(naRow.length !== 0){
-                    if(naRow.indexOf(row) !== -1){
-                        if(naCol[naRow.indexOf(row)] === col)
-                        color = 'white'
+                if (naRow.length !== 0) {
+                    if (naRow.indexOf(row) !== -1) {
+                        if (naCol[naRow.indexOf(row)] === col)
+                            color = 'white'
                     }
                 }
                 g.append('rect')
-                    .attr('width',colWidth)
-                    .attr('height',colHeight)
-                    .attr('fill',color)
-                    .attr('stroke-width','1px')
-                    .attr('stroke',tableRender.strokeColor)
-                    .attr('x',pos[0] + col * colWidth)
-                    .attr('y',pos[1] + row * colHeight)
+                    .attr('width', colWidth)
+                    .attr('height', colHeight)
+                    .attr('fill', color)
+                    .attr('stroke-width', '1px')
+                    .attr('stroke', tableRender.strokeColor)
+                    .attr('x', pos[0] + col * colWidth)
+                    .attr('y', pos[1] + row * colHeight)
                     // .attr('opacity',0.8)
-                // g.append('text')
-                //     .attr('x',pos[0] + col * colWidth)
-                //     .attr('y',pos[1] + row * colHeight)
-                //     .attr('dx',colWidth / 2)
-                //     .attr('dy',colHeight / 3 * 2)
-                //     .attr('text-anchor', 'middle')
-                //     .text(matrix[row][col].length > maxCharsPerCell ?
-                //         matrix[row][col].slice(0,maxCharsPerCell) : matrix[row][col])
-                //     .attr('fill','white')
-                //     .attr('font-size',`${cellFontSize}px`)
-                if(matrix[row][col].length <= 6){
+                    // g.append('text')
+                    //     .attr('x',pos[0] + col * colWidth)
+                    //     .attr('y',pos[1] + row * colHeight)
+                    //     .attr('dx',colWidth / 2)
+                    //     .attr('dy',colHeight / 3 * 2)
+                    //     .attr('text-anchor', 'middle')
+                    //     .text(matrix[row][col].length > maxCharsPerCell ?
+                    //         matrix[row][col].slice(0,maxCharsPerCell) : matrix[row][col])
+                    //     .attr('fill','white')
+                    //     .attr('font-size',`${cellFontSize}px`)
+                if (matrix[row][col].length <= 6) {
                     g.append('text')
-                    .attr('x',pos[0] + col * colWidth)
-                    .attr('y',pos[1] + row * colHeight)
-                    .attr('dx',colWidth / 2)
-                    .attr('dy',colHeight / 3 * 2)
-                    .attr('text-anchor', 'middle')
-                    .text(matrix[row][col])
-                    .attr('fill','white')
-                    .attr('font-size',`${colWidth / 5}px`)
-                }else{
-                    let textToShow = matrix[row][col].slice(0,5)
+                        .attr('x', pos[0] + col * colWidth)
+                        .attr('y', pos[1] + row * colHeight)
+                        .attr('dx', colWidth / 2)
+                        .attr('dy', colHeight / 3 * 2)
+                        .attr('text-anchor', 'middle')
+                        .text(matrix[row][col])
+                        .attr('fill', 'white')
+                        .attr('font-size', `${colWidth / 5}px`)
+                } else {
+                    let textToShow = matrix[row][col].slice(0, 5)
                     g.append('text')
-                    .attr('x',pos[0] + col * colWidth)
-                    .attr('y',pos[1] + row * colHeight)
-                    .attr('dx',colWidth / 2)
-                    .attr('dy',colHeight / 3 * 2)
-                    .attr('text-anchor', 'middle')
-                    .text(textToShow + '…')
-                    .attr('fill','white')
-                    .attr('font-size',`${colWidth / 5}px`)
-                    .append("svg:title")
-                    .text(matrix[row][col])
+                        .attr('x', pos[0] + col * colWidth)
+                        .attr('y', pos[1] + row * colHeight)
+                        .attr('dx', colWidth / 2)
+                        .attr('dy', colHeight / 3 * 2)
+                        .attr('text-anchor', 'middle')
+                        .text(textToShow + '…')
+                        .attr('fill', 'white')
+                        .attr('font-size', `${colWidth / 5}px`)
+                        .append("svg:title")
+                        .text(matrix[row][col])
                 }
             }
         }

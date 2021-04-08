@@ -140,12 +140,13 @@ export default {
         submitUpload(){
             // this.$emit("uploadSuccess");
             // return ;
-            if(this.$refs.inputfiles.$children[0].fileList.length===0 && this.$refs.outputfiles.$children[0].fileList.length===0){
+            // console.log(this.$refs.inputfiles);
+            if(this.$refs.inputfiles.$children[0].fileList.length===0){  //  && this.$refs.outputfiles.$children[0].fileList.length===0
                 this.$message({
                     type:'error',
-                    showClose:true,
-                    duration:3000,
-                    message:'please choose at least a file!'
+                    // showClose:true,
+                    // duration:3000,
+                    message:'Please select at least one file to upload'
                 });
             }else{
                 let flag1 = true,flag2 = true

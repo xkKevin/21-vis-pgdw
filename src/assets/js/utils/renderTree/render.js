@@ -1,27 +1,8 @@
 import { nodeSize, lineAttr } from '@/assets/js/config/config'
-import * as monaco from "monaco-editor";
-import * as d3 from 'd3'
 
-function codeHighlight(line, editor, decorations) {
-    if (line == 0) {
-        editor.deltaDecorations(decorations, [{
-            range: new monaco.Range(line, 1, line, 1),
-            options: {
-                isWholeLine: true,
-                className: 'myContentClass2',
-                glyphMarginClassName: 'myGlyphMarginClass2'
-            }
-        }])
-    } else {
-        editor.deltaDecorations(decorations, [{
-            range: new monaco.Range(line, 1, line, 1),
-            options: {
-                isWholeLine: true,
-                className: 'myContentClass',
-                glyphMarginClassName: 'myGlyphMarginClass'
-            }
-        }])
-    }
+var vm = null
+const sendVue = (_this) => {
+    vm = _this
 }
 
 function drawNode(g, specs, nodePos, specsInf, showTableFunc) {
@@ -117,6 +98,9 @@ function drawNode(g, specs, nodePos, specsInf, showTableFunc) {
                 .attr('fill', 'balck')
                 .attr('font-size', `${font_size}px`)
                 .text(showText)
+                .on('click', function(event) {
+                    showTableFunc(nodeName[idx])
+                })
                 .append("svg:title")
                 .text(specsInf[nodeName[idx]][0])
                 // .on("mouseover",function(event){
@@ -137,9 +121,6 @@ function drawNode(g, specs, nodePos, specsInf, showTableFunc) {
                 // .on("mouseout",function(event){
                 //     g.select(`#table_name_${specsInf[nodeName[idx]][0]}`).remove()
                 // })
-                .on('click', function(event) {
-                    showTableFunc(nodeName[idx])
-                })
 
             let rowsAndCols = `${specsInf[nodeName[idx]][1] - 1}R*${specsInf[nodeName[idx]][2]}C`
             let showRowsAndCols = ''
@@ -194,7 +175,7 @@ function drawNode(g, specs, nodePos, specsInf, showTableFunc) {
     }
 }
 
-function drawEdge(g, specs, nodePos, editor, decorations) {
+function drawEdge(g, specs, nodePos) {
 
     for (let idx = 0; idx < specs.length; idx++) {
         let defs = g.append("defs")
@@ -237,14 +218,14 @@ function drawEdge(g, specs, nodePos, editor, decorations) {
                 .attr("marker-end", `url(#arrow_${idx})`)
                 .attr('class', `edge_${idx}`)
                 .on('click', function(event) {
-                    codeHighlight(lineNum, editor, decorations)
+                    vm.codeHighlight(lineNum)
                 })
         } else if (typeof(specs[idx].input_table_file) === 'string') {
             let meetingPosY = nodePos[specs[idx].input_table_file][1] + nodeSize.height / 2
             let meetingPosX = nodePos[specs[idx].input_table_file][0] + nodeSize.width +
                 0.8 * (Math.min(nodePos[specs[idx].output_table_file[0]][0], nodePos[specs[idx].output_table_file[1]][0]) -
                     nodePos[specs[idx].input_table_file][0] - nodeSize.width)
-            
+
             let str = typeof(specs[idx].output_table_file) === 'string' ? specs[idx].output_table_file : specs[idx].output_table_file[0]
             let firstIdx = 0
             for (let s = 0; s < str.length; s++) {
@@ -264,7 +245,7 @@ function drawEdge(g, specs, nodePos, editor, decorations) {
                 // .style("stroke", lineAttr.color)
                 .attr('class', `edge_${idx}`)
                 .on('click', function(event) {
-                    codeHighlight(lineNum, editor, decorations)
+                    vm.codeHighlight(lineNum)
                 })
 
             g.append('line')
@@ -276,7 +257,7 @@ function drawEdge(g, specs, nodePos, editor, decorations) {
                 .attr('stroke-width', lineAttr.strokeWidth)
                 .attr('class', `edge_${idx}`)
                 .on('click', function(event) {
-                    codeHighlight(lineNum, editor, decorations)
+                    vm.codeHighlight(lineNum)
                 })
 
             g.append('line')
@@ -289,7 +270,7 @@ function drawEdge(g, specs, nodePos, editor, decorations) {
                 .attr("marker-end", `url(#arrow_${idx})`)
                 .attr('class', `edge_${idx}`)
                 .on('click', function(event) {
-                    codeHighlight(lineNum, editor, decorations)
+                    vm.codeHighlight(lineNum)
                 })
 
             g.append('line')
@@ -302,7 +283,7 @@ function drawEdge(g, specs, nodePos, editor, decorations) {
                 .attr("marker-end", `url(#arrow_${idx})`)
                 .attr('class', `edge_${idx}`)
                 .on('click', function(event) {
-                    codeHighlight(lineNum, editor, decorations)
+                    vm.codeHighlight(lineNum)
                 })
         } else {
             let meetingPosY = nodePos[specs[idx].output_table_file][1] + nodeSize.height / 2
@@ -329,7 +310,7 @@ function drawEdge(g, specs, nodePos, editor, decorations) {
                 // .style("stroke", "black")
                 .attr('class', `edge_${idx}`)
                 .on('click', function(event) {
-                    codeHighlight(lineNum, editor, decorations)
+                    vm.codeHighlight(lineNum)
                 })
 
             g.append('line')
@@ -341,7 +322,7 @@ function drawEdge(g, specs, nodePos, editor, decorations) {
                 .attr('stroke-width', lineAttr.strokeWidth)
                 .attr('class', `edge_${idx}`)
                 .on('click', function(event) {
-                    codeHighlight(lineNum, editor, decorations)
+                    vm.codeHighlight(lineNum)
                 })
 
             g.append('line')
@@ -353,7 +334,7 @@ function drawEdge(g, specs, nodePos, editor, decorations) {
                 .attr('stroke-width', lineAttr.strokeWidth)
                 .attr('class', `edge_${idx}`)
                 .on('click', function(event) {
-                    codeHighlight(lineNum, editor, decorations)
+                    vm.codeHighlight(lineNum)
                 })
 
             g.append('line')
@@ -366,11 +347,11 @@ function drawEdge(g, specs, nodePos, editor, decorations) {
                 .attr("marker-end", `url(#arrow_${idx})`)
                 .attr('class', `edge_${idx}`)
                 .on('click', function(event) {
-                    codeHighlight(lineNum, editor, decorations)
+                    vm.codeHighlight(lineNum)
                 })
         }
     }
 
 }
 
-export { drawNode, drawEdge }
+export { drawNode, drawEdge, sendVue }
