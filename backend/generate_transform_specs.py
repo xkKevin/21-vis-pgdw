@@ -463,16 +463,20 @@ def generate_transform_specs(script_content):
                 specs["type"] = 'delete_columns_select_keep'
                 specs["input_explicit_col"] = keep_col
                 # specs["operation_rule"] = 'Keep Columns: ' + ','.join(keep_col)
+                specs["operation_rule"] = 'Keep ' + ','.join(specs["input_explicit_col"])
 
                 rename_cols = []
                 for pk, pv in params.items():
                     if pk in ('none'):
                         continue
                     pv = remove_quote(pv)
-                    specs["input_explicit_col"].append(pv)
-                    specs["operation_rule"] = 'Keep ' + ','.join(specs["input_explicit_col"])
                     rename_cols.append(pv)
                 if rename_cols:
+                    pr_tmp = r[3].split(",")[1:]
+                    specs["input_explicit_col"] = []
+                    for i in pr_tmp:
+                        specs["input_explicit_col"].append(remove_quote(i.split("=")[-1]))
+                    specs["operation_rule"] = 'Keep ' + ','.join(specs["input_explicit_col"])
                     code1 = "%s=select(%s,%s)" % (specs["output_table_name"], specs["input_table_name"], '`%s`' % "`,`".join(specs["input_explicit_col"]))
                     script_code = original_codes[:line_num-1]
                     script_code.append(code1)  # 将原先的那一行代码替换掉
@@ -489,8 +493,9 @@ def generate_transform_specs(script_content):
                         raise Exception("Failed to execute the %s script!" % script_exec_name)  # 如果执行失败，抛出异常
                     
                     new_tbl_file = "L%d_2 (%s).csv" % (line_num, specs["output_table_name"])
-                    if not os.path.exists(new_tbl_file):
-                        os.rename(specs["output_table_file"], new_tbl_file) # 重命名文件
+                    if os.path.exists(new_tbl_file):
+                        os.remove(new_tbl_file)
+                    os.rename(specs["output_table_file"], new_tbl_file) # 重命名文件
 
                     # os.rename(specs["output_table_file"], "L%d_2 (%s).csv" % (line_num, specs["output_table_name"])) # 重命名文件
 
@@ -579,8 +584,9 @@ def generate_transform_specs(script_content):
                     raise Exception("Failed to execute the %s script!" % script_exec_name)  # 如果执行失败，抛出异常
                 
                 new_tbl_file = "L%d_2 (%s).csv" % (line_num, specs["output_table_name"])
-                if not os.path.exists(new_tbl_file):
-                    os.rename(specs["output_table_file"], new_tbl_file) # 重命名文件
+                if os.path.exists(new_tbl_file):
+                    os.remove(new_tbl_file)
+                os.rename(specs["output_table_file"], new_tbl_file) # 重命名文件
 
                 specs["output_table_name"] = output_tbl  # + "_1"
                 specs["output_table_file"] = output_t1
