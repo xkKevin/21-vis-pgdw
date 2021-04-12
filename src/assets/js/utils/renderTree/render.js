@@ -26,6 +26,7 @@ function drawNode(g, specs, nodePos, specsInf, showTableFunc) {
     }
 
     nodeName = Array.from(new Set(nodeName))
+    console.log("nodeName: ",nodeName)
     for (let idx = 0; idx < nodeName.length; idx++) {
 
         let nodeRect = g.append('rect')
@@ -84,6 +85,7 @@ function drawNode(g, specs, nodePos, specsInf, showTableFunc) {
             let letters = 8
             let font_size = nodeSize.width / 1.33 / letters
             let showText = ''
+           
             if (letters + 1 >= specsInf[nodeName[idx]][0].length) { // 可显示9个字符
                 showText = specsInf[nodeName[idx]][0]
             } else {

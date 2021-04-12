@@ -602,6 +602,12 @@ export default {
             // Object.assign(specsToHandle,response.data.transform_specs)
 
             specsToHandle = Array.from(response.data.transform_specs);
+            for(let idx = 0;idx < specsToHandle.length;idx ++){
+              if(specsToHandle[idx].type === 'separate_tables_decompose'){
+                specsToHandle[idx].output_table_file = specsToHandle[idx].output_table_file.slice(0,Math.min(2,specsToHandle[idx].output_table_file.length))
+                specsToHandle[idx].output_table_name = specsToHandle[idx].output_table_name.slice(0,Math.min(2,specsToHandle[idx].output_table_name.length))
+              }
+            }
             /*
             specsToHandle = [
               {
@@ -1894,7 +1900,7 @@ export default {
               xPercents.push(1);
               yPercents.push(1);
             }
-
+    
             separate_tables_decompose(
               res.m1,
               res.tables,
