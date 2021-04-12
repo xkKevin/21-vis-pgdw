@@ -9,15 +9,15 @@
     <el-row type="flex" justify="center" style="height: 45vh">
       <el-col style="width: 20vw; margin-right: 7px">
         <el-row style="height: 100%; display: flex; flex-direction: column">
-          <el-header height="60px" style="background: black">
+          <el-header height="65px" style="background: black">
             <div
               style="
                 text-align: center;
                 color: white;
-                font-size: 20pt;
+                font-size: 21pt;
                 font-family: Arial;
                 font-weight: bold;
-                line-height: 60px;
+                line-height: 65px;
               "
             >
               Somnus
@@ -57,12 +57,12 @@
                       width: 138px;
                       display: inline-block;
                       text-align: center;
-                      padding: 3px 0;
+                      padding: 4px 0;
                     "
                   >
                     {{ one_case }}
                   </span>
-                  <i class="el-icon-arrow-down el-icon--right"></i>
+                  <i class="el-icon-arrow-down el-icon--right" style="position: relative; left: -6px;"></i>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item
                       v-for="key in Object.keys(cases)"
@@ -100,11 +100,11 @@
             <el-dropdown @command="changeModel" style="margin-left: 8px">
               <span
                 class="el-dropdown-link"
-                style="width: 68px; display: inline-block; text-align: center"
+                style="width: 69px; display: inline-block; text-align: center; padding: 2px 0;"
               >
                 {{ language }}
               </span>
-              <i class="el-icon-arrow-down el-icon--right"></i>
+              <i class="el-icon-arrow-down el-icon--right" style="position: relative; left: -4px;"></i>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item
                   v-for="item in all_langs"
@@ -487,7 +487,7 @@ export default {
       if (flag) {
         // flag 为 true，说明是界面传来的，注意不能用 script_content === "" 来判断，因为 第二个参数传进来的是 VueComponent
         if (lang === this.language) return;
-        console.log("script_content:", script_content);
+        // console.log("script_content:", script_content);
         script_content = this.editor.getValue();
         this.language = lang;
       }
@@ -2842,7 +2842,9 @@ footer.el-footer {
   padding: 10px;
 }
 .el-dropdown {
+  border-radius: 8px;
   border: 1px solid grey;
+  background-color: white;
   /* background-color: lightblue; */
   font-size: 20px;
 }

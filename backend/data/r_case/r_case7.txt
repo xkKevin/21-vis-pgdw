@@ -9,7 +9,8 @@ table_select1 = select(table_del2, -year2)
 table_select2 = select(table_select1, -cases2)
 
 # The transformation, Decompose, results in a divergence edge
-split_year = group_split(table2, year)
+split_year = group_split(table2, year)  # Decompose by year
+# split_country = group_split(table2, country)  # Decompose by country
 
 # The table, trees, is used as input tables twice
 trees_ungroup = ungroup(trees)

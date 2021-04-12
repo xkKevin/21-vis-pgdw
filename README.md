@@ -34,3 +34,7 @@ pip install -r backend\requirements.txt
 ```
 python backend\app.py
 ```
+
+
+##### Others
+`kubectl cp ./generate_transform_specs.py pgdw-78b459fb4-nj9f6:/PG4DT/backend/generate_transform_specs.py`
