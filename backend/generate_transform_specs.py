@@ -4,7 +4,7 @@ import time
 Rscript_path = "Rscript"  # Rscript执行路径
 
 
-def deleteMatchFiles(directory, starts="", ends="", recursion = False, hour = 0.5):
+def deleteMatchFiles(directory, starts="", ends="", recursion = False, hour = 0.2):
     '''
     按特定要求删除某路径下的匹配文件，如果starts和ends都不填写，则默认删除该目录下所有文件
     recursion: 表示是否递归删除匹配的文件，默认为否，即值删除当前路径下的匹配文件

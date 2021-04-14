@@ -216,7 +216,7 @@
       </el-col>
     </el-row>
     <el-row style="margin-top: 9px">
-      <el-col style="height: 52.6vh">
+      <el-col style="height: 52.6vh; display: flex; flex-direction: column;">
         <el-row
           type="flex"
           justify="space-between"
@@ -226,7 +226,7 @@
         </el-row>
         <div
           id="glyphs"
-          style="height: 43vh"
+          style="flex: 1; padding: 3px 1px"
           v-loading="glyph_running"
           element-loading-spinner="el-icon-loading"
           element-loading-text="Running"
