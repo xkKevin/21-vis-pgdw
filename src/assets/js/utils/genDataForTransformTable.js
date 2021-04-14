@@ -197,12 +197,24 @@ function generateDataForFold(dataIn1_csv, dataOut1_csv, inExpOrImpCol, outExpOrI
         m1.push(tempRow)
     }
 
-    for (let row = 1; row <= 2 * inExpOrImpCol.length; row++) {
-        let tempRow = []
-        for (let col = 0; col < dataOut1_csv[0].length; col++) {
-            if (m2[0].indexOf(dataOut1_csv[0][col]) !== -1) tempRow.push(dataOut1_csv[row][col])
+    if(contextualCols.length === 0){
+        for (let row = 1; row <= 2 * inExpOrImpCol.length; row++) {
+            let tempRow = []
+            tempRow = [m1[0][Math.floor((row - 1) / 2)],m1[row % 2 === 1 ? 1 : 2][Math.floor((row - 1) / 2)]]
+            // for (let col = 0; col < m2[0].length; col++) {
+            //     tempRow.push(m1)
+            // }
+            m2.push(tempRow)
         }
-        m2.push(tempRow)
+    }
+    else{
+        for (let row = 1; row <= 2 * inExpOrImpCol.length; row++) {
+            let tempRow = []
+            for (let col = 0; col < dataOut1_csv[0].length; col++) {
+                if (m2[0].indexOf(dataOut1_csv[0][col]) !== -1) tempRow.push(dataOut1_csv[row][col])
+            }
+            m2.push(tempRow)
+        }
     }
     return { m1, m2 }
 }
