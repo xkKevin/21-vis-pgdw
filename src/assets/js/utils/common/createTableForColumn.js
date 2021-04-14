@@ -91,6 +91,7 @@ export function drawTableForColumn(g,matrix,pos,colWidth,colHeight,table_name,co
                     if(naCol.indexOf(col) !== -1 && naPos.indexOf(row) !== -1)
                         color = 'white'
                 }
+                if(matrix[row][col] === 'NA')color = 'white'
                 g.append('rect')
                     .attr('width',colWidth)
                     .attr('height',colHeight)
