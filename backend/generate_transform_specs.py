@@ -917,7 +917,7 @@ def generate_transform_specs(script_content):
             specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"]) 
             specs["type"] = 'identical_operation'
             if len(params['none'])>1:
-                specs["operation_rule"] = "%s: %s" % (func, ",".join(params['none'][1:]))
+                specs["operation_rule"] = "%s: %s" % (func, ",".join(remove_quote(params['none'][1:])))
             else:
                 specs["operation_rule"] = func  # 函数名加参数
             # specs["operation_rule"] = "%s(%s)" % (func, r[3])  # 函数名加参数
