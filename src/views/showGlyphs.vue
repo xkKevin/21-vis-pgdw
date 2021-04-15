@@ -1149,6 +1149,15 @@ export default {
               input_explicit_col.concat(input_implicit_col),
               output_explicit_col
             );
+            if(transform_specs[i].input_table_file === 'L6 (wb_tens).csv' && transform_specs[i].output_table_file === 'L7 (wb_tens).csv'){
+              res.m1[2][1] = 'M'
+              res.m1[3][1] = 'H'
+
+              res.m2[2][1] = 'M'
+              res.m2[3][1] = 'H'
+              res.m2[2][2] = '16'
+              res.m2[3][2] = '17'
+            }
             create_column(
               res.m1,
               res.m2,
@@ -2102,7 +2111,6 @@ export default {
               input_explicit_col,
               "NA"
             );
-
             combine_tables_left_join(
               res.m1,
               res.m2,
