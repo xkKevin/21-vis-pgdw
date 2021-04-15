@@ -1073,6 +1073,7 @@ export default {
         if (transform_specs[i].axis) {
           axis = parseInt(transform_specs[i].axis);
         }
+        const row_diff = 1
         switch (transform_specs[i].type) {
           case "create_tables":
             res = generateDataForCreateTable(dataOut1_csv);
@@ -1084,7 +1085,7 @@ export default {
               this.show_table_name,
               pos,
               res[0].length / dataOut1_csv[0].length,
-              res.length / dataOut1_csv.length
+              (res.length-row_diff) / (dataOut1_csv.length - row_diff)
             );
             break;
           case "create_columns_merge":
@@ -1109,8 +1110,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1136,8 +1137,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1164,8 +1165,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1189,8 +1190,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1228,7 +1229,7 @@ export default {
                 m1[0].length / dataIn1_csv[0].length,
                 m2[0].length / dataOut1_csv[0].length,
               ],
-              [m1.length / dataIn1_csv.length, m2.length / dataOut1_csv.length]
+              [(m1.length-row_diff) / (dataIn1_csv.length-row_diff), (m2.length-row_diff) / (dataOut1_csv.length-row_diff)]
             );
             break;
           case "create_rows_insert":
@@ -1255,8 +1256,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1270,7 +1271,7 @@ export default {
               this.show_table_name,
               pos,
               [res.m1[0].length / dataIn1_csv[0].length],
-              [res.m1.length / dataIn1_csv.length]
+              [(res.m1.length-row_diff) / (dataIn1_csv.length-row_diff)]
             );
             break;
           case "delete_columns_select_keep":
@@ -1295,8 +1296,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1321,8 +1322,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1350,8 +1351,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1374,8 +1375,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1401,8 +1402,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1422,10 +1423,10 @@ export default {
               dataOut1_csv,
               input_explicit_col
             );
-            console.log(
-              "partition: ",
-              res.m2[0].length / dataOut1_csv[0].length
-            );
+            // console.log(
+            //   "partition: ",
+            //   res.m2[0].length / dataOut1_csv[0].length
+            // );
             delete_duplicate_row_partColumn(
               res.m1,
               res.m2,
@@ -1442,8 +1443,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1468,8 +1469,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1495,8 +1496,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1524,8 +1525,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1551,8 +1552,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1580,8 +1581,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1608,8 +1609,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1636,8 +1637,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1664,8 +1665,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1691,8 +1692,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1720,8 +1721,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1749,8 +1750,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1800,8 +1801,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ],
               res.outColor
             );
@@ -1827,8 +1828,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1853,8 +1854,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1883,9 +1884,9 @@ export default {
                 res.m3[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataIn2_csv,
-                res.m3.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataIn2_csv-row_diff),
+                (res.m3.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -1894,12 +1895,12 @@ export default {
               dataIn1_csv,
               input_explicit_col
             );
-            let xPercents = [res.m1[0].length / dataIn1_csv[0].length];
-            let yPercents = [res.m1.length / dataIn1_csv.length];
-            for (let idx = 0; idx < res.tables.length; idx++) {
-              xPercents.push(1);
-              yPercents.push(1);
-            }
+            let x_Percents = res.m1[0].length / dataIn1_csv[0].length;
+            // for (let idx = 0; idx < res.tables.length; idx++) {
+            //   // console.log(res.tables[idx]);
+            //   xPercents.push(xPercents[0]);
+            //   yPercents.push((res.tables[idx].length-1)/(tableInf[output_tables[idx].length-1]));
+            // }
     
             separate_tables_decompose(
               res.m1,
@@ -1910,8 +1911,12 @@ export default {
               i,
               this.show_table_name,
               pos,
-              xPercents,
-              yPercents
+              [x_Percents, x_Percents, x_Percents],
+              [
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.tables[0].length-row_diff)/(dataOut1_csv.length-row_diff),
+                (res.tables[1].length-row_diff)/(dataOut2_csv.length-row_diff),
+              ]
             );
             break;
           case "separate_tables_decompose_q":
@@ -1940,9 +1945,9 @@ export default {
                 res.m3[0].length / dataOut2_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOu1_csv,
-                res.m3.length / dataOut2_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOu1_csv.length-row_diff),
+                (res.m3.length-row_diff) / (dataOut2_csv.length-row_diff),
               ]
             );
             break;
@@ -1971,9 +1976,9 @@ export default {
                 res.m3[0].length / dataOut2_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOu1_csv,
-                res.m3.length / dataOut2_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOu1_csv-row_diff),
+                (res.m3.length-row_diff) / (dataOut2_csv.length-row_diff),
               ]
             );
             break;
@@ -2000,8 +2005,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -2026,8 +2031,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -2082,9 +2087,9 @@ export default {
                 res.m3[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataIn2_csv.length,
-                res.m3.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataIn2_csv.length-row_diff),
+                (res.m3.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -2120,9 +2125,9 @@ export default {
                 res.m3[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataIn2_csv.length,
-                res.m3.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataIn2_csv.length-row_diff),
+                (res.m3.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -2156,9 +2161,9 @@ export default {
                 res.m3[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataIn2_csv.length,
-                res.m3.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataIn2_csv.length-row_diff),
+                (res.m3.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             ),
               this.show_table_name;
@@ -2191,9 +2196,9 @@ export default {
                 res.m3[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataIn2_csv.length,
-                res.m3.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataIn2_csv.length-row_diff),
+                (res.m3.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -2219,8 +2224,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -2252,12 +2257,12 @@ export default {
               this.show_table_name,
               pos,
               [
-                res.m1[0].length / dataIn1_csv[0].length,
-                res.m2[0].length / dataOut1_csv[0].length,
+                res.m2[0].length / dataIn1_csv[0].length,
+                res.m1[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m2.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m1.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -2290,9 +2295,9 @@ export default {
                 res.m3[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataIn2_csv.length,
-                res.m3.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataIn2_csv.length-row_diff),
+                (res.m3.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -2321,9 +2326,9 @@ export default {
                 res.m3[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataIn2_csv.length,
-                res.m3.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataIn2_csv.length-row_diff),
+                (res.m3.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;
@@ -2343,7 +2348,7 @@ export default {
           //       this.show_table_name,
           //       pos,
           //       [res.m1[0].length / dataIn1_csv[0].length, res.m2[0].length / dataIn2_csv[0].length, res.m3[0].length / dataOut1_csv[0].length],
-          //       [res.m1.length / dataIn1_csv.length, res.m2.length / dataIn2_csv.length, res.m3.length / dataOut1_csv.length]
+          //       [(res.m1.length-row_diff) / (dataIn1_csv.length-row_diff), (res.m2.length-row_diff) / (dataIn2_csv.length-row_diff), (res.m3.length-row_diff) / (dataOut1_csv.length-row_diff)]
           //     );
           //   }else{
           //     combine_tables_extend_axis0(
@@ -2359,7 +2364,7 @@ export default {
           //       this.show_table_name,
           //       pos,
           //       [res.m1[0].length / dataIn1_csv[0].length, res.m2[0].length / dataIn2_csv[0].length, res.m3[0].length / dataOut1_csv[0].length],
-          //       [res.m1.length / dataIn1_csv.length, res.m2.length / dataIn2_csv.length, res.m3.length / dataOut1_csv.length]
+          //       [(res.m1.length-row_diff) / (dataIn1_csv.length-row_diff), (res.m2.length-row_diff) / (dataIn2_csv.length-row_diff), (res.m3.length-row_diff) / (dataOut1_csv.length-row_diff)]
           //     );
           //   }
           // break;
@@ -2380,8 +2385,8 @@ export default {
                 res.m2[0].length / dataOut1_csv[0].length,
               ],
               [
-                res.m1.length / dataIn1_csv.length,
-                res.m2.length / dataOut1_csv.length,
+                (res.m1.length-row_diff) / (dataIn1_csv.length-row_diff),
+                (res.m2.length-row_diff) / (dataOut1_csv.length-row_diff),
               ]
             );
             break;

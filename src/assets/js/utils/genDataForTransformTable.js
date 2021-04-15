@@ -59,7 +59,7 @@ function generateDataForColumnRearrange(dataIn1_csv, dataOut1_csv, colsAfterArra
 function generateDataForTableSort(dataIn1_csv, dataOut1_csv, sortedCol, order) {
     //暂定以索引方式传入列
     //sortedCol是一个数组
-
+    const isAsc = order.indexOf("desc") === -1 // 是否是升序
     let contextualCols = extractCols(Array.from(dataIn1_csv[0]), sortedCol, sortedCol)
 
     let m1 = [
@@ -92,8 +92,32 @@ function generateDataForTableSort(dataIn1_csv, dataOut1_csv, sortedCol, order) {
     }
     let uniqueVal = Array.from(new Set(colVals))
     let rows = []
-    for (let idx = 0; idx < Math.min(uniqueVal.length, 3); idx++) {
-        rows.push(colVals.indexOf(uniqueVal[idx]) + 1)
+    for (let idx = 0; idx < uniqueVal.length - 3; idx++) {
+        let select_elems = uniqueVal.slice(idx, idx + 3)
+        if (isAsc) {
+            if (select_elems.toString() == select_elems.sort().toString()) {
+                continue
+            } else {
+                rows.push(colVals.indexOf(uniqueVal[idx]) + 1)
+                rows.push(colVals.indexOf(uniqueVal[idx + 1]) + 1)
+                rows.push(colVals.indexOf(uniqueVal[idx + 2]) + 1)
+                break
+            }
+        } else {
+            if (select_elems.toString() == select_elems.sort().reverse().toString()) {
+                continue
+            } else {
+                rows.push(colVals.indexOf(uniqueVal[idx]) + 1)
+                rows.push(colVals.indexOf(uniqueVal[idx + 1]) + 1)
+                rows.push(colVals.indexOf(uniqueVal[idx + 2]) + 1)
+                break
+            }
+        }
+    }
+    if (rows.length < 3) {
+        for (let idx = 0; idx < uniqueVal.length; idx++) {
+            rows.push(colVals.indexOf(uniqueVal[idx]) + 1)
+        }
     }
     rows.sort()
     for (let row = 0; row < rows.length; row++) {
@@ -131,15 +155,17 @@ function generateDataForTableSort(dataIn1_csv, dataOut1_csv, sortedCol, order) {
         colVal.push(m1[row][colInM1])
     }
     let valBeforeSort = Array.from(colVal)
-    if (order.indexOf("desc") === -1) {
+    if (isAsc) {
         //暂定为只对数值类型进行排序
-        colVal = colVal.sort(function(a, b) {
-            return a - b
-        })
+        // colVal = colVal.sort(function(a, b) {
+        //     return a - b
+        // })
+        colVal = colVal.sort()
     } else {
-        colVal = colVal.sort(function(a, b) {
-            return b - a
-        })
+        // colVal = colVal.sort(function(a, b) {
+        //     return b - a
+        // })
+        colVal = colVal.sort().reverse()
     }
 
     // console.log("sorted: ",colVal)
@@ -197,17 +223,16 @@ function generateDataForFold(dataIn1_csv, dataOut1_csv, inExpOrImpCol, outExpOrI
         m1.push(tempRow)
     }
 
-    if(contextualCols.length === 0){
+    if (contextualCols.length === 0) {
         for (let row = 1; row <= 2 * inExpOrImpCol.length; row++) {
             let tempRow = []
-            tempRow = [m1[0][Math.floor((row - 1) / 2)],m1[row % 2 === 1 ? 1 : 2][Math.floor((row - 1) / 2)]]
-            // for (let col = 0; col < m2[0].length; col++) {
-            //     tempRow.push(m1)
-            // }
+            tempRow = [m1[0][Math.floor((row - 1) / 2)], m1[row % 2 === 1 ? 1 : 2][Math.floor((row - 1) / 2)]]
+                // for (let col = 0; col < m2[0].length; col++) {
+                //     tempRow.push(m1)
+                // }
             m2.push(tempRow)
         }
-    }
-    else{
+    } else {
         for (let row = 1; row <= 2 * inExpOrImpCol.length; row++) {
             let tempRow = []
             for (let col = 0; col < dataOut1_csv[0].length; col++) {
