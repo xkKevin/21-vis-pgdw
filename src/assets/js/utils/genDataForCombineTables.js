@@ -466,7 +466,6 @@ function generateDataForFullJoin(dataIn1_csv, dataIn2_csv, dataOut1_csv,inExpOrI
     }
     rows3 = Array.from(new Set(rows3))
     rows3.sort()
-
     for(let row = 0;row < rows1.length;row++){
         let tempRow = []
         for(let col = 0;col < dataIn1_csv[0].length;col++){
@@ -637,7 +636,14 @@ function generateDataForFullJoin_2(dataIn1_csv, dataIn2_csv, dataOut1_csv,inExpC
   
     // rows3 = Array.from(new Set(rows3))
     rows3.sort()
-
+    let valueRows3 = [],tempRows3= []
+    for(let idx = 0; idx < rows3.length; idx++){
+        if(valueRows3.indexOf(dataOut1_csv[rows3[idx]][dataOut1_csv[0].indexOf(dataIn1_csv[0][inExpCols[0]])]) === -1){
+            valueRows3.push(dataOut1_csv[rows3[idx]][dataOut1_csv[0].indexOf(dataIn1_csv[0][inExpCols[0]])])
+            tempRows3.push(rows3[idx])
+        }
+    }
+    rows3 = tempRows3
     let inColor1 = [],inColor2 = [],outColor = []
     let allRows = []
     for(let r1 = 0;r1 < rows1.length;r1++){
