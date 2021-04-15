@@ -53,7 +53,7 @@ function create_row(m1,m2,rule,t1_name,t2_name,insertPos = -1,name,showTableName
     drawTableForRow(g,m1,[inputX,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
     drawPcentBar(g,[inputX,colHeight],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])
    
-    drawDashRect(g,[inputX,(m1.length + 1) * colHeight + 3],colHeight,m1[0].length * colWidth)
+    drawDashRect(g,[inputX,(m1.length + 1) * colHeight],colHeight,m1[0].length * colWidth)
     let plusUrl = require('../../images/add.svg')
     drawIcon(g,[inputX + (m1[0].length - 0.8) * colWidth / 2,(m1.length + 1.1) * colHeight],0.8 * colWidth,0.8 * colHeight,plusUrl)
     let arrowUrl = require('../../images/arrow.svg')
