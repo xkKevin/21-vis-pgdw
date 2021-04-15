@@ -1780,8 +1780,8 @@ export default {
               res.m1.push(["", "JENKINS  MAZIE HEIRS", ""]);
               res.m1.push(["", "RUSHING JR & RUSHING TRUSTEES", ""]);
               (res.m2[1][0] = "WILLIAMS  JILL S"), (res.m2[1][1] = "1");
-              res.m2.push(["JENKINS  MAZIE HEIRS", "1"]);
-              res.m2.push(["RUSHING JR & RUSHING TRUSTEES", "4"]);
+              res.m2[2] = ["JENKINS  MAZIE HEIRS", "1"];
+              res.m2[3] = ["RUSHING JR & RUSHING TRUSTEES", "4"];
             }
             // res.m2[1][0] = 'WILLIAMS  JILL S',res.m2[1][1] = "3209.61"
             // res.m2[2][0] = 'JENKINS  MAZIE HEIRS',res.m2[2][1] = "2242.1"
