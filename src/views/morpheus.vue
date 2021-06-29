@@ -14,13 +14,13 @@
               style="
                 text-align: center;
                 color: white;
-                font-size: 21pt;
+                font-size: 18pt;
                 font-family: Arial;
                 font-weight: bold;
                 line-height: 65px;
               "
             >
-              Somnus
+              MORPHEUS&nbsp;Revisited
             </div>
           </el-header>
           <div
@@ -40,7 +40,7 @@
                 flex-direction: column;
               "
             >
-              <upload-tables></upload-tables>
+              <upload-tables v-on:updatechange="getUpload" @getTableName="getTableName"></upload-tables>
               <el-row
                 style="
                   background: white;
@@ -54,7 +54,7 @@
                   <span
                     class="el-dropdown-link"
                     style="
-                      width: 138px;
+                      width: 158px;
                       display: inline-block;
                       text-align: center;
                       padding: 4px 0;
@@ -96,8 +96,8 @@
         >
           <div id="tag1"></div>
           <div class="title_right">
-            Language:
-            <el-dropdown @command="changeModel" style="margin-left: 8px">
+            Language:R
+            <!-- <el-dropdown @command="changeModel" style="margin-left: 8px">
               <span
                 class="el-dropdown-link"
                 style="width: 69px; display: inline-block; text-align: center; padding: 2px 0;"
@@ -115,8 +115,8 @@
                   {{ item }}
                 </el-dropdown-item>
               </el-dropdown-menu>
-            </el-dropdown>
-            <el-button
+            </el-dropdown> -->
+            <!-- <el-button
               round
               @click="generateGlyphs"
               style="
@@ -134,10 +134,10 @@
                 margin-left: 8px;
               "
               >Run</el-button
-            >
+            > -->
           </div>
         </el-row>
-        <div style="flex: 1; display: flex; align-items: center">
+        <div v-loading="script_loading" style="flex: 1; display: flex; align-items: center">
           <div id="monaco" style="height: 38vh; width: 98%"></div>
         </div>
         <!-- style="width:40vw; height:100%; padding:0 0 0 0; display: grid; grid-template-columns: [c1] 100%; grid-template-rows: [r1] 50px [r2] auto;" -->
@@ -193,6 +193,7 @@
         >
           <el-table
             v-loading="table_loading"
+            v-if="showTable"
             element-loading-spinner="el-icon-loading"
             element-loading-text="Loading"
             stripe
@@ -354,7 +355,7 @@ import {
   combine_tables_extend_axis1,
 } from "@/assets/js/glyph/glyphs_for_python";
 
-import uploadTables from "./InputTables";
+import uploadTables from "./MorpheusInputTables";
 
 const request_api = "";
 
@@ -367,28 +368,44 @@ export default {
       editor: null, // 文本编辑器
       table_name: "",
       script_content: "", //'print("hello world!")',  上一次运行的script脚本
-      language: "r",
+      language: "R",
       all_langs: ["r", "python"],
       glyph_running: false,
       table_loading: false,
+      script_loading: false,
       tableData: [],
       tableHead: [],
       dataTables: {},
       show_table_name: true,
       decorations: null,
       cases: {
-        r_case1: "input1.csv",
-        r_case2: "warpbreaks.csv",
-        r_case3: "Energy-Poverty 32641 homes.csv",
-        r_case4: "fy2018.csv",
-        r_case5: "benchmark5.txt",
-        r_case6: "benchmark19.txt",
-        r_case7: "original_tables/table1.csv",
-        python_case1: "apple-iphone-revenue.csv",
+        Morpheus_case1: "benchmarks/1/r1_input1.csv|benchmarks/1/r1_output1.csv",
+        Morpheus_case2: "benchmarks/2/r2_input1.csv|benchmarks/2/r2_output1.csv",
+        Morpheus_case3: "benchmarks/3/r3_input1.csv|benchmarks/3/r3_output1.csv",
+        Morpheus_case4: "benchmarks/13/r13_input1.csv|benchmarks/13/r13_output1.csv",
+        Morpheus_case5: "benchmarks/27/r27_input1.csv|benchmarks/27/r27_input2.csv|benchmarks/27/r27_output1.csv",
+        Morpheus_case6: "benchmarks/53/r53_input1.csv|benchmarks/53/r53_output1.csv",
+        Morpheus_case7: "benchmarks/60/r60_input1.csv|benchmarks/60/r60_output1.csv",
+        Morpheus_case8: "benchmarks/74/r74_input1.csv|benchmarks/74/r74_output1.csv",
+        // case8: "benchmarks/38/r38_input1.csv|benchmarks/38/r38_input2.csv|benchmarks/38/r38_output1.csv",
         // "python_case2": "",
+      },
+      casesTable: {
+        Morpheus_case1: "r1_input1.csv",
+        Morpheus_case2: "r2_input1.csv",
+        Morpheus_case3: "r3_input1.csv",
+        Morpheus_case4: "r13_input1.csv",
+        Morpheus_case5: "r27_input1.csv",
+        Morpheus_case6: "r53_input1.csv",
+        Morpheus_case7: "r60_input1.csv",
+        Morpheus_case8: "r74_input1.csv",
       },
       one_case: "Select a case",
       interaction_flag: false,
+      scriptReturnByUpload: '',
+      tableName: '',
+      showTable: false,
+      gm_flag_count: 0
       // warning_flag: true, // 只在第一次警告用户
     };
   },
@@ -402,10 +419,27 @@ export default {
   //   },
   // },
   methods: {
+    getUpload(e){
+      this.showTable = true
+      this.scriptReturnByUpload = e;
+      this.language = 'R';
+      this.changeModel(this.language, this.scriptReturnByUpload, false);
+      this.detectChanges();
+      this.getTableData(this.tableName)
+      this.generateGlyphsUpload();
+    },
+    getTableName(e){
+      this.tableName = e
+    },
     selectCase(one_case = "r_case1") {
+      this.showTable = true
+      this.glyph_running = true
+      this.table_loading = true
+      this.script_loading = true
       this.one_case = one_case;
-      this.getScriptData(this.one_case);
-      this.getTableData(this.cases[this.one_case]);
+      // this.getScriptData(this.one_case);
+      this.getMorpheus(this.cases[this.one_case]);
+      this.getTableData(this.casesTable[this.one_case]);
     },
     drawTag(id, text) {
       let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -451,7 +485,7 @@ export default {
       this.initEditor();
       // this.getTableData(this.cases["r_case1"]);
       // this.getScriptData();
-      this.selectCase();
+      // this.selectCase();
       sendVue(this);
     },
     initEditor() {
@@ -462,7 +496,7 @@ export default {
         automaticLayout: true, // 自动布局
         autoIndent: true, //自动布局
         fontSize: 16, //字体大小
-        readOnly: false, // 只读
+        readOnly: true, // 只读
         theme: "vs", // 官方自带三种主题vs, hc-black, or vs-dark,
         glyphMargin: true,
       });
@@ -520,10 +554,10 @@ export default {
       // console.log(this.decorations);
     },
     async getTableData(table_file) {
-      this.table_loading = true;
+      // this.table_loading = true;
       // 降低网络带宽，减少请求次数，同时避免
       if (this.dataTables[table_file] == undefined) {
-        const table_path = `${request_api}/data/user_data/${table_file}?a=${Math.random()}`;
+        const table_path = `${request_api}/data/morpheusData/${table_file}?a=${Math.random()}`;
         await getCsv(table_path, this.dataTables, table_file);
       }
       this.table_name = table_file.startsWith("original_tables/")
@@ -534,7 +568,7 @@ export default {
       this.tableHead = this.dataTables[table_file].tableHead;
       this.table_loading = false;
       /*
-      const table_path = `${request_api}/data/user_data/${table_file}?a=${Math.random()}`;
+      const table_path = `${request_api}/data/${tables_path}/${table_file}?a=${Math.random()}`;
       // dataIn1_csv = await getCsv(table_path);
       d3.text(table_path).then(data => {
         // console.log("text", d3.csvParseRows(data))
@@ -574,10 +608,254 @@ export default {
           });
         });
     },
+    getMorpheus(case_string = "") {
+      this.gm_flag_count += 1
+      const path = `${request_api}/useMorpheus`
+      axios.get(path, { params: { caseString: case_string } })
+      .then((response) => {
+        this.language = 'R';
+        this.changeModel(this.language, response.data.scriptReturn, false);
+        this.script_loading = false;
+        this.detectChanges();
+        this.generateGlyphs();
+        this.gm_flag_count -= 1
+      })
+      .catch((error) => {
+        if (this.gm_flag_count > 0) {
+          this.gm_flag_count -= 1
+        } else {
+          console.log(error);
+          this.$message({
+          message: error,
+          type: "error",
+        });
+        }
+      });
+    },
     generateGlyphs() {
       // console.log(this.editor.getValue(), this.language);
-      const path = `${request_api}/generate_transform_specs`;
+      const path = `${request_api}/morpheus_generate_transform_specs`;
       let specsToHandle = [];
+      // console.log(this.scriptReturnByUpload)
+      // console.log(this.editor.getValue())
+      // this.glyph_running = true;
+      axios
+        .get(path, {
+          params: {
+            script_content: this.editor.getValue(),
+            language: this.language,
+          },
+        })
+        .then((response) => {
+          this.glyph_running = false;
+          // 执行 run 之前先 清空当前数据
+          this.dataTables = {};
+          // 生成glyphs的操作
+          if (response.data.error_info) {
+            this.$message({
+              message: response.data.error_info,
+              type: "error", // success/warning/info/error
+            });
+          } else {
+            // console.log(response.data.transform_specs)
+            document.getElementById("glyphs").innerHTML = "";
+            // Object.assign(specsToHandle,response.data.transform_specs)
+
+            specsToHandle = Array.from(response.data.transform_specs);
+            for(let idx = 0;idx < specsToHandle.length;idx ++){
+              if(specsToHandle[idx].type === 'separate_tables_decompose'){
+                specsToHandle[idx].output_table_file = specsToHandle[idx].output_table_file.slice(0,Math.min(2,specsToHandle[idx].output_table_file.length))
+                specsToHandle[idx].output_table_name = specsToHandle[idx].output_table_name.slice(0,Math.min(2,specsToHandle[idx].output_table_name.length))
+              }
+            }
+            /*
+            specsToHandle = [
+              {
+                    operation_rule: `Load: "apple-iphone-revenue.csv"`,
+                    output_table_file: "t1.csv",
+                    output_table_name: "revenue",
+                    type: "create_tables",
+                },
+               
+                {
+                    operation_rule: `rearrange Category`,
+                    input_table_file: "t1.csv",
+                    input_table_name: "revenue",
+                    input_explicit_col:["Category"],
+                    output_table_file: "t3.csv",
+                    output_table_name: "revenue_sort",
+                    type: "transform_tables_sort",
+                },
+                // {
+                //     operation_rule: `transform scores`,
+                //     output_explicit_col:['P.E.'],
+                //     input_table_file: "t6.csv",
+                //     input_table_name: "scores2",
+                //     output_explicit_col:["P.E."],
+                //     output_table_file: "t11.csv",
+                //     output_table_name: "level2score",
+                //     type: "transform_columns_mutate",
+                // },
+                {
+                    operation_rule: `Load: "apple-iphone-unit-sales.csv"`,
+                    output_table_file: "t2.csv",
+                    output_table_name: "sales",
+                    type: "create_tables",
+                },
+                 {
+                    operation_rule: `rearrange Category`,
+                    input_table_file: "t2.csv",
+                    input_table_name: "sales",
+                    input_explicit_col:["Category"],
+                    output_table_file: "t4.csv",
+                    output_table_name: "sales_sort",
+                    type: "transform_tables_sort",
+                },
+                // {
+                //     operation_rule: `transform scores`,
+                //     output_explicit_col:['P.E.'],
+                //     input_table_file: "t4.csv",
+                //     input_table_name: "scores2",
+                //     output_explicit_col:["P.E."],
+                //     output_table_file: "t9.csv",
+                //     output_table_name: "level2score",
+                //     type: "transform_columns_mutate",
+                // },
+
+                {
+                    operation_rule: `concat tables`,
+                    input_table_file: ["t3.csv","t4.csv"],
+                    input_table_name: ["revenue_sort","sales_sort"],
+                    output_table_file: "t5.csv",
+                    output_table_name: "rev_sales",
+                    axis:0,
+                    type: "combine_tables_concat_python",
+                },
+                // {
+                //     operation_rule: `drop duplicated rows`,
+                //     input_table_file: 't14.csv',
+                //     input_table_name: "all_scores",
+                //     output_table_file: "t17.csv",
+                //     output_table_name: "drop_dup",
+                //     // axis:0,
+                //     type:'delete_rows_deduplicate',
+                // },
+                {
+                  input_table_file: 't5.csv',
+                  input_table_name: "rev_sales",
+                  output_table_file: "t6.csv",
+                  output_table_name: "rev_sales",
+                  operation_rule:"reset_index",
+                  type:"identical_operation"
+                },
+                {
+                  input_table_file: 't6.csv',
+                  input_table_name: "rev_sales",
+                  input_explicit_col:['Category'],
+                  output_table_file: "t7.csv",
+                  output_table_name: "rev_sales",
+                  operation_rule:"delete Category",
+                  type:"delete_columns_select_remove"
+                },
+                // {
+                //   input_table_file: 't19.csv',
+                //   input_table_name: "drop_dup",
+                //   input_explicit_col:['ID'],
+                //   output_table_file: "t21.csv",
+                //   output_table_name: "drop_ID",
+                //   operation_rule:"delete ID",
+                //   type:"delete_columns_select_remove"
+                // },
+                {
+                  input_table_file: 't7.csv',
+                  input_table_name: "Category",
+                  output_table_file: "t8.csv",
+                  output_table_name: "Category",
+                  operation_rule:"caculate mean",
+                  type:'create_rows_summarize'
+                } 
+            ]
+            */
+
+            let nullInfileCount = "*",
+              nullOutfileCount = "#";
+            specsToHandle.forEach((spec) => {
+              if (!spec.input_table_file) {
+                spec["input_table_file"] = nullInfileCount;
+                nullInfileCount += "*";
+              }
+              if (!spec.output_table_file) {
+                spec["output_table_file"] = nullOutfileCount;
+                nullOutfileCount += "#";
+              }
+            });
+
+            let { groups, edges } = getComponents(specsToHandle);
+
+            let graphs = getGraphs(groups, edges);
+
+            let svgWidth = 0,
+              svgHeight = 0;
+
+            let nodePos = {};
+            const ELK = require("elkjs");
+            let proms = [];
+            for (let idx = 0; idx < graphs.length; idx++) {
+              let tempElk = new Promise((resolve, reject) => {
+                let elk = new ELK();
+                elk
+                  .layout(graphs[idx])
+                  .then((data) => {
+                    for (let idx = 0; idx < data.children.length; idx++) {
+                      nodePos[data.children[idx].id] = [
+                        data.children[idx].x,
+                        data.children[idx].y,
+                      ];
+                    }
+                  })
+                  .then(() => {
+                    resolve();
+                  });
+              });
+              proms.push(tempElk);
+            }
+            Promise.all(proms).then(() => {
+              //在高度方向上给不同的component设置偏移量，由上一组的maxY确定
+              let yOffset = 0;
+              for (let group = 0; group < groups.length; group++) {
+                let maxY = 0;
+                groups[group].nodeGroup.forEach((tableName) => {
+                  maxY = Math.max(nodePos[tableName][1], maxY);
+                  nodePos[tableName][1] = nodePos[tableName][1] + yOffset;
+                  svgWidth = Math.max(svgWidth, nodePos[tableName][0]);
+                  svgHeight = Math.max(svgHeight, nodePos[tableName][1]);
+                });
+                yOffset = yOffset + maxY + 1.2 * parseInt(nodeSize.height);
+              }
+              if (nodePos["L10 (fy2018).csv"]) {
+                nodePos["L10 (fy2018).csv"][1] += 200;
+              }
+
+              let g = drawSvgAndEdge(specsToHandle, nodePos, "100%", "100%");
+              this.$store.commit("setG", g);
+              this.preparation(specsToHandle, nodePos);
+              this.script_content = this.editor.getValue(); // 只有运行成功后，this.script_content 才会被更新
+              this.interaction_flag = true;
+              // this.warning_flag = true;
+            });
+          }
+        })
+        .catch((error) => {
+          this.glyph_running = false;
+          console.log(error);
+        });
+    },
+    generateGlyphsUpload() {
+      // console.log(this.editor.getValue(), this.language);
+      const path = `${request_api}/upload_morpheus_generate_transform_specs`;
+      let specsToHandle = [];
+      console.log(this.scriptReturnByUpload)
+      console.log(this.editor.getValue())
       this.glyph_running = true;
       axios
         .get(path, {
@@ -797,6 +1075,7 @@ export default {
       console.log("transformation specifications: ", transform_specs);
 
       let tableInf = {};
+      let tables_path = 'morpheusData';
 
       for (let i = 0; i < transform_specs.length; i++) {
         let pos = [];
@@ -904,7 +1183,7 @@ export default {
         ) {
           if (typeof transform_specs[i].input_table_file === "string") {
             dataIn1_csv = await getCsv(
-              `${request_api}/data/user_data/${
+              `${request_api}/data/${tables_path}/${
                 transform_specs[i].input_table_file
               }?a=${Math.random()}`,
               this.dataTables,
@@ -919,7 +1198,7 @@ export default {
             }
           } else {
             dataIn1_csv = await getCsv(
-              `${request_api}/data/user_data/${
+              `${request_api}/data/${tables_path}/${
                 transform_specs[i].input_table_file[0]
               }?a=${Math.random()}`,
               this.dataTables,
@@ -934,7 +1213,7 @@ export default {
             }
             if (transform_specs[i].input_table_file.length > 1)
               dataIn2_csv = await getCsv(
-                `${request_api}/data/user_data/${
+                `${request_api}/data/${tables_path}/${
                   transform_specs[i].input_table_file[1]
                 }?a=${Math.random()}`,
                 this.dataTables,
@@ -955,7 +1234,7 @@ export default {
         ) {
           if (typeof transform_specs[i].output_table_file === "string") {
             dataOut1_csv = await getCsv(
-              `${request_api}/data/user_data/${
+              `${request_api}/data/${tables_path}/${
                 transform_specs[i].output_table_file
               }?a=${Math.random()}`,
               this.dataTables,
@@ -970,7 +1249,7 @@ export default {
             }
           } else {
             dataOut1_csv = await getCsv(
-              `${request_api}/data/user_data/${
+              `${request_api}/data/${tables_path}/${
                 transform_specs[i].output_table_file[0]
               }?a=${Math.random()}`,
               this.dataTables,
@@ -985,7 +1264,7 @@ export default {
             }
             if (transform_specs[i].output_table_file.length > 1)
               dataOut2_csv = await getCsv(
-                `${request_api}/data/user_data/${
+                `${request_api}/data/${tables_path}/${
                   transform_specs[i].output_table_file[1]
                 }?a=${Math.random()}`,
                 this.dataTables,
@@ -1707,12 +1986,14 @@ export default {
             );
             break;
           case "combine_columns_merge":
+            console.log(dataIn1_csv, dataOut1_csv); 
             res = generateDataForMergeColumns(
               dataIn1_csv,
               dataOut1_csv,
-              input_explicit_col,
+              input_explicit_col.sort(),
               output_explicit_col
             );
+            console.log(res);
             combine_columns_merge(
               res.m1,
               res.m2,

@@ -1,0 +1,1 @@
+./run-morpheus.sh "benchmarks/1/r1_input1.csv|benchmarks/1/r1_output1.csv" specs/spec2/ outr1.txt

@@ -31,6 +31,12 @@ const routes = [{
         name: 'UploadTables',
         component: () =>
             import ('@/views/InputTables')
+    },
+    {
+        path: '/morpheus',
+        name: 'useMorpheus',
+        component: () =>
+            import ('@/views/morpheus')
     }
 ]
 
