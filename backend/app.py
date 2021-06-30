@@ -79,23 +79,18 @@ def postMorpheusData():
     if request.method == "GET":
         try:
             inputList = []
-            outputFile = ''
-            inputTableList = []
             filesList = []
             basepath = os.path.dirname(__file__)  # 当前文件所在路径
-            inputPath = os.path.join(basepath , 'data\morpheusUserData\input')
-            outputPath = os.path.join(basepath , 'data\morpheusUserData\output')
+            inputPath = os.path.join(basepath , 'data/morpheusUserData/input')
+            outputPath = os.path.join(basepath , 'data/morpheusUserData/output')
             for root, dirs, files in os.walk(inputPath):
                 for f in files:
-                    print(os.path.join(root, f))
                     inputList.append(os.path.join(root, f))
                     fileTup = ("inputlist" , (f, open(os.path.join(root, f), "rb")))
                     filesList.append(fileTup)
 
             for root, dirs, files in os.walk(outputPath):
                 for f in files:
-                    print(os.path.join(root, f))
-                    outputFile = os.path.join(root, f)
                     fileTup = ("output" , (f, open(os.path.join(root, f), "rb")))
                     filesList.append(fileTup)
             result = requests.post('http://127.0.0.1:8080/useMorpheus', files=filesList)
