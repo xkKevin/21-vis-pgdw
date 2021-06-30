@@ -433,9 +433,6 @@ export default {
     },
     selectCase(one_case = "r_case1") {
       this.showTable = true
-      this.glyph_running = true
-      this.table_loading = true
-      this.script_loading = true
       this.one_case = one_case;
       // this.getScriptData(this.one_case);
       this.getMorpheus(this.cases[this.one_case]);
@@ -554,7 +551,7 @@ export default {
       // console.log(this.decorations);
     },
     async getTableData(table_file) {
-      // this.table_loading = true;
+      this.table_loading = true;
       // 降低网络带宽，减少请求次数，同时避免
       if (this.dataTables[table_file] == undefined) {
         const table_path = `${request_api}/data/morpheusData/${table_file}?a=${Math.random()}`;
@@ -609,6 +606,7 @@ export default {
         });
     },
     getMorpheus(case_string = "") {
+      this.script_loading = true
       this.gm_flag_count += 1
       const path = `${request_api}/useMorpheus`
       axios.get(path, { params: { caseString: case_string } })
@@ -641,6 +639,7 @@ export default {
     },
     generateGlyphs() {
       // console.log(this.editor.getValue(), this.language);
+      this.glyph_running = true
       const path = `${request_api}/morpheus_generate_transform_specs`;
       let specsToHandle = [];
       // console.log(this.scriptReturnByUpload)
