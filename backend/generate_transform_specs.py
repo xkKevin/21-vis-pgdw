@@ -86,7 +86,7 @@ def execScript(script_content):
         }}
     }}\n'''.format(value=match_r[0][0],line_num=line_num, colnames_name=colnames_name)  # matrix和dataframe是两种不一样的table结构
 
-    with open(script_exec_name, "w", encoding='utf-8', newline='\r\n') as fp:
+    with open(script_exec_name, "w", encoding='utf-8') as fp:  # , newline='\r\n'
         fp.write(codes)
         
     if(os.system(Rscript_path + " " + script_exec_name)):

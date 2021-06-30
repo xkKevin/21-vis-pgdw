@@ -19,7 +19,8 @@ def execScript(script_content):
     codes = ''
 #     p_out_func_params = re.compile('''\s*(.+?)\s*=\s*([\w\.]+?)\s*[(](.*)[)]''')
 #     p_out_cols = re.compile('''([\w]+)\[+\s*(.*?)\s*\]+''')
-    p = re.compile('''^(\s*)(\w+)[\[\s\.]*(.*?)[\s\]]*=\s*([\w\.]+?)\s*[(](.*)[)]''')
+    p1 = re.compile('''^(\s*)(\w+)[\[\s\.]*(.*?)[\s\]]*=\s*([\w\.]+?)\s*[(](.*)[)]''') # 这里表示必须经过函数
+    p2 = re.compile('''^(\s*)(\w+)[\[\s\.]*(.*?)[\s\]]*=\s*([\w\.]*)\s*''')  # 而这个匹配表示只需要一个赋值表达式就可以了
     # space_index, output_table, columns, function, parameters
     p_pandas = re.compile("^(\s*)import\s*pandas\s*(as\s*(\w+))?\s*")
     
@@ -41,9 +42,10 @@ def execScript(script_content):
         line_num += 1
         codes += line
         original_codes.append(line.strip("\n"))
-        match_r = p.findall(line)
+        match_r = p1.findall(line)
+        match_r2 = p2.findall(line)
 #             print(match_r)
-        if len(match_r) == 0:
+        if len(match_r2) == 0:
             if codes[-1] != '\n':
                 codes += '\n'
             pandas_r = p_pandas.findall(line)
@@ -56,10 +58,13 @@ def execScript(script_content):
 {space_index}col_states={{}}\n'''.format(space_index=space_index)
                     flag = False
         else:
-            parser_info[line_num] = match_r[0][1:]  # output_table, columns, function, parameters
+            if len(match_r):
+                parser_info[line_num] = match_r[0][1:]  # output_table, columns, function, parameters
+            else:
+                parser_info[line_num] = match_r2[0][1:]  # 这是赋值语句的情况（即没有函数）
+            space_index = match_r2[0][0]
             if codes[-1] != '\n':
                 codes += '\n'
-            space_index = match_r[0][0]
             codes += \
 '''{space_index}if (isinstance({value}, {pandas_abbr}.DataFrame)):
 {space_index}    columns = list({value}.index.names)
@@ -70,7 +75,7 @@ def execScript(script_content):
 {space_index}    else:
 {space_index}        col_states[{line_num}] = list({value}.columns.values)
 {space_index}        {value}.to_csv("L{line_num} ({value}).csv", index=False)
-\n'''.format(space_index=space_index, value=match_r[0][1],line_num=line_num,pandas_abbr=pandas_abbr) 
+\n'''.format(space_index=space_index, value=match_r2[0][1],line_num=line_num,pandas_abbr=pandas_abbr) 
                 
     with open(script_exec_name, "w", encoding='utf-8') as fp:
         codes += '''{space_index}with open("{str_time}_colnames.txt","w",encoding='utf-8') as fp:
@@ -208,7 +213,7 @@ def generate_transform_specs(script_content):
     # output_table, columns, function, parameters
 
     parser_info, col_states, pandas_abbr = execScript(script_content)
-    
+
     transform_specs = []
     var2table = {} # 用来记录变量对应的table file名称
     # p_match_num = re.compile("table(.+)\.csv")  #  L{line_num} ({value})
@@ -219,6 +224,11 @@ def generate_transform_specs(script_content):
     p_brackets = re.compile("\[(.+)\]")
     
     for pi_key, pi_value in parser_info.items():
+
+        if len(pi_value) < 4 and var2table.get(pi_value[0]):
+            var2table[pi_value[0]] = "L%d (%s).csv" % (pi_key, pi_value[0])
+            continue
+
         line_num = pi_key
         specs = {}
         output_tbl = pi_value[0]

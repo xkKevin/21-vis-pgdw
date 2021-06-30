@@ -2818,7 +2818,7 @@ export default {
     this.drawTag("tag1", "Script Panel");
     this.drawTag("tag2", "Table Panel");
     this.drawTag("tag3", "Graph Panel");
-    // this.record_log();
+    this.record_log();
   },
 };
 </script>

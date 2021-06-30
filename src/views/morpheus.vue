@@ -613,12 +613,19 @@ export default {
       const path = `${request_api}/useMorpheus`
       axios.get(path, { params: { caseString: case_string } })
       .then((response) => {
-        this.language = 'R';
-        this.changeModel(this.language, response.data.scriptReturn, false);
-        this.script_loading = false;
-        this.detectChanges();
-        this.generateGlyphs();
-        this.gm_flag_count -= 1
+        if(response.data.error_info){
+          this.$message({
+            message: response.data.error_info,
+            type: "error",
+          });
+        }else{
+          this.language = 'R';
+          this.changeModel(this.language, response.data.scriptReturn, false);
+          this.script_loading = false;
+          this.detectChanges();
+          this.generateGlyphs();
+          this.gm_flag_count -= 1
+        }
       })
       .catch((error) => {
         if (this.gm_flag_count > 0) {

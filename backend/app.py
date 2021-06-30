@@ -3,7 +3,6 @@ from flask import Flask, request, render_template, jsonify, send_from_directory,
 import generate_transform_specs as gts
 import python_adaptor
 import os
-import datetime
 import requests
 
 # 当设置了某个路径为static_folder后，自动将最后一个文件夹设置为url的静态文件访问起始网址
@@ -15,7 +14,7 @@ app = Flask(__name__, static_folder='../dist/static',
 # app.jinja_env.variable_start_string = '[['
 # app.jinja_env.variable_end_string = ']]'
 
-data_path = "data/"
+data_path = "backend/data/"
 script_file = "script_test.txt"
 
 # 注意，以下两个输出结果不一样，此时程序中涉及到的路径皆以app.root_path为准
@@ -47,20 +46,23 @@ def getData():
 @app.route('/useMorpheus', methods=['GET'])
 def getMorpheusData():
     if request.method == "GET":
-        caseString = request.args.get("caseString")  # POST请求用 request.form.get
-        if caseString:
-            urlPath = 'http://127.0.0.1:8080/useMorpheus'
-            paramas = {'caseString' : caseString}
-            response = requests.get(urlPath, params=paramas)
-            result = response.json()
-            # now_time = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-            # baseDir = os.path.dirname(__file__)
-            # outFile = 'out' + now_time + '.txt'
-            # filePath = os.path.join(baseDir, './data/caseText/', outFile)
-            # with open(filePath, "w", encoding='utf-8') as f:
-            #     f.write(result['scriptReturn'])
-            #     f.close()
-            return jsonify({'scriptReturn': result['scriptReturn']})
+        try:
+            caseString = request.args.get("caseString")  # POST请求用 request.form.get
+            if caseString:
+                urlPath = 'http://127.0.0.1:8080/useMorpheus'
+                paramas = {'caseString' : caseString}
+                response = requests.get(urlPath, params=paramas)
+                result = response.json()
+                # now_time = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                # baseDir = os.path.dirname(__file__)
+                # outFile = 'out' + now_time + '.txt'
+                # filePath = os.path.join(baseDir, './data/caseText/', outFile)
+                # with open(filePath, "w", encoding='utf-8') as f:
+                #     f.write(result['scriptReturn'])
+                #     f.close()
+                return jsonify({'scriptReturn': result['scriptReturn']})
+        except Exception as e:
+            return jsonify({'error_info': str(e)})
     #     if case_file:
     #         print("%s%s/%s.txt" % (data_path, case_file[:-1], case_file))
     #         with open("%s%s/%s.txt" % (data_path, case_file[:-1], case_file), 'r', encoding='utf-8') as f:
@@ -75,29 +77,32 @@ def getMorpheusData():
 @app.route('/useMorpheusPost', methods=['GET'])
 def postMorpheusData():
     if request.method == "GET":
-        inputList = []
-        outputFile = ''
-        inputTableList = []
-        filesList = []
-        basepath = os.path.dirname(__file__)  # 当前文件所在路径
-        inputPath = os.path.join(basepath , 'data\morpheusUserData\input')
-        outputPath = os.path.join(basepath , 'data\morpheusUserData\output')
-        for root, dirs, files in os.walk(inputPath):
-            for f in files:
-                print(os.path.join(root, f))
-                inputList.append(os.path.join(root, f))
-                fileTup = ("inputlist" , (f, open(os.path.join(root, f), "rb")))
-                filesList.append(fileTup)
+        try:
+            inputList = []
+            outputFile = ''
+            inputTableList = []
+            filesList = []
+            basepath = os.path.dirname(__file__)  # 当前文件所在路径
+            inputPath = os.path.join(basepath , 'data\morpheusUserData\input')
+            outputPath = os.path.join(basepath , 'data\morpheusUserData\output')
+            for root, dirs, files in os.walk(inputPath):
+                for f in files:
+                    print(os.path.join(root, f))
+                    inputList.append(os.path.join(root, f))
+                    fileTup = ("inputlist" , (f, open(os.path.join(root, f), "rb")))
+                    filesList.append(fileTup)
 
-        for root, dirs, files in os.walk(outputPath):
-            for f in files:
-                print(os.path.join(root, f))
-                outputFile = os.path.join(root, f)
-                fileTup = ("output" , (f, open(os.path.join(root, f), "rb")))
-                filesList.append(fileTup)
-        result = requests.post('http://127.0.0.1:8080/useMorpheus', files=filesList)
-        respones = result.json()
-        return jsonify({'scriptReturn': respones['scriptReturn']})
+            for root, dirs, files in os.walk(outputPath):
+                for f in files:
+                    print(os.path.join(root, f))
+                    outputFile = os.path.join(root, f)
+                    fileTup = ("output" , (f, open(os.path.join(root, f), "rb")))
+                    filesList.append(fileTup)
+            result = requests.post('http://127.0.0.1:8080/useMorpheus', files=filesList)
+            respones = result.json()
+            return jsonify({'scriptReturn': respones['scriptReturn']})
+        except Exception as e:
+            return jsonify({'error_info': str(e)})
         # caseString = request.args.get("caseString")  # POST请求用 request.form.get
         # if caseString:
         #     urlPath = 'http://127.0.0.1:5000/useMorpheus'
@@ -144,7 +149,7 @@ def generate_transform_specs():
         
         # -------- 以下代码是用来调试的 -------- # 
         # os.chdir(os.path.join(os.getcwd(), data_path_lan)) # 修改当前工作目录  os.path.join(os.getcwd(),script_name)
-        # transform_specs = adaptor(script_file)  # transform_specs = gts.generate_transform_specs(script_file)
+        # transform_specs = adaptor(script_content)  # transform_specs = gts.generate_transform_specs(script_file)
         # import json
         # with open("transform_specs.json", "w") as fp:
         #     json.dump(transform_specs, fp, indent=2)

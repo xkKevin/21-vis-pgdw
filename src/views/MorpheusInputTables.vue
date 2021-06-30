@@ -227,6 +227,11 @@ export default {
                         this.language = 'R';
                         this.$emit('getTableName',this.inputfileList[0].name)
                         this.$emit('updatechange',response.data.scriptReturn);
+                    }).catch(err => {
+                        this.$message({
+                            message: err,
+                            type: "error", // success/warning/info/error
+                        });
                     })
                 }
                 Promise.all([p1,p2]).then(()=>{
