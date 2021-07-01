@@ -179,6 +179,16 @@ export default {
                     message:'Please select at least one file to upload'
                 });
             }else{
+                this.$axios({
+                        url: `${request_api}/cleanDataFolder`,
+                        method: "get",
+                    }).then(res => {
+                        if (res.data.message!=='success') {
+                            alert(res.data.error_info)
+                        }
+                    }).catch(err=>{
+                        alert(err)
+                    })
                 let flag1 = true,flag2 = true
                 let p1 = new Promise((resolve,reject)=>{
                     let data = {}

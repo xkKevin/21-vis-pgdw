@@ -78,21 +78,22 @@ def getMorpheusData():
 def postMorpheusData():
     if request.method == "GET":
         try:
-            inputList = []
             filesList = []
             basepath = os.path.dirname(__file__)  # 当前文件所在路径
             inputPath = os.path.join(basepath , 'data/morpheusUserData/input')
             outputPath = os.path.join(basepath , 'data/morpheusUserData/output')
             for root, dirs, files in os.walk(inputPath):
                 for f in files:
-                    inputList.append(os.path.join(root, f))
+                    print('inputFile:', os.path.join(root, f))
                     fileTup = ("inputlist" , (f, open(os.path.join(root, f), "rb")))
                     filesList.append(fileTup)
 
             for root, dirs, files in os.walk(outputPath):
                 for f in files:
+                    print('outputFile:', os.path.join(root, f))
                     fileTup = ("output" , (f, open(os.path.join(root, f), "rb")))
                     filesList.append(fileTup)
+            print(filesList)
             result = requests.post('http://127.0.0.1:8080/useMorpheus', files=filesList)
             respones = result.json()
             return jsonify({'scriptReturn': respones['scriptReturn']})
@@ -249,6 +250,27 @@ def upload_morpheus_generate_transform_specs():
                     delPath =os.path.join(root, f)
                     os.remove(delPath)
 
+@app.route('/cleanDataFolder', methods = ['GET'])
+def cleanDataFolder():
+    if request.method == "GET":
+        try:
+            basepath = os.path.dirname(__file__)  # 当前文件所在路径
+            inputPath = os.path.join(basepath , 'data\morpheusUserData\input')
+            outputPath = os.path.join(basepath , 'data\morpheusUserData\output')
+            for root, dirs, files in os.walk(inputPath):
+                for f in files:
+                    print(os.path.join(root, f))
+                    delPath =os.path.join(root, f)
+                    os.remove(delPath)
+
+            for root, dirs, files in os.walk(outputPath):
+                for f in files:
+                    print(os.path.join(root, f))
+                    delPath =os.path.join(root, f)
+                    os.remove(delPath)
+            return jsonify({'message': 'success'})
+        except Exception as e:
+            return jsonify({'error_info': str(e)})   # 如果有异常的话，将异常信息返回给前端
 
 # 由于Flask只能开启一个static_folder，要想访问其他静态数据，则重新开启一个路由以专门访问数据
 # Custom static data
