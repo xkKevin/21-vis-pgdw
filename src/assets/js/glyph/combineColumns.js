@@ -54,18 +54,26 @@ export function combine_columns_merge(m1,m2,rule,t1_name,t2_name,inExpOrImp,outE
     let arrowUrl = require('../../images/arrow.svg')
     drawIcon(g,[(m1[0].length + 0.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
 
-    drawTableForColumn(g,m2,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,outColors)
-    drawPcentBar(g,[(m1[0].length + 1) * colWidth,colHeight],m2[0].length * colWidth,m2.length * colHeight,colHeight,xPercents[1],yPercents[1])
+    if(inExpOrImp === [0,1]){
+        drawTableForColumn(g,m2,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,[3,2])
+    }else if(inExpOrImp === [0,2]){
+        drawTableForColumn(g,m2,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,[3,1])
+    }else if(inExpOrImp === [1,2]){
+        drawTableForColumn(g,m2,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,[3,0])
+    }else{
+        drawTableForColumn(g,m2,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,outColors)
+    }
+     drawPcentBar(g,[(m1[0].length + 1) * colWidth,colHeight],m2[0].length * colWidth,m2.length * colHeight,colHeight,xPercents[1],yPercents[1])
 
     let inColLenAndMid = drawHighLightCol(g,m1,inExpOrImp,[0,colHeight],colWidth,colHeight)
     let yOfLine = (m1.length + 2) * colHeight
     //画两个表之间的连线
     if(inColLenAndMid.len != 0){
         let outColLenAndMid = drawHighLightCol(g,m2,outExpOrImp,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight)
-        yOfLine = inColLenAndMid.len == 1 ? (m1.length + 2) * colHeight : (m1.length + 3) * colHeight
+        yOfLine = inColLenAndMid.len == 1 ? (m1.length + 1) * colHeight : (m1.length + 2) * colHeight
         drawLine(g,[inColLenAndMid.midPoint,yOfLine],[outColLenAndMid.midPoint,yOfLine],true)
         if(inColLenAndMid.len != 1){
-            drawLine(g,[outColLenAndMid.midPoint,yOfLine],[outColLenAndMid.midPoint,yOfLine - colHeight],true)
+            drawLine(g,[outColLenAndMid.midPoint,yOfLine],[outColLenAndMid.midPoint,yOfLine - 0.5 * colHeight],true)
         }
     }
     if(showOperation)drawOperationName(g,[width / 2,yOfLine],`${rule}`,'1.2em',colFontSize)

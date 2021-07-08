@@ -350,4 +350,4 @@ morpheus=select(morpheus,1,3,2,4)'''
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(host='localhost', port=80, debug=True)

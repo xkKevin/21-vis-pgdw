@@ -161,8 +161,8 @@ function combine_tables_inner_join(m1, m2, m3, rule, t1_name, t2_name, t3_name, 
     let arrowUrl = require('../../images/arrow.svg')
     drawIcon(g, [(Math.max(m1[0].length, m2[0].length) + 0.1) * colWidth, (1 + m1.length / 2) * colHeight - colHeight / 2 + colHeight * 2], 0.8 * colWidth, colHeight, arrowUrl)
 
-    drawTableForRow(g, m3, [(Math.max(m1[0].length, m2[0].length) + 1) * colWidth, 4 * colHeight], colWidth, colHeight, t3_name, colFontSize, cellFontSize, outColor)
-    drawPcentBar(g, [(Math.max(m1[0].length, m2[0].length) + 1) * colWidth, 4 * colHeight], m3[0].length * colWidth, m3.length * colHeight, colHeight, xPercents[2], yPercents[2])
+    drawTableForRow(g, m3, [(Math.max(m1[0].length, m2[0].length) + 1) * colWidth, 3 * colHeight], colWidth, colHeight, t3_name, colFontSize, cellFontSize, outColor)
+    drawPcentBar(g, [(Math.max(m1[0].length, m2[0].length) + 1) * colWidth, 3 * colHeight], m3[0].length * colWidth, m3.length * colHeight, colHeight, xPercents[2], yPercents[2])
 
     let yOfLine = (m1.length + m2.length + 3) * colHeight
     if (showOperation) drawOperationName(g, [width / 2, yOfLine], `${rule}`, '1.2em', colFontSize)
