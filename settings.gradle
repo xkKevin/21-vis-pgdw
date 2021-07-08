@@ -1,0 +1,4 @@
+rootProject.name = "pgdw"
+//include "backend"
+include "frontend"
+//include "morpheus"
