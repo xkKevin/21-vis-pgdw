@@ -380,8 +380,8 @@ export default {
       decorations: null,
       cases: {
         Morpheus_case1: "benchmarks/1/r1_input1.csv|benchmarks/1/r1_output1.csv",
-        Morpheus_case2: "benchmarks/2/r2_input1.csv|benchmarks/2/r2_output1.csv",
-        Morpheus_case3: "benchmarks/3/r3_input1.csv|benchmarks/3/r3_output1.csv",
+        Morpheus_case2: "benchmarks/5/r5_input1.csv|benchmarks/5/r5_output1.csv",
+        Morpheus_case3: "benchmarks/9/r9_input1.csv|benchmarks/9/r9_output1.csv",
         Morpheus_case4: "benchmarks/13/r13_input1.csv|benchmarks/13/r13_output1.csv",
         Morpheus_case5: "benchmarks/27/r27_input1.csv|benchmarks/27/r27_input2.csv|benchmarks/27/r27_output1.csv",
         Morpheus_case6: "benchmarks/53/r53_input1.csv|benchmarks/53/r53_output1.csv",
@@ -392,8 +392,8 @@ export default {
       },
       casesTable: {
         Morpheus_case1: "r1_input1.csv",
-        Morpheus_case2: "r2_input1.csv",
-        Morpheus_case3: "r3_input1.csv",
+        Morpheus_case2: "r5_input1.csv",
+        Morpheus_case3: "r9_input1.csv",
         Morpheus_case4: "r13_input1.csv",
         Morpheus_case5: "r27_input1.csv",
         Morpheus_case6: "r53_input1.csv",
