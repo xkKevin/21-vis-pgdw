@@ -221,8 +221,8 @@ function transform_tables_unfold(m1, m2, rule, t1_name, t2_name, inExpLen, name,
 
     let arrowUrl = require('../../images/arrow.svg')
     drawIcon(g, [(m1[0].length + 0.1) * colWidth, (1 + m2.length / 2) * colHeight + (m1.length - 3) / 2 * colHeight], 0.8 * colWidth, colHeight, arrowUrl)
-    drawTableForFold(g, m2, [(m1[0].length + 1) * colWidth, (m1.length - 1) / 2 * colHeight], colWidth, colHeight, t2_name, colFontSize, cellFontSize, inExpLen)
-    drawPcentBar(g, [(m1[0].length + 1) * colWidth, (m1.length - 1) / 2 * colHeight], m2[0].length * colWidth, m2.length * colHeight, colHeight, xPercents[1], yPercents[1])
+    drawTableForFold(g, m2, [(m1[0].length + 1) * colWidth, (m1.length - 1) / 2 * colHeight + (m2.length === 3 ? 0 : colHeight * 0.5)], colWidth, colHeight, t2_name, colFontSize, cellFontSize, inExpLen)
+    drawPcentBar(g, [(m1[0].length + 1) * colWidth, (m1.length - 1) / 2 * colHeight + (m2.length === 3 ? 0 : colHeight * 0.5)], m2[0].length * colWidth, m2.length * colHeight, colHeight, xPercents[1], yPercents[1])
 
     let yOfLine = (m1.length + 2) * colHeight
     if (showOperation) drawOperationName(g, [width / 2, yOfLine], rule, '1.2em', colFontSize)

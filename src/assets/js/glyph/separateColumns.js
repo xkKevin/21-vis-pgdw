@@ -62,7 +62,7 @@ export function separate_columns(m1, m2, rule, t1_name, t2_name, inExpOrImp, out
     let arrowUrl = require('../../images/arrow.svg')
     drawIcon(g,[(m1[0].length + 0.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
 
-    drawTableForColumn(g,m2,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize)
+    drawTableForColumn(g,m2,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,inExpOrImp[0] === 0 ? [1,2,3] : [0,2,3])
     drawPcentBar(g,[(m1[0].length + 1) * colWidth,colHeight],m2[0].length * colWidth,m2.length * colHeight,colHeight,xPercents[1],yPercents[1])
 
     let inColLenAndMid = drawHighLightCol(g,m1,inExpOrImp,[0,colHeight],colWidth,colHeight)
