@@ -2,7 +2,7 @@ module.exports = {
     devServer: {
         // 自动打开浏览器
         open: true,
-        port: 8080,
+        port: 8081,
         proxy: {
             '/': {
                 target: 'http://localhost',
