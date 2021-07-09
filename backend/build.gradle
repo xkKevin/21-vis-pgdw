@@ -24,6 +24,10 @@ task buildDockerImage(type: Exec) {
             from project.file("src").getAbsolutePath()
             into "${dockerBuildDirectory}/dist/src"
         }
+        copy {
+            from project.file("requirements.txt").getAbsolutePath()
+            into "${dockerBuildDirectory}/dist/"
+        }
         println("running command: ${String.join(" ", getCommandLine())}")
     }
     executable("docker")
