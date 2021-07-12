@@ -1,4 +1,4 @@
-{{- define "pgdw-app.config.nginx.conf" -}}
+{{- define "somnus-app.config.nginx.conf" -}}
 server {
     listen       80;
     server_name  localhost;
@@ -14,7 +14,7 @@ server {
         proxy_send_timeout 600;
         send_timeout 600;
         client_body_timeout 300;
-        rewrite ^/api/(.*) /$1 break;
+        rewrite ^/(.*) /$1 break;
         proxy_pass https://{{ $.Values.backend.host }}:{{ $.Values.backend.port }};
     }
 
@@ -28,7 +28,7 @@ server {
         proxy_send_timeout 600;
         send_timeout 600;
         client_body_timeout 300;
-        rewrite ^/api/(.*) /$1 break;
+        rewrite ^/(.*) /$1 break;
         proxy_pass https://{{ $.Values.backend.host }}:{{ $.Values.backend.port }};
     }
 
