@@ -1,0 +1,52 @@
+buildscript {
+    repositories {
+        for (mavenRepositoryUrl in project.rootProject.ext.mavenRepositoryUrlList) {
+            maven { url(mavenRepositoryUrl) }
+        }
+    }
+}
+version = project.rootProject.ext.constructVersion()
+
+def imageNameWithTag = "${project.rootProject.getName()}-${project.getName()}:${project.getVersion()}"
+task buildDockerImage(type: Exec) {
+    def dockerBuildDirectory = project.file("${project.buildDir}/runtime/docker")
+    doFirst {
+        dockerBuildDirectory.parentFile.mkdirs()
+        copy {
+            from project.file("docker")
+            into dockerBuildDirectory
+        }
+        copy {
+            from project.file("src").getAbsolutePath()
+            into "${dockerBuildDirectory}/dist/src"
+        }
+        copy {
+            from project.file("lib").getAbsolutePath()
+            into "${dockerBuildDirectory}/dist/lib"
+        }
+        copy {
+            from project.file("bin").getAbsolutePath()
+            into "${dockerBuildDirectory}/dist/bin"
+        }
+        copy {
+            from project.file("requirements.txt").getAbsolutePath()
+            into "${dockerBuildDirectory}/dist/"
+        }
+        println("running command: ${String.join(" ", getCommandLine())}")
+    }
+    executable("docker")
+    args(
+            "build", dockerBuildDirectory.getAbsolutePath(),
+            "-f", project.file("${dockerBuildDirectory}/Dockerfile").getAbsolutePath(),
+            "-t", imageNameWithTag,
+    )
+}
+task runDockerImage(type: Exec) {
+    executable("docker")
+    args(
+            "run",
+            "-p", "8890:80",
+            imageNameWithTag,
+    )
+    dependsOn(buildDockerImage)
+}
