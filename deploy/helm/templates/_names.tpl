@@ -73,3 +73,17 @@ morpheus selector labels
 {{ include "somnus-app.selectorLabels" . }}
 app.part: morpheus
 {{- end }}
+
+{{/*
+backend service name
+*/}}
+{{- define "somnus-app.service.backend" -}}
+{{ include "somnus-app.fullname" . }}-backend
+{{- end }}
+
+{{/*
+morpheus service name
+*/}}
+{{- define "somnus-app.service.morpheus" -}}
+{{ include "somnus-app.fullname" . }}-morpheus
+{{- end }}

@@ -7,7 +7,7 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
+    - port: {{ .Values.frontend.port }}
       targetPort: 80
       protocol: TCP
       name: http
@@ -17,13 +17,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "somnus-app.fullname" . }}-backend
+  name: {{ include "somnus-app.service.backend" . }}
   labels:
     {{- include "somnus-app.backend.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
+    - port: {{ .Values.backend.port }}
       targetPort: 80
       protocol: TCP
       name: http
@@ -33,13 +33,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "somnus-app.fullname" . }}-morpheus
+  name: {{ include "somnus-app.service.morpheus" . }}
   labels:
     {{- include "somnus-app.morpheus.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
+    - port: {{ .Values.morpheus.port }}
       targetPort: 80
       protocol: TCP
       name: http

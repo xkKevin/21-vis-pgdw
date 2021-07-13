@@ -100,9 +100,12 @@ affinity: {}
 frontend:
   replicaCount: 1
   podAnnotations: {}
+  port: 80
 backend:
   replicaCount: 1
   podAnnotations: {}
+  port: 80
 morpheus:
   replicaCount: 1
   podAnnotations: {}
+  port: 80

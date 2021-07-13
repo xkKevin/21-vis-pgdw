@@ -344,6 +344,7 @@ ext {
             (1..n).collect { alphabet[random.nextInt(alphabet.length())] }.join()
         }
     }
+    appName = "somnus-app"
 }
 task downloadHelmBinary() {
     if (project.file(project.ext.helmBinaryForCompilePath).exists()) {

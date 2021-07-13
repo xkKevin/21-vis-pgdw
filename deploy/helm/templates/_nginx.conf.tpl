@@ -15,7 +15,7 @@ server {
         send_timeout 600;
         client_body_timeout 300;
         rewrite ^/(.*) /$1 break;
-        proxy_pass https://{{ $.Values.backend.host }}:{{ $.Values.backend.port }};
+        proxy_pass https://{{ include "somnus-app.service.backend" . }}:{{ $.Values.backend.port }};
     }
 
     location ~ ^/morpheus/api {
@@ -29,7 +29,7 @@ server {
         send_timeout 600;
         client_body_timeout 300;
         rewrite ^/(.*) /$1 break;
-        proxy_pass https://{{ $.Values.backend.host }}:{{ $.Values.backend.port }};
+        proxy_pass https://{{ include "somnus-app.service.morpheus" . }}:{{ $.Values.backend.port }};
     }
 
     location /version {
