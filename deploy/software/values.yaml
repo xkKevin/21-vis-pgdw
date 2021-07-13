@@ -1,0 +1,6 @@
+image:
+  repository: ${dockerRegistryService}/${name}
+  pullPolicy: Always
+  tag: ${version}
+deploy:
+  timestamp: "${deployTimestamp}"
