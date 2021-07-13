@@ -25,7 +25,9 @@ def softwareDefinitionPath = "${project.buildDir}/runtime/software/software.yaml
 def softwareInstanceName = "nebula-frontend${softwareInstanceNameSuffix}"
 def valuesYamlTemplate = project.file("blackhole/software/${valuesFileName}")
 def valuesYaml = project.file("${project.buildDir}/runtime/software/${valuesFileName}")
-def imageNameWithTag = "${softwareName}:${softwareVersion}"
+def frontendImageNameWithTag = "${softwareName}-frontend:${softwareVersion}"
+def backendImageNameWithTag = "${softwareName}-backend:${softwareVersion}"
+def morpheusImageNameWithTag = "${softwareName}-morpheus:${softwareVersion}"
 
 task renderChartYaml() {
     doLast {
@@ -137,17 +139,30 @@ task uploadHelmPackage() {
     }
     dependsOn(buildHelmPackage)
 }
-task uploadDockerImage(type: Exec) {
-    doFirst {
+task uploadDockerImage() {
+    doLast {
         exec {
-            commandLine("docker", "tag", "${imageNameWithTag}", "${dockerRegistryService}/${imageNameWithTag}")
+            commandLine("docker", "tag",
+                    "${frontendImageNameWithTag}", "${dockerRegistryService}/${frontendImageNameWithTag}")
         }
-        println("running command: ${String.join(" ", getCommandLine())}")
+        exec {
+            commandLine("docker", "push", "${dockerRegistryService}/${frontendImageNameWithTag}")
+        }
+        exec {
+            commandLine("docker", "tag",
+                    "${backendImageNameWithTag}", "${dockerRegistryService}/${backendImageNameWithTag}")
+        }
+        exec {
+            commandLine("docker", "push", "${dockerRegistryService}/${backendImageNameWithTag}")
+        }
+        exec {
+            commandLine("docker", "tag",
+                    "${morpheusImageNameWithTag}", "${dockerRegistryService}/${morpheusImageNameWithTag}")
+        }
+        exec {
+            commandLine("docker", "push", "${dockerRegistryService}/${morpheusImageNameWithTag}")
+        }
     }
-    executable("docker")
-    args(
-            "push", "${dockerRegistryService}/${imageNameWithTag}",
-    )
     dependsOn(":frontend:buildDockerImage")
     dependsOn(":backend:buildDockerImage")
     dependsOn(":morpheus:buildDockerImage")
