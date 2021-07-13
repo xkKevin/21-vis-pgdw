@@ -171,9 +171,10 @@ task installSoftware() {
         project.rootProject.ext.render(
                 valuesYamlTemplate,
                 [
-                        name           : softwareName,
-                        version        : softwareVersion,
-                        deployTimestamp: System.currentTimeMillis(),
+                        dockerRegistryService: dockerRegistryService,
+                        name                 : softwareName,
+                        version              : softwareVersion,
+                        deployTimestamp      : System.currentTimeMillis(),
                 ],
                 valuesYaml,
         )
@@ -205,9 +206,10 @@ task updateSoftwareInstance() {
         project.rootProject.ext.render(
                 valuesYamlTemplate,
                 [
-                        name           : softwareName,
-                        version        : softwareVersion,
-                        deployTimestamp: System.currentTimeMillis(),
+                        dockerRegistryService: dockerRegistryService,
+                        name                 : softwareName,
+                        version              : softwareVersion,
+                        deployTimestamp      : System.currentTimeMillis(),
                 ],
                 valuesYaml,
         )
