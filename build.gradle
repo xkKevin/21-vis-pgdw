@@ -338,6 +338,7 @@ ext {
             clusterName          : systemEnv.get("clusterName", "core-cluster"),
             namespace            : systemEnv.get("namespace", "common-software"),
             hostSuffix           : systemEnv.get("hostSuffix", "local.geekcity.tech"),
+            valuesFileName       : systemEnv.get("valuesFileName", "loca.dev.values.yaml")
     ]
     randomGenerator = { String alphabet, int n ->
         new Random().with { Random random ->
