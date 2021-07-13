@@ -41,44 +41,6 @@ task renderChartYaml() {
         )
     }
 }
-task downloadHelmBinary() {
-    if (project.file(project.rootProject.ext.helmBinaryForCompilePath).exists()) {
-        println("skip ${name} as files exists")
-        enabled(false)
-    }
-    doLast {
-        def helmForCompilePackagePath = "${project.buildDir}/runtime/download/helm_for_compile.tar.gz"
-        download {
-            src constructHelmDownloadAddress()
-            dest helmForCompilePackagePath
-            tempAndMove true
-            overwrite false
-        }
-        def helmForCompilePackageDirectory = project.file(helmForCompilePackagePath).parentFile.getAbsolutePath()
-        def extractDirectoryPath = "${helmForCompilePackageDirectory}/helm_for_compile"
-        project.file(extractDirectoryPath).mkdirs()
-        exec {
-            commandLine(
-                    "tar",
-                    "zxvf",
-                    helmForCompilePackagePath,
-                    "-C",
-                    extractDirectoryPath,
-            )
-        }
-        copy {
-            from "${extractDirectoryPath}/${constructHelmPackageDirectoryName()}/helm"
-            into project.file(project.rootProject.ext.helmBinaryForCompilePath).parentFile.getAbsolutePath()
-        }
-        exec {
-            commandLine(
-                    "chmod",
-                    "u+x",
-                    project.rootProject.ext.helmBinaryForCompilePath,
-            )
-        }
-    }
-}
 task buildHelmPackage() {
     def runtimeHelmPackageDirectory = "${project.buildDir}/runtime/compile/"
     doFirst {
@@ -287,43 +249,4 @@ task uninstallSoftware() {
                 flintBaseUrl, clusterName, softwareInstanceId
         )
     }
-}
-
-private static String constructHelmDownloadAddress() {
-    def operatingSystem = org.gradle.internal.os.OperatingSystem.current();
-    def arch = System.getProperty("os.arch")
-    if (operatingSystem.isMacOsX() && "x86_64" == arch) {
-        // mirror of https://get.helm.sh/helm-v3.6.0-darwin-amd64.tar.gz
-        return "http://proxy.geekcity.tech:30080/helm-v3.6.0-darwin-amd64.tar.gz"
-    }
-    if (operatingSystem.isLinux() && "amd64" == arch) {
-        // mirror of https://get.helm.sh/helm-v3.6.0-linux-amd64.tar.gz
-        return "http://proxy.geekcity.tech:30080/helm-v3.6.0-linux-amd64.tar.gz"
-    }
-    // not fully tested
-    if (operatingSystem.isMacOsX() && "aarch64" == arch) {
-        // mirror of https://get.helm.sh/helm-v3.6.0-darwin-amd64.tar.gz
-        return "http://proxy.geekcity.tech:30080/helm-v3.6.0-darwin-amd64.tar.gz"
-    }
-    throw new RuntimeException("not supported operating system(${operatingSystem.getName()}) or arch(${arch})")
-}
-
-private static String constructHelmPackageDirectoryName() {
-    def operatingSystem = org.gradle.internal.os.OperatingSystem.current();
-    def arch = System.getProperty("os.arch")
-    if (operatingSystem.isMacOsX() && "x86_64" == arch) {
-        return "darwin-amd64"
-    }
-    if (operatingSystem.isLinux() && "amd64" == arch) {
-        return "linux-amd64"
-    }
-    // not fully tested
-    if (operatingSystem.isMacOsX() && "aarch64" == arch) {
-        return "darwin-amd64"
-    }
-    throw new RuntimeException("not supported operating system(${operatingSystem.getName()}) or arch(${arch})")
-}
-
-private static String responseBodyAsString(body) {
-    body instanceof byte[] ? new String(body) : String.valueOf(body)
 }
