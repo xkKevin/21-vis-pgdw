@@ -24,7 +24,7 @@ script_file = "script_test.txt"
 @app.route('/')
 def index():
     # 由于前端html页面都被打包压缩，因此直接使用jinja模板来传参不可行，这样就要另开启一个接口
-    return render_template('index.html') # render_template('index.html', language='r') 此种方法行不通
+    return "service is ready"
 
 
 # 前端向后端获取scripts、table name等信息
