@@ -6,14 +6,12 @@ deploy:
   timestamp: "0"
 image:
   pullPolicy: IfNotPresent
+  repository: somnus-app
   frontend:
-    repository: somnus-app-frontend
     tag: ""
   backend:
-    repository: somnus-app-backend
     tag: ""
   morpheus:
-    repository: somnus-app-morpheus
     tag: ""
 
 imagePullSecrets: []
