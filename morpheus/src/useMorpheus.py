@@ -1,9 +1,11 @@
+# -*- coding: UTF-8 -*-
+
 import os
 import datetime
 from flask import Flask, jsonify, globals
 from flask.globals import request
 from werkzeug.utils import secure_filename
-
+ 
 app = Flask(__name__)
 
 globals.isRun = False
@@ -11,6 +13,12 @@ globals.isRun = False
 @app.route('/')
 def hello():
     return 'hello docker&flask'
+
+
+@app.route('/healthy')
+def healthy():
+    return '200'
+
 
 @app.route('/useMorpheus', methods = ['post', 'GET'])
 def useMorpheus():
@@ -75,6 +83,10 @@ def useMorpheus():
     scriptReturn += '\r'
     with open(outFileName) as fp:
         for line in fp.readlines():
+            if line.startswith("There were"):
+                writeSignal = False
+            if line.startswith("Warning messages"):
+                writeSignal = False
             if writeSignal:
                 scriptReturn += line
             if line.startswith("R program"):
@@ -82,6 +94,6 @@ def useMorpheus():
     os.remove('./' + outFileName)
     globals.isRun = False
     return jsonify({'scriptReturn': scriptReturn})
-
+ 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(host='0.0.0.0', port='8080',debug=True)
