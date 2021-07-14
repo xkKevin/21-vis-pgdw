@@ -4,7 +4,7 @@ server {
     server_name  localhost;
     client_max_body_size 1000m;
 
-    location ~ ^/api {
+    location ~ ^/backend {
         proxy_set_header HOST $host;
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header X-Real-IP $remote_addr;
@@ -15,10 +15,10 @@ server {
         send_timeout 600;
         client_body_timeout 300;
         rewrite ^/(.*) /$1 break;
-        proxy_pass https://{{ include "somnus-app.service.backend" . }}:{{ $.Values.backend.port }};
+        proxy_pass http://{{ include "somnus-app.service.backend" . }}:{{ $.Values.backend.port }};
     }
 
-    location ~ ^/morpheus/api {
+    location ~ ^/morpheus {
         proxy_set_header HOST $host;
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header X-Real-IP $remote_addr;
@@ -29,7 +29,7 @@ server {
         send_timeout 600;
         client_body_timeout 300;
         rewrite ^/(.*) /$1 break;
-        proxy_pass https://{{ include "somnus-app.service.morpheus" . }}:{{ $.Values.backend.port }};
+        proxy_pass http://{{ include "somnus-app.service.morpheus" . }}:{{ $.Values.backend.port }};
     }
 
     location /version {
