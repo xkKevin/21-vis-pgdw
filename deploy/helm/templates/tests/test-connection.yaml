@@ -11,5 +11,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "somnus-app.fullname" . }}:{{ .Values.service.port }}']
+      args: ['{{ include "somnus-app.fullname" . }}:{{ .Values.frontend.port }}']
   restartPolicy: Never

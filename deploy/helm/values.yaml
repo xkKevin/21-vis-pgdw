@@ -6,12 +6,14 @@ deploy:
   timestamp: "0"
 image:
   pullPolicy: IfNotPresent
-  repository: somnus-app
   frontend:
+    repository: somnus-app-frontend
     tag: ""
   backend:
+    repository: somnus-app-backend
     tag: ""
   morpheus:
+    repository: somnus-app-morpheus
     tag: ""
 
 imagePullSecrets: []
@@ -37,10 +39,6 @@ securityContext: {}
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
   # runAsUser: 1000
-
-service:
-  type: ClusterIP
-  port: 80
 
 ingress:
   enabled: false

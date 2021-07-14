@@ -4,3 +4,10 @@ image:
   tag: ${version}
 deploy:
   timestamp: "${deployTimestamp}"
+ingress:
+  enabled: true
+  annotations: {}
+  hosts:
+    - host: morpheus.zjvis.net
+      paths:
+        - path: /

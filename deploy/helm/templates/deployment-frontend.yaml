@@ -35,7 +35,7 @@ spec:
         - name: {{ .Chart.Name }}-frontend
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}-frontend:{{ .Values.image.frontend.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.image.frontend.repository }}:{{ .Values.image.frontend.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
             - mountPath: /etc/nginx/conf.d/default.conf
