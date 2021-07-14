@@ -12,6 +12,12 @@ globals.isRun = False
 def hello():
     return 'hello docker&flask'
 
+
+@app.route('/healthy')
+def healthy():
+    return '200'
+
+
 @app.route('/useMorpheus', methods = ['post', 'GET'])
 def useMorpheus():
     if globals.isRun == True:
