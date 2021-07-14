@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "somnus-app.frontend.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .Values.frontend.serviceType }}
   ports:
     - port: {{ .Values.frontend.port }}
       targetPort: 80
@@ -21,7 +21,7 @@ metadata:
   labels:
     {{- include "somnus-app.backend.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: ClusterIP
   ports:
     - port: {{ .Values.backend.port }}
       targetPort: 80
@@ -37,7 +37,7 @@ metadata:
   labels:
     {{- include "somnus-app.morpheus.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: ClusterIP
   ports:
     - port: {{ .Values.morpheus.port }}
       targetPort: 80

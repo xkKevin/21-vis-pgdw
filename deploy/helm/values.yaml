@@ -96,6 +96,7 @@ affinity: {}
 frontend:
   replicaCount: 1
   podAnnotations: {}
+  serviceType: ClusterIP
   port: 80
 backend:
   replicaCount: 1
