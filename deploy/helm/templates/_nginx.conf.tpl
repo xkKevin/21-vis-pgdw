@@ -14,7 +14,7 @@ server {
         proxy_send_timeout 600;
         send_timeout 600;
         client_body_timeout 300;
-        rewrite ^/(.*) /$1 break;
+        rewrite ^/backend/(.*) /$1 break;
         proxy_pass http://{{ include "somnus-app.service.backend" . }}:{{ $.Values.backend.port }};
     }
 
@@ -28,7 +28,7 @@ server {
         proxy_send_timeout 600;
         send_timeout 600;
         client_body_timeout 300;
-        rewrite ^/(.*) /$1 break;
+        rewrite ^/morpheus/(.*) /$1 break;
         proxy_pass http://{{ include "somnus-app.service.morpheus" . }}:{{ $.Values.backend.port }};
     }
 
