@@ -35,7 +35,7 @@ spec:
         - name: {{ .Chart.Name }}-morpheus
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.frontend.repository }}:{{ .Values.image.morpheus.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.image.morpheus.repository }}:{{ .Values.image.morpheus.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
             - mountPath: /etc/nginx/conf.d/default.conf
