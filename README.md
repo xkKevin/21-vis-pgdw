@@ -38,3 +38,4 @@ python backend\app.py
 
 ##### Others
 `kubectl cp ./generate_transform_specs.py pgdw-78b459fb4-nj9f6:/PG4DT/backend/generate_transform_specs.py`
+Use `https://morpheus.projects.zjvis.org/useMorpheus?caseString=benchmarks/1/r1_input1.csv|benchmarks/1/r1_output1.csv` to test whether the Morpheus Server is running.

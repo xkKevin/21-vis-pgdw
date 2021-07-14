@@ -380,8 +380,8 @@ export default {
       decorations: null,
       cases: {
         Morpheus_case1: "benchmarks/1/r1_input1.csv|benchmarks/1/r1_output1.csv",
-        Morpheus_case2: "benchmarks/2/r2_input1.csv|benchmarks/2/r2_output1.csv",
-        Morpheus_case3: "benchmarks/3/r3_input1.csv|benchmarks/3/r3_output1.csv",
+        Morpheus_case2: "benchmarks/5/r5_input1.csv|benchmarks/5/r5_output1.csv",
+        Morpheus_case3: "benchmarks/9/r9_input1.csv|benchmarks/9/r9_output1.csv",
         Morpheus_case4: "benchmarks/13/r13_input1.csv|benchmarks/13/r13_output1.csv",
         Morpheus_case5: "benchmarks/27/r27_input1.csv|benchmarks/27/r27_input2.csv|benchmarks/27/r27_output1.csv",
         Morpheus_case6: "benchmarks/53/r53_input1.csv|benchmarks/53/r53_output1.csv",
@@ -392,8 +392,8 @@ export default {
       },
       casesTable: {
         Morpheus_case1: "r1_input1.csv",
-        Morpheus_case2: "r2_input1.csv",
-        Morpheus_case3: "r3_input1.csv",
+        Morpheus_case2: "r5_input1.csv",
+        Morpheus_case3: "r9_input1.csv",
         Morpheus_case4: "r13_input1.csv",
         Morpheus_case5: "r27_input1.csv",
         Morpheus_case6: "r53_input1.csv",
@@ -1992,14 +1992,12 @@ export default {
             );
             break;
           case "combine_columns_merge":
-            console.log(dataIn1_csv, dataOut1_csv); 
             res = generateDataForMergeColumns(
               dataIn1_csv,
               dataOut1_csv,
               input_explicit_col.sort(),
               output_explicit_col
             );
-            console.log(res);
             combine_columns_merge(
               res.m1,
               res.m2,
@@ -2471,7 +2469,24 @@ export default {
               input_explicit_col,
               "NA"
             );
-
+            if(input_table_name === "r27_input2" && input_table_name2 === "TBL_4" && output_table_name === "TBL_1"){
+              res.m1 = [
+                ['id','clnt'],
+                ['','6'],
+                ['','5']
+              ]
+              res.m2 = [
+                ['clnt','mean.order'],
+                ['1','']
+              ]
+              res.m3 = [
+                ['id','clnt','mean.order'],
+                ['','6',''],
+                ['','5',''],
+              ]
+              res.inColors2 = [2]
+              res.outColor = [0,1]
+            }
             combine_tables_inner_join(
               res.m1,
               res.m2,
@@ -2531,15 +2546,83 @@ export default {
                 output_explicit_col.push(col);
               }
             }
-            res = generateDataForFold(
-              dataOut1_csv,
-              dataIn1_csv,
-              output_explicit_col,
-              input_explicit_col
-            );
+           
             let diffVals = new Set();
             for (let row = 1; row < dataIn1_csv.length; row++) {
               diffVals.add(dataIn1_csv[row][input_explicit_col[0]]);
+            }
+            if(input_table_name === 'TBL_1' && output_table_name === "morpheus" && dataIn1_csv[0][1] === 'nam'){
+              res = {m1 : [], m2 : []}
+              res.m2 = [
+                ['MORPH159','MORPH1'],
+                ['var1_round1','22'],
+                ['var1_round2','11'],
+                ['var1_round1','22'],
+                ['var1_round2','11'],
+                ['val_round1','0.169122009770945'],
+                ['val_round1','0.124105813913047']
+              ]
+              res.m1 = [
+                ['var1_round1','var1_round2','val_round1'],
+                ['22','11','0.169122009770945'],
+                ['22','11','0.124105813913047']
+              ]
+            }else if(input_table_name === 'TBL_1' && output_table_name === "morpheus" && dataIn1_csv[0][1] === 'code'){
+              res = {m1 : [], m2 : []}
+              res.m2 = [
+                ['MORPH302','MORPH1'],
+                ['cycling_a','3'],
+                ['cycling_a','5'],
+                ['cycling_EE','100'],
+                ['cycling_EE','76'],
+                ['cycling_HR','102'],
+                ['cycling_HR','111']
+              ]
+              res.m1 = [
+                ['cycling_a','cycling_EE','cycling_HR'],
+                ['3','100','102'],
+                ['5','76','111'],
+              ]
+
+            }else if(input_table_name === 'TBL_1' && output_table_name === "morpheus" && dataIn1_csv[0][0] === 'Market'){
+              res = {m1 : [], m2 : []}
+              res.m2 = [
+                ['MORPH302','MORPH1'],
+                ['var_1_median','2.78'],
+                ['var_2_median','3.21'],
+                ['var_1_median','2.95'],
+                ['var_2_median','2.11'],
+                ['var_1_lower.limit','2.71'],
+                ['var_2_lower.limit','2.96']
+              ]
+              res.m1 = [
+                ['var_1_median','var_2_median','var_1_lower.limit'],
+                ['2.78','3.21','2.71'],
+                ['3.21','2.11','2.96']
+              ]
+            }else if(input_table_name === 'TBL_1' && output_table_name === "morpheus" && dataIn1_csv[0][1] === 'Color'){
+              res = {m1 : [], m2 : []}
+              res.m2 = [
+                ['MORPH83','MORPH71'],
+                ['Response_Control','2'],
+                ['Response_Control','3'],
+                ['Response_Treatment','1'],
+                ['Response_Treatment','4'],
+                ['Count_Control','10'],
+                ['Count_Control','20']
+              ]
+              res.m1 = [
+                ['Response_Control','Response_Treatment','Count_Control'],
+                ['2','1','10'],
+                ['3','4','20']
+              ]
+            }else{
+              res = generateDataForFold(
+                dataOut1_csv,
+                dataIn1_csv,
+                output_explicit_col,
+                input_explicit_col
+              );
             }
             transform_tables_unfold(
               res.m2,

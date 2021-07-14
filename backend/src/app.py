@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 from flask import Flask, request, render_template, jsonify, send_from_directory,json
 # from flask_cors import CORS  # 前端已经通过代理处理CORS了，因此后端不需要再开启
 import generate_transform_specs as gts
@@ -25,6 +27,11 @@ script_file = "script_test.txt"
 def index():
     # 由于前端html页面都被打包压缩，因此直接使用jinja模板来传参不可行，这样就要另开启一个接口
     return "service is ready"
+
+
+@app.route('/healthy')
+def healthy():
+    return '200'
 
 
 # 前端向后端获取scripts、table name等信息
