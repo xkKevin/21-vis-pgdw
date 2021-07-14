@@ -21,7 +21,7 @@ script_file = "script_test.txt"
 # print(os.getcwd()) # pgdw
 # print(app.root_path)  # pgdw/backend
 
-@app.route('/')
+@app.route('/healthy')
 def index():
     # 由于前端html页面都被打包压缩，因此直接使用jinja模板来传参不可行，这样就要另开启一个接口
     return "service is ready"
