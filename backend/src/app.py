@@ -56,7 +56,7 @@ def getMorpheusData():
         try:
             caseString = request.args.get("caseString")  # POST请求用 request.form.get
             if caseString:
-                urlPath = 'http://127.0.0.1:8080/useMorpheus'
+                urlPath = 'http://somnus-dev-somnus-app-morpheus/useMorpheus'
                 paramas = {'caseString' : caseString}
                 response = requests.get(urlPath, params=paramas)
                 result = response.json()
@@ -101,7 +101,7 @@ def postMorpheusData():
                     fileTup = ("output" , (f, open(os.path.join(root, f), "rb")))
                     filesList.append(fileTup)
             print(filesList)
-            result = requests.post('http://127.0.0.1:8080/useMorpheus', files=filesList)
+            result = requests.post('http://somnus-dev-somnus-app-morpheus/useMorpheus', files=filesList)
             respones = result.json()
             return jsonify({'scriptReturn': respones['scriptReturn']})
         except Exception as e:
