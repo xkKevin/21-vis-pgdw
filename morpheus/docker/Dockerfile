@@ -12,7 +12,7 @@ RUN R -e "install.packages('RInside',dependencies=TRUE, repos='https://mirrors.s
 RUN R -e "install.packages('compare',dependencies=TRUE, repos='https://mirrors.sjtug.sjtu.edu.cn/cran/')"
 
 COPY dist/bin/lockfile /usr/bin/lockfile
-ADD dist/lib/ae-pldi17-morpheus.tar.gz /app/ae-pldi17-morpheus/
+ADD dist/lib/ae-pldi17-morpheus.tar.gz /app/morpheus/
 COPY dist/requirements.txt /tmp/requirements.txt
 RUN pip3 install -i http://mirrors.aliyun.com/pypi/simple -r /tmp/requirements.txt --trusted-host mirrors.aliyun.com
 
