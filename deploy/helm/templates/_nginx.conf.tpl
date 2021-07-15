@@ -33,7 +33,7 @@ server {
     }
 
     location /version {
-        return 200 '{{ $.Chart.AppVersion }}';
+        return 200 '{{ $.Values.deploy.version}}';
     }
 
     location /deploy/timestamp {
