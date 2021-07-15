@@ -56,7 +56,7 @@ def getMorpheusData():
         try:
             caseString = request.args.get("caseString")  # POST请求用 request.form.get
             if caseString:
-                urlPath = 'http://127.0.0.1:8080/useMorpheus'
+                urlPath = 'http://127.0.0.1:8080/useMorpheus'  # http://127.0.0.1:8080
                 paramas = {'caseString' : caseString}
                 response = requests.get(urlPath, params=paramas)
                 result = response.json()

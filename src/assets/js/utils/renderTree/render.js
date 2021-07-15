@@ -1,4 +1,5 @@
 import { nodeSize, lineAttr } from '@/assets/js/config/config'
+import {codeHighlight} from "@/assets/js/glyph/generate_provenance";
 
 var vm = null
 const sendVue = (_this) => {
@@ -220,7 +221,7 @@ function drawEdge(g, specs, nodePos) {
                 .attr("marker-end", `url(#arrow_${idx})`)
                 .attr('class', `edge_${idx}`)
                 .on('click', function(event) {
-                    vm.codeHighlight(lineNum)
+                    codeHighlight(lineNum)
                 })
         } else if (typeof(specs[idx].input_table_file) === 'string') {
             let meetingPosY = nodePos[specs[idx].input_table_file][1] + nodeSize.height / 2
@@ -247,7 +248,7 @@ function drawEdge(g, specs, nodePos) {
                 // .style("stroke", lineAttr.color)
                 .attr('class', `edge_${idx}`)
                 .on('click', function(event) {
-                    vm.codeHighlight(lineNum)
+                    codeHighlight(lineNum)
                 })
 
             g.append('line')
@@ -259,7 +260,7 @@ function drawEdge(g, specs, nodePos) {
                 .attr('stroke-width', lineAttr.strokeWidth)
                 .attr('class', `edge_${idx}`)
                 .on('click', function(event) {
-                    vm.codeHighlight(lineNum)
+                    codeHighlight(lineNum)
                 })
 
             g.append('line')
@@ -272,7 +273,7 @@ function drawEdge(g, specs, nodePos) {
                 .attr("marker-end", `url(#arrow_${idx})`)
                 .attr('class', `edge_${idx}`)
                 .on('click', function(event) {
-                    vm.codeHighlight(lineNum)
+                    codeHighlight(lineNum)
                 })
 
             g.append('line')
@@ -285,7 +286,7 @@ function drawEdge(g, specs, nodePos) {
                 .attr("marker-end", `url(#arrow_${idx})`)
                 .attr('class', `edge_${idx}`)
                 .on('click', function(event) {
-                    vm.codeHighlight(lineNum)
+                    codeHighlight(lineNum)
                 })
         } else {
             let meetingPosY = nodePos[specs[idx].output_table_file][1] + nodeSize.height / 2
@@ -312,7 +313,7 @@ function drawEdge(g, specs, nodePos) {
                 // .style("stroke", "black")
                 .attr('class', `edge_${idx}`)
                 .on('click', function(event) {
-                    vm.codeHighlight(lineNum)
+                    codeHighlight(lineNum)
                 })
 
             g.append('line')
@@ -324,7 +325,7 @@ function drawEdge(g, specs, nodePos) {
                 .attr('stroke-width', lineAttr.strokeWidth)
                 .attr('class', `edge_${idx}`)
                 .on('click', function(event) {
-                    vm.codeHighlight(lineNum)
+                    codeHighlight(lineNum)
                 })
 
             g.append('line')
@@ -336,7 +337,7 @@ function drawEdge(g, specs, nodePos) {
                 .attr('stroke-width', lineAttr.strokeWidth)
                 .attr('class', `edge_${idx}`)
                 .on('click', function(event) {
-                    vm.codeHighlight(lineNum)
+                    codeHighlight(lineNum)
                 })
 
             g.append('line')
@@ -349,7 +350,7 @@ function drawEdge(g, specs, nodePos) {
                 .attr("marker-end", `url(#arrow_${idx})`)
                 .attr('class', `edge_${idx}`)
                 .on('click', function(event) {
-                    vm.codeHighlight(lineNum)
+                    codeHighlight(lineNum)
                 })
         }
     }
