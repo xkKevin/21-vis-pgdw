@@ -94,13 +94,12 @@ def postMorpheusData():
                     print('inputFile:', os.path.join(root, f))
                     fileTup = ("inputlist" , (f, open(os.path.join(root, f), "rb")))
                     filesList.append(fileTup)
-
             for root, dirs, files in os.walk(outputPath):
                 for f in files:
                     print('outputFile:', os.path.join(root, f))
                     fileTup = ("output" , (f, open(os.path.join(root, f), "rb")))
                     filesList.append(fileTup)
-            print(filesList)
+            # print(filesList)
             result = requests.post('http://127.0.0.1:8080/useMorpheus', files=filesList)
             respones = result.json()
             return jsonify({'scriptReturn': respones['scriptReturn']})
