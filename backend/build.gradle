@@ -42,7 +42,7 @@ task runDockerImage(type: Exec) {
     args(
             "run",
             "-p", "8889:80",
-            "-e", "MORPHEUS_SERVICE_URL=http://localhost:8890",
+            "-e", "MORPHEUS_SERVICE_URL=http://host.docker.internal:8890/useMorpheus",
             imageNameWithTag,
     )
     dependsOn(buildDockerImage)

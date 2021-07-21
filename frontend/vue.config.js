@@ -4,12 +4,12 @@ module.exports = {
         open: true,
         port: 8081,
         proxy: {
-            '/': {
-                target: 'http://localhost',
+            '/backend': {
+                target: 'http://localhost:8889',
                 ws: true,
                 changeOrigin: true,
                 pathRewrite: {
-                    '^/': '/'
+                    '^/backend/(.*)': '/$1'
                 }
             },
             // '/api': {
