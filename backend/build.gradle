@@ -1,0 +1,49 @@
+buildscript {
+    repositories {
+        for (mavenRepositoryUrl in project.rootProject.ext.mavenRepositoryUrlList) {
+            maven { url(mavenRepositoryUrl) }
+        }
+    }
+}
+version = project.rootProject.ext.constructVersion()
+
+def imageNameWithTag = "${project.rootProject.ext.appName}-${project.getName()}:${project.getVersion()}"
+task buildDockerImage(type: Exec) {
+    def dockerBuildDirectory = project.file("${project.buildDir}/runtime/docker")
+    doFirst {
+        dockerBuildDirectory.parentFile.mkdirs()
+        copy {
+            from project.file("docker")
+            into dockerBuildDirectory
+        }
+        copy {
+            from project.file("data").getAbsolutePath()
+            into "${dockerBuildDirectory}/dist/data"
+        }
+        copy {
+            from project.file("src").getAbsolutePath()
+            into "${dockerBuildDirectory}/dist/src"
+        }
+        copy {
+            from project.file("requirements.txt").getAbsolutePath()
+            into "${dockerBuildDirectory}/dist/"
+        }
+        println("running command: ${String.join(" ", getCommandLine())}")
+    }
+    executable("docker")
+    args(
+            "build", dockerBuildDirectory.getAbsolutePath(),
+            "-f", project.file("${dockerBuildDirectory}/Dockerfile").getAbsolutePath(),
+            "-t", imageNameWithTag,
+    )
+}
+task runDockerImage(type: Exec) {
+    executable("docker")
+    args(
+            "run",
+            "-p", "8889:80",
+            "-e", "MORPHEUS_SERVICE_URL=http://host.docker.internal:8890/useMorpheus",
+            imageNameWithTag,
+    )
+    dependsOn(buildDockerImage)
+}

@@ -1,0 +1,56 @@
+buildscript {
+    repositories {
+        for (mavenRepositoryUrl in project.rootProject.ext.mavenRepositoryUrlList) {
+            maven { url(mavenRepositoryUrl) }
+        }
+    }
+}
+
+plugins {
+    id "com.github.node-gradle.node" version "3.0.1"
+}
+
+repositories.clear()
+repositories.addAll(buildscript.repositories)
+
+node {
+    download = true
+    version = "16.4.2"
+    distBaseUrl = "https://npm.taobao.org/mirrors/node"
+}
+
+version = project.rootProject.ext.constructVersion()
+
+def imageNameWithTag = "${project.rootProject.ext.appName}-${project.getName()}:${project.getVersion()}"
+task buildDockerImage(type: Exec) {
+    def dockerBuildDirectory = project.file("${project.buildDir}/runtime/docker")
+    doFirst {
+        dockerBuildDirectory.parentFile.mkdirs()
+        copy {
+            from project.file("docker")
+            into dockerBuildDirectory
+        }
+        copy {
+            from project.file("dist").getAbsolutePath()
+            into "${dockerBuildDirectory}/dist"
+        }
+        println("running command: ${String.join(" ", getCommandLine())}")
+    }
+    executable("docker")
+    args(
+            "build", dockerBuildDirectory.getAbsolutePath(),
+            "-f", project.file("${dockerBuildDirectory}/Dockerfile").getAbsolutePath(),
+            "-t", imageNameWithTag,
+    )
+    dependsOn(npm_run_build)
+}
+task runDockerImage(type: Exec) {
+    executable("docker")
+    args(
+            "run",
+            "-p", "8888:80",
+            "-v", "${project.file("docker/nginx.debug.conf").getAbsolutePath()}:/etc/nginx/conf.d/default.conf",
+            imageNameWithTag,
+    )
+    dependsOn(buildDockerImage)
+}

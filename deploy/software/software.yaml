@@ -1,0 +1,5 @@
+helmPackage:
+  url: ${chartMuseumService}
+  name: ${name}
+  version: ${version}
+healthyUrl: ""
