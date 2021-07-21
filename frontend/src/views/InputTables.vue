@@ -68,7 +68,7 @@
 </template>
 
 <script>
-const request_api = ""
+const request_api = "/backend"
 import Papa from 'papaparse'
 export default {
   name: "uploadTables",

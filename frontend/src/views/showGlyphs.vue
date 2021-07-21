@@ -244,7 +244,7 @@ import { getCsv } from "@/assets/js/utils/common/getCsv";
 import uploadTables from "./InputTables";
 import {generateGlyphs, sendVue_gp, codeHighlight, record_log} from "@/assets/js/glyph/generate_provenance";
 
-const request_api = "";
+const request_api = "/backend";
 
 export default {
   name: "showGlyphs",

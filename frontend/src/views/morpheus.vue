@@ -247,7 +247,7 @@ import {generateGlyphs, sendVue_gp, codeHighlight, record_log} from "@/assets/js
 
 import uploadTables from "./MorpheusInputTables";
 
-const request_api = "";
+const request_api = "/backend";
 
 export default {
   name: "showGlyphs",

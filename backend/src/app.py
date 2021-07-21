@@ -24,17 +24,6 @@ script_file = "script_test.txt"
 # print(app.root_path)  # pgdw/backend
 
 @app.route('/healthy')
-def index():
-    # 由于前端html页面都被打包压缩，因此直接使用jinja模板来传参不可行，这样就要另开启一个接口
-    return "service is ready"
-
-
-@app.route('/healthy')
-def healthy():
-    return '200'
-
-
-@app.route('/healthy')
 def healthy():
     return '200'
 
@@ -61,7 +50,7 @@ def getMorpheusData():
         try:
             caseString = request.args.get("caseString")  # POST请求用 request.form.get
             if caseString:
-                urlPath = 'http://somnus-dev-somnus-app-morpheus/useMorpheus'
+                urlPath = os.environ.get('morpheus_path')
                 paramas = {'caseString' : caseString}
                 response = requests.get(urlPath, params=paramas)
                 result = response.json()
@@ -104,7 +93,7 @@ def postMorpheusData():
                     print('outputFile:', os.path.join(root, f))
                     fileTup = ("output" , (f, open(os.path.join(root, f), "rb")))
                     filesList.append(fileTup)
-            result = requests.post('http://somnus-dev-somnus-app-morpheus/useMorpheus', files=filesList)
+            result = requests.post(os.environ.get('morpheus_path'), files=filesList)
             respones = result.json()
             return jsonify({'scriptReturn': respones['scriptReturn']})
         except Exception as e:
