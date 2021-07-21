@@ -34,6 +34,11 @@ def healthy():
     return '200'
 
 
+@app.route('/healthy')
+def healthy():
+    return '200'
+
+
 # 前端向后端获取scripts、table name等信息
 @app.route('/getScriptData', methods=['GET'])
 def getData():
@@ -94,13 +99,11 @@ def postMorpheusData():
                     print('inputFile:', os.path.join(root, f))
                     fileTup = ("inputlist" , (f, open(os.path.join(root, f), "rb")))
                     filesList.append(fileTup)
-
             for root, dirs, files in os.walk(outputPath):
                 for f in files:
                     print('outputFile:', os.path.join(root, f))
                     fileTup = ("output" , (f, open(os.path.join(root, f), "rb")))
                     filesList.append(fileTup)
-            print(filesList)
             result = requests.post('http://somnus-dev-somnus-app-morpheus/useMorpheus', files=filesList)
             respones = result.json()
             return jsonify({'scriptReturn': respones['scriptReturn']})
