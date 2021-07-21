@@ -18,6 +18,7 @@ app = Flask(__name__, static_folder='../dist/static',
 
 data_path = "backend/data/"
 script_file = "script_test.txt"
+morpheus_url = os.environ.get("MORPHEUS_SERVICE_URL")
 
 # 注意，以下两个输出结果不一样，此时程序中涉及到的路径皆以app.root_path为准
 # print(os.getcwd()) # pgdw
@@ -50,7 +51,7 @@ def getMorpheusData():
         try:
             caseString = request.args.get("caseString")  # POST请求用 request.form.get
             if caseString:
-                urlPath = os.environ.get('morpheus_path')
+                urlPath = morpheus_url
                 paramas = {'caseString' : caseString}
                 response = requests.get(urlPath, params=paramas)
                 result = response.json()
@@ -93,7 +94,7 @@ def postMorpheusData():
                     print('outputFile:', os.path.join(root, f))
                     fileTup = ("output" , (f, open(os.path.join(root, f), "rb")))
                     filesList.append(fileTup)
-            result = requests.post(os.environ.get('morpheus_path'), files=filesList)
+            result = requests.post(morpheus_url, files=filesList)
             respones = result.json()
             return jsonify({'scriptReturn': respones['scriptReturn']})
         except Exception as e:
