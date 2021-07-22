@@ -157,7 +157,7 @@ export default {
                     }
                     data['type'] = "output"
                     this.$axios({
-                        url: "/api/getTablesAndParse",
+                        url: `${request_api}/api/getTablesAndParse`,
                         method: "post",
                         data: this.$qs.stringify(data),
                     }).then(res => {
@@ -175,7 +175,7 @@ export default {
                     }
                     data['type'] = "input"
                     this.$axios({
-                        url: "/api/getTablesAndParse",
+                        url: `${request_api}/api/getTablesAndParse`,
                         method: "post",
                         data: this.$qs.stringify(data),
                     }).then(res => {

@@ -1,41 +1,38 @@
-# flask_vue_template
+### Somnus
 
-## Front-End
+#### Introduction
 
-### Project setup
-```
-npm install
-```
+We have three modules for our Somnus project: Backend, Frontend, and Morpheus.
+See *Project Deployment* to setup Somnus.
+See *Development* to test and add new features.
+#### Project Deployment
+##### Environment
++ Java
++ Docker
 
-#### Compiles and hot-reloads for development
-```
-npm run serve
-```
+##### Run
 
-#### Compiles and minifies for production
-```
-npm run build
-```
-
-#### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
++ `./gradlew :morpheus:runDockerImage`
++ `./gradlew :backend:runDockerImage`
++ `./gradlew :frontend:runDockerImage`
+    + http://localhost:8888
 
 
-## Back-End
-
-### Project setup
-```
-pip install -r backend\requirements.txt 
-# if you want to use image sources to speed up installation:
-# pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r backend\requirements.txt 
-```
-
-### Run the project
-```
-python backend\app.py
-```
+#### Development
+##### Backend
++ Python 3.7
+    + Flask
+    + 
+    + See `path to requirements.txt`
++ R 4.1
+    + dplyr
+    + tydir
 
 
-##### Others
-`kubectl cp ./generate_transform_specs.py pgdw-78b459fb4-nj9f6:/PG4DT/backend/generate_transform_specs.py`
-Use `https://morpheus.projects.zjvis.org/useMorpheus?caseString=benchmarks/1/r1_input1.csv|benchmarks/1/r1_output1.csv` to test whether the Morpheus Server is running.
+
+##### Frontend
++ node
+
+
+##### Morpheus
+See xxxx. for more details.

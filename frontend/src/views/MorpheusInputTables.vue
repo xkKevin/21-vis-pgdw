@@ -110,11 +110,12 @@ export default {
       outputFilesAsString:{},
       inputfileList:[],
       outputfileList:[],
-      scriptReturn:'',
       fullscreenLoading:false
     }
   },
-
+mounted() {
+    window.myVue = this
+},
   methods:{
         getInputTableData(filename){
             this.inputTableName = filename
@@ -177,93 +178,102 @@ export default {
                     message:'Please select at least one file to upload'
                 });
             }else{
-                this.$axios({
-                        url: `${request_api}/cleanDataFolder`,
-                        method: "get",
-                    }).then(res => {
-                        if (res.data.message!=='success') {
-                            alert(res.data.error_info)
-                        } else {
-                            let flag1 = true,flag2 = true
-                            let p1 = new Promise((resolve,reject)=>{
-                                let data = {}
-                                for(let key in this.outputFilesAsString){
-                                    data[key] = this.outputFilesAsString[key]
-                                }
-                                data['type'] = "output"
-                                console.log(data)
-                                this.$axios({
-                                    url: "/api/morpheusGetTablesAndParse",
-                                    method: "post",
-                                    data: this.$qs.stringify(data),
-                                }).then(res => {
-                                    if(res.data === "False")flag1 = false
-                                    resolve()
-                                }).catch(err=>{
-                                    alert(err)
-                                    reject()
-                                })     
-                            })
-                            let p2 = new Promise((resolve,reject)=>{
-                                let data = {}
-                                for(let key in this.inputFilesAsString){
-                                    data[key] = this.inputFilesAsString[key]
-                                }
-                                data['type'] = "input"
-                                console.log(data)
-                                this.$axios({
-                                    url: "/api/morpheusGetTablesAndParse",
-                                    method: "post",
-                                    data: this.$qs.stringify(data),
-                                }).then(res => {
-                                    if(res.data === "False")flag2 = false
-                                    resolve()
-                                }).catch(err=>{
-                                    alert(err)
-                                    reject()
-                                })     
-                            })
-                            if(flag1 && flag2){
-                                // 调用接口上传数据
-                                const path = `${request_api}/useMorpheusPost`
-                                this.$axios.get(path)
-                                .then((response) => {
-                                    this.fullscreenLoading = false
-                                    this.language = 'R';
-                                    this.$emit('getTableName',this.inputfileList[0].name)
-                                    this.$emit('updatechange',response.data.scriptReturn);
-                                }).catch(err => {
-                                    this.$message({
-                                        message: err,
-                                        type: "error", // success/warning/info/error
-                                    });
-                                })
-                            }
-                            Promise.all([p1,p2]).then(()=>{
-                                if(flag1 && flag2){
-                                    this.$message({
-                                        message: "File(s) upload succeeded",
-                                        type: "success", // success/warning/info/error
-                                    });
-                                    this.$emit("uploadSuccess");
-                                }
-                                else{
-                                    this.$message({
-                                        message: "File(s) upload failed",
-                                        type: "error", // success/warning/info/error
-                                    });
-                                }
-                            })
-                        }
+                let flag1 = true,flag2 = true
+                let p1 = new Promise((resolve,reject)=>{
+                    let data = {}
+                    let output_file = {}
+                    for(let key in this.outputFilesAsString){
+                        output_file[key] = this.outputFilesAsString[key]
+                    }
+                    data['output'] = output_file
+
+                    let input_file = {}
+                    for(let key in this.inputFilesAsString){
+                        input_file[key] = this.inputFilesAsString[key]
+                    }
+                    data['input'] = input_file
+                    console.log(data);
+                    this.$axios({
+                        url: `${request_api}/api/morpheusGetTablesAndParse`,
+                        method: "post",
+                        data: this.$qs.stringify(data),
+                    }).then((response) => {
+                        this.fullscreenLoading = false
+                        this.language = 'R';
+                        this.$emit('getTableName',this.inputfileList[0].name)
+                        this.$emit('updatechange',response.data.scriptReturn);
+
+                        resolve();
+                        
                     }).catch(err=>{
                         alert(err)
-                    })
+                        reject()
+                    })     
+                })
+                /*
+                let p2 = new Promise((resolve,reject)=>{
+                    let data = {}
+                    for(let key in this.inputFilesAsString){
+                        data[key] = this.inputFilesAsString[key]
+                    }
+                    data['type'] = "input"
+                    console.log(data)
+                    this.$axios({
+                        url: `${request_api}/api/morpheusGetTablesAndParse`,
+                        method: "post",
+                        data: this.$qs.stringify(data),
+                    }).then(res => {
+                        if(res.data === "False")flag2 = false
+                        resolve()
+                    }).catch(err=>{
+                        alert(err)
+                        reject()
+                    })     
+                })
+                */
+                // if(flag1 && flag2){
+                //     // 调用接口上传数据
+                //     const path = `${request_api}/useMorpheusPost`
+                //     this.$axios.get(path)
+                //     .then((response) => {
+                //         this.fullscreenLoading = false
+                //         this.language = 'R';
+                //         this.$emit('getTableName',this.inputfileList[0].name)
+                //         this.$emit('updatechange',response.data.scriptReturn);
+                //     }).catch(err => {
+                //         this.$message({
+                //             message: err,
+                //             type: "error", // success/warning/info/error
+                //         });
+                //     })
+                // }
+                Promise.all([p1]).then(()=>{
+                    if(flag1 && flag2){
+                        this.$refs.inputfiles.clearFiles();
+                        this.$refs.outputfiles.clearFiles();
+                        this.inputfileList = []
+                        this.outputfileList = []
+                        this.inputFilesAsString = {}
+                        this.outputFilesAsString = {}
+                        this.$message({
+                            message: "File(s) upload succeeded",
+                            type: "success", // success/warning/info/error
+                        });
+                        this.$emit("uploadSuccess");
+                    }
+                    else{
+                        this.$message({
+                            message: "File(s) upload failed",
+                            type: "error", // success/warning/info/error
+                        });
+                    }
+                })
             };
         },
-        handleOutputRemove(file,fileList){
+        handleOutputRemove(fileList){
             this.outputfileList = fileList
         },
-        handleInputRemove(file,fileList){
+        handleInputRemove(fileList){
             this.inputfileList = fileList
         }
     }

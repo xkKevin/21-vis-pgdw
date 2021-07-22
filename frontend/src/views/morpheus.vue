@@ -9,7 +9,7 @@
     <el-row type="flex" justify="center" style="height: 45vh">
       <el-col style="width: 20vw; margin-right: 7px">
         <el-row style="height: 100%; display: flex; flex-direction: column">
-          <el-header height="65px" style="background: black">
+          <el-header height="65px" style="background: black; padding-right: 0; padding-left: 0">
             <div
               style="
                 text-align: center;
@@ -74,6 +74,13 @@
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
+                <div v-if="downloadFlag" style="font-size: small">
+                  <dir style="padding-left:0">Donwload&nbsp;Files:
+                    <span v-for="item in downloadList" :key="item" style="margin-right:10px">
+                      <a :href="'/backend/data/morpheusData/'+ item ">{{ item }}</a>
+                    </span>
+                  </dir>
+                </div>
               </el-row>
             </el-row>
           </div>
@@ -87,6 +94,7 @@
           height: 100%;
           display: flex;
           flex-direction: column;
+          z-index: 1;
         "
       >
         <el-row
@@ -137,7 +145,7 @@
             > -->
           </div>
         </el-row>
-        <div v-loading="script_loading" style="flex: 1; display: flex; align-items: center">
+        <div v-loading="script_loading" element-loading-text="Morpheus Running" style="flex: 1; display: flex; align-items: center">
           <div id="monaco" style="height: 38vh; width: 98%"></div>
         </div>
         <!-- style="width:40vw; height:100%; padding:0 0 0 0; display: grid; grid-template-columns: [c1] 100%; grid-template-rows: [r1] 50px [r2] auto;" -->
@@ -230,7 +238,7 @@
           style="flex: 1; padding: 3px 1px"
           v-loading="glyph_running"
           element-loading-spinner="el-icon-loading"
-          element-loading-text="Running"
+          element-loading-text="Glyph Running"
         ></div>
       </el-col>
     </el-row>
@@ -290,6 +298,18 @@ export default {
         Morpheus_case7: "r60_input1.csv",
         Morpheus_case8: "r74_input1.csv",
       },
+      caseDownloadName: {
+        Morpheus_case1: ["r1_input1.csv","r1_output1.csv"],
+        Morpheus_case2: ["r5_input1.csv","r5_output1.csv"],
+        Morpheus_case3: ["r9_input1.csv","r9_output1.csv"],
+        Morpheus_case4: ["r13_input1.csv","r13_output1.csv"],
+        Morpheus_case5: ["r27_input1.csv","r27_input2.csv","r27_output1.csv"],
+        Morpheus_case6: ["r53_input1.csv","r53_output1.csv"],
+        Morpheus_case7: ["r60_input1.csv","r60_output1.csv"],
+        Morpheus_case8: ["r74_input1.csv","r74_output1.csv"],
+      },
+      downloadList: [],
+      downloadFlag: false,
       one_case: "Select a case",
       interaction_flag: false,
       scriptReturnByUpload: '',
@@ -310,6 +330,7 @@ export default {
   // },
   methods: {
     getUpload(e){
+      this.downloadFlag = false
       this.showTable = true
       this.scriptReturnByUpload = e;
       this.language = 'R';
@@ -325,10 +346,12 @@ export default {
     },
     selectCase(one_case = "r_case1") {
       this.showTable = true
+      this.downloadFlag = true
       this.one_case = one_case;
       // this.getScriptData(this.one_case);
       this.getMorpheus(this.cases[this.one_case]);
       this.getTableData(this.casesTable[this.one_case]);
+      this.downloadList = this.caseDownloadName[this.one_case]
     },
     drawTag(id, text) {
       let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");

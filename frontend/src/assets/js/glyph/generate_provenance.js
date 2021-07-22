@@ -2208,7 +2208,7 @@ function codeHighlight(line) {
 
 function record_log(type, returnCitySN) {
     // console.log("out", returnCitySN);
-    const path = "https://freenli.projects.zjvis.org/access_log/";
+    const path = "https://freenli.zjvis.net/access_log/";
     // const data = {
     //   "ip":returnCitySN.cip,
     //   "id":returnCitySN.cid,
