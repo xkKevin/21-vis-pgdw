@@ -1,0 +1,20 @@
+image:
+  pullPolicy: Always
+  frontend:
+    repository: ${dockerRegistryService}/${name}-frontend
+    tag: ${version}
+  backend:
+    repository: ${dockerRegistryService}/${name}-backend
+    tag: ${version}
+  morpheus:
+    repository: ${dockerRegistryService}/${name}-morpheus
+    tag: ${version}
+deploy:
+  timestamp: "${deployTimestamp}"
+ingress:
+  enabled: true
+  annotations: {}
+  hosts:
+    - host: somnus.zjvis.net
+      paths:
+        - path: /
