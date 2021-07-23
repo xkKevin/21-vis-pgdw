@@ -103,6 +103,8 @@ backend:
   replicaCount: 1
   podAnnotations: {}
   port: 80
+  data:
+    path: /app/backend/data/
 morpheus:
   replicaCount: 1
   podAnnotations: {}

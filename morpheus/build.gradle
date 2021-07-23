@@ -44,7 +44,7 @@ task buildDockerImage(type: Exec) {
 task runDockerImage(type: Exec) {
     executable("docker")
     args(
-            "run",
+            "run", "--rm",
             "-p", "8890:80",
             imageNameWithTag,
     )

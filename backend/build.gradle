@@ -40,8 +40,9 @@ task buildDockerImage(type: Exec) {
 task runDockerImage(type: Exec) {
     executable("docker")
     args(
-            "run",
+            "run", "--rm",
             "-p", "8889:80",
+            "-e", "BACKEND_DATA_PATH=/app/backend/data/",
             "-e", "MORPHEUS_SERVICE_URL=http://host.docker.internal:8890/useMorpheus",
             imageNameWithTag,
     )
