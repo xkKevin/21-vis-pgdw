@@ -2,9 +2,6 @@
   <div id="showGlyphs">
     <!-- <remote-script src="https://github.com/bumbu/svg-pan-zoom/blob/master/dist/svg-pan-zoom.min.js"></remote-script> -->
     <!-- <remote-script src="http://ariutta.github.io/svg-pan-zoom/dist/svg-pan-zoom.min.js"></remote-script> -->
-    <remote-script
-      src="https://somnus.projects.zjvis.org/data/static/svg-pan-zoom.js"
-    ></remote-script>
     <!-- <remote-script src="https://pv.sohu.com/cityjson?ie=utf-8"></remote-script> -->
     <el-row type="flex" justify="center" style="height: 45vh">
       <el-col style="width: 20vw; margin-right: 7px">
