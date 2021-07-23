@@ -47,7 +47,7 @@ task buildDockerImage(type: Exec) {
 task runDockerImage(type: Exec) {
     executable("docker")
     args(
-            "run",
+            "run", "--rm",
             "-p", "8888:80",
             "-v", "${project.file("docker/nginx.debug.conf").getAbsolutePath()}:/etc/nginx/conf.d/default.conf",
             imageNameWithTag,

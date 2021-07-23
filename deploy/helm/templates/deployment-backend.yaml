@@ -38,6 +38,8 @@ spec:
           image: "{{ .Values.image.backend.repository }}:{{ .Values.image.backend.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
+            - name: BACKEND_DATA_PATH
+              value: "{{ .Values.backend.data.path }}"
             - name: MORPHEUS_SERVICE_URL
               value: "http://{{ include "somnus-app.service.morpheus" . }}:{{ .Values.morpheus.port }}/useMorpheus"
           volumeMounts:
