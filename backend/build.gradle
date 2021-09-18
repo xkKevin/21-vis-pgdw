@@ -37,6 +37,15 @@ task buildDockerImage(type: Exec) {
             "-t", imageNameWithTag,
     )
 }
+
+task killDockerContainer(type: Exec) {
+    executable("docker")
+    args(
+            "kill", "backend"
+    )
+    ignoreExitValue(true)
+}
+
 task runDockerImage(type: Exec) {
     executable("docker")
     args(
@@ -44,7 +53,10 @@ task runDockerImage(type: Exec) {
             "-p", "8889:80",
             "-e", "BACKEND_DATA_PATH=/app/backend/data/",
             "-e", "MORPHEUS_SERVICE_URL=http://host.docker.internal:8890/useMorpheus",
+            "--name", "backend",
+            "-d",
             imageNameWithTag,
     )
+    dependsOn(killDockerContainer)
     dependsOn(buildDockerImage)
 }

@@ -24,6 +24,10 @@ script_file = "script_test.txt"
 # print(os.getcwd()) # pgdw
 # print(app.root_path)  # pgdw/backend
 
+@app.route('/')
+def hello():
+    return 'This is the Backend module.'
+
 def cleanFolder():
     try:
         inputPath = os.path.join(data_path , 'morpheusUserData/input')
@@ -171,7 +175,7 @@ def morpheus_generate_transform_specs():
         script_content = request.args.get("script_content", "")  # POST请求用 request.form.get
         language = request.args.get("language", "r")
         data_path_lan1 = os.path.join(data_path, "morpheusData/")
-        if language == 'R':
+        if language == 'r':
             # data_path_lan = os.path.join(data_path, "r_case")
             adaptor = gts.generate_transform_specs
         elif language == 'python':
@@ -208,7 +212,7 @@ def upload_morpheus_generate_transform_specs():
         script_content = request.args.get("script_content", "")  # POST请求用 request.form.get
         language = request.args.get("language", "r")
         data_path_lan1 = os.path.join(data_path, "morpheusData")
-        if language == 'R':
+        if language == 'r':
             # data_path_lan = os.path.join(data_path, "r_case")
             adaptor = gts.generate_transform_specs
         elif language == 'python':

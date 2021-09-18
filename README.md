@@ -13,15 +13,26 @@ See *Development* to test and add new features.
 
 ##### Environment
 
-+ Java
++ JDK 1.8 (Java SE 8)
+  + [Download](https://www.oracle.com/java/technologies/javase/javase8u211-later-archive-downloads.html)
 + Docker
 
 ##### Run
 
-+ `./gradlew :morpheus:runDockerImage`
-+ `./gradlew :backend:runDockerImage`
-+ `./gradlew :frontend:runDockerImage`
-    + http://localhost:8888
+Run modules separately:
++ `./gradlew :morpheus:runDockerImage` for Morpheus
+  + <http://localhost:8890>
++ `./gradlew :backend:runDockerImage` for Backend
+  + <http://localhost:8889>
++ `./gradlew :frontend:runDockerImage` for Frontend
+  + <http://localhost:8888>
+
+You can also run all modules in one command:
++ `./gradlew runDockerImage`
+    + <http://localhost:8888>
+
+Kill all containers in one command:
++ `./gradlew killDockerContainer`
 
 #### Development
 

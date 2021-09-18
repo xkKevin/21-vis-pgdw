@@ -12,7 +12,7 @@ globals.isRun = False
 
 @app.route('/')
 def hello():
-    return 'hello docker&flask'
+    return 'This is the Morpheus module.'
 
 
 @app.route('/healthy')

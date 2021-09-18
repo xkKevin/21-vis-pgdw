@@ -263,7 +263,7 @@ export default {
       editor: null, // 文本编辑器
       table_name: "",
       script_content: "", //'print("hello world!")',  上一次运行的script脚本
-      language: "R",
+      language: "r",
       all_langs: ["r", "python"],
       glyph_running: false,
       table_loading: false,
@@ -330,7 +330,7 @@ export default {
       this.downloadFlag = false
       this.showTable = true
       this.scriptReturnByUpload = e;
-      this.language = 'R';
+      this.language = 'r';
       this.changeModel(this.language, this.scriptReturnByUpload, false);
       this.detectChanges();
       this.getTableData(this.tableName)
@@ -530,7 +530,7 @@ export default {
             type: "error",
           });
         }else{
-          this.language = 'R';
+          this.language = 'r';
           this.changeModel(this.language, response.data.scriptReturn, false);
           this.script_loading = false;
           this.detectChanges();

@@ -41,12 +41,24 @@ task buildDockerImage(type: Exec) {
             "-t", imageNameWithTag,
     )
 }
+
+task killDockerContainer(type: Exec) {
+    executable("docker")
+    args(
+            "kill", "morpheus"
+    )
+    ignoreExitValue(true)
+}
+
 task runDockerImage(type: Exec) {
     executable("docker")
     args(
             "run", "--rm",
             "-p", "8890:80",
+            "--name", "morpheus",
+            "-d",
             imageNameWithTag,
     )
+    dependsOn(killDockerContainer)
     dependsOn(buildDockerImage)
 }
