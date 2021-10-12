@@ -1,6 +1,6 @@
 import {extractCols} from "./common/extractContextualCols";
 
-function generateDataForGroupSummarize(dataIn1_csv, dataOut1_csv, inExpCol, inImpCol,outExpOrImpCol){
+function generateDataForGroupSummarize(dataIn1_csv, dataOut1_csv, inExpCol, inImpCol, outExpOrImpCol){
 
     let contextualCols = extractCols(Array.from(dataIn1_csv[0]),inExpCol.concat(inImpCol),inExpCol.concat(inImpCol))
     let allCols = inExpCol.concat(inImpCol)

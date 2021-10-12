@@ -20,6 +20,11 @@ data_path = os.environ.get("BACKEND_DATA_PATH", "backend/data/")
 morpheus_url = os.environ.get("MORPHEUS_SERVICE_URL", "http://127.0.0.1:8890/useMorpheus")
 script_file = "script_test.txt"
 
+if data_path.startswith("/app"):
+    port = 80
+else:
+    port = 8889
+
 # 注意，以下两个输出结果不一样，此时程序中涉及到的路径皆以app.root_path为准
 # print(os.getcwd()) # pgdw
 # print(app.root_path)  # pgdw/backend
@@ -327,4 +332,4 @@ def morpheusGetTablesAndParse():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(host='0.0.0.0', port=port, debug=True)

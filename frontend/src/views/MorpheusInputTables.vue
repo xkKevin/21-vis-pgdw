@@ -84,7 +84,7 @@
                 line-height: 17px;
                 font-weight: 400;
                 " 
-                @click="submitUpload" size="small" type="primary" v-loading.fullscreen.lock="fullscreenLoading">
+                @click="submitUpload" size="small" type="primary"> <!-- v-loading.fullscreen.lock="fullscreenLoading" -->
                 <!-- <i class="el-icon-upload2"></i> -->
                   Upload&nbsp;and&nbsp;Run
               </el-button>
@@ -110,12 +110,12 @@ export default {
       outputFilesAsString:{},
       inputfileList:[],
       outputfileList:[],
-      fullscreenLoading:false
+    //   fullscreenLoading:false
     }
   },
-mounted() {
-    window.myVue = this
-},
+    mounted() {
+        window.myVue = this
+    },
   methods:{
         getInputTableData(filename){
             this.inputTableName = filename
@@ -169,7 +169,7 @@ mounted() {
             // this.$emit("uploadSuccess");
             // return ;
             // console.log(this.$refs.inputfiles);
-            this.fullscreenLoading = true
+            // this.fullscreenLoading = true
             if(this.$refs.inputfiles.$children[0].fileList.length===0){  //  && this.$refs.outputfiles.$children[0].fileList.length===0
                 this.$message({
                     type:'error',
@@ -179,6 +179,7 @@ mounted() {
                 });
             }else{
                 let flag1 = true,flag2 = true
+                this.$emit("change-script-loading", true)
                 let p1 = new Promise((resolve,reject)=>{
                     let data = {}
                     let output_file = {}
@@ -192,13 +193,13 @@ mounted() {
                         input_file[key] = this.inputFilesAsString[key]
                     }
                     data['input'] = input_file
-                    console.log(data);
                     this.$axios({
                         url: `${request_api}/api/morpheusGetTablesAndParse`,
                         method: "post",
                         data: this.$qs.stringify(data),
                     }).then((response) => {
-                        this.fullscreenLoading = false
+                        // this.fullscreenLoading = false
+                        this.$emit("change-script-loading", false)
                         this.language = 'R';
                         this.$emit('getTableName',this.inputfileList[0].name)
                         this.$emit('updatechange',response.data.scriptReturn);
@@ -255,10 +256,10 @@ mounted() {
                         this.outputfileList = []
                         this.inputFilesAsString = {}
                         this.outputFilesAsString = {}
-                        this.$message({
-                            message: "File(s) upload succeeded",
-                            type: "success", // success/warning/info/error
-                        });
+                        // this.$message({
+                        //     message: "File(s) upload succeeded",
+                        //     type: "success", // success/warning/info/error
+                        // });
                         this.$emit("uploadSuccess");
                     }
                     else{

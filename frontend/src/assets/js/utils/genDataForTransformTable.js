@@ -241,6 +241,26 @@ function generateDataForFold(dataIn1_csv, dataOut1_csv, inExpOrImpCol, outExpOrI
             m2.push(tempRow)
         }
     }
+
+    // set max(data.length) = 6
+    if (m2.length > 7) {
+        let change_m1 = []
+        let change_m2 = []
+        let change_temp_m1 = []
+        for (let row = 0; row <= 6; row++) {
+            change_m2.push(m2[row])
+        }
+        for (let row = 0; row < m1.length; row++) {
+            for (let col = 0; col < 3; col++) {
+                change_temp_m1.push(m1[row][col])
+            }
+            change_m1.push(change_temp_m1)
+            change_temp_m1 = []
+        }
+        m1 = change_m1
+        m2 = change_m2
+    }
+
     return { m1, m2 }
 }
 

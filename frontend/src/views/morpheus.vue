@@ -37,7 +37,7 @@
                 flex-direction: column;
               "
             >
-              <upload-tables v-on:updatechange="getUpload" @getTableName="getTableName"></upload-tables>
+              <upload-tables v-on:updatechange="getUpload" @getTableName="getTableName" @change-script-loading="changeScriptLoading($event)"></upload-tables>
               <el-row
                 style="
                   background: white;
@@ -101,7 +101,7 @@
         >
           <div id="tag1"></div>
           <div class="title_right">
-            Language:R
+            Language: R
             <!-- <el-dropdown @command="changeModel" style="margin-left: 8px">
               <span
                 class="el-dropdown-link"
@@ -340,6 +340,9 @@ export default {
     },
     getTableName(e){
       this.tableName = e
+    },
+    changeScriptLoading(status){
+      this.script_loading = status
     },
     selectCase(one_case = "r_case1") {
       this.showTable = true

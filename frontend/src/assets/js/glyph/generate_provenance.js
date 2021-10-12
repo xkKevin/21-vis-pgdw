@@ -1517,27 +1517,9 @@ async function preparation(transform_specs, nodePos, table_path) {
                     output_explicit_col,
                     input_explicit_col
                 );
-                let unfold_m1 = []
-                let unfold_m2 = []
-                let unfold_temp_m1 = []
-                if (res.m2.length > 7) {
-                    for (let row = 0; row <= 6; row++) {
-                        unfold_m2.push(res.m2[row])
-                    }
-                    for (let row = 0; row < res.m1.length; row++) {
-                        for (let col = 0; col < 3; col++) {
-                            unfold_temp_m1.push(res.m1[row][col])
-                        }
-                        unfold_m1.push(unfold_temp_m1)
-                        unfold_temp_m1 = []
-                    }
-                } else {
-                    unfold_m2 = res.m2
-                    unfold_m1 = res.m1
-                }
                 transform_tables_unfold(
-                    unfold_m2,
-                    unfold_m1,
+                    res.m2,
+                    res.m1,
                     rule,
                     input_table_name,
                     output_table_name,
@@ -2207,6 +2189,8 @@ function codeHighlight(line) {
 
 
 function record_log(type, returnCitySN) {
+    return;
+
     // console.log("out", returnCitySN);
     const path = "https://freenli.zjvis.net/access_log/";
     // const data = {

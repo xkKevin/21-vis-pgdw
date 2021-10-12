@@ -47,9 +47,15 @@ Kill all containers in one command:
   + dplyr
   + tydir
 
+RUN: `python backend/src/app.py`
+
 ##### Frontend
 
 + node
+
+RUN:
+  + `npm install`
+  + `npm run serve`
 
 ##### Morpheus
 

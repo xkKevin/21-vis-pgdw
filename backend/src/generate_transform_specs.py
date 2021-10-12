@@ -456,16 +456,18 @@ def generate_transform_specs(script_content):
                     keep_col.append(col)
             remove_col = remove_quote(remove_col)
             keep_col = remove_quote(keep_col)
-            var2table[output_tbl] = specs["output_table_file"]
+            # var2table[output_tbl] = specs["output_table_file"]
             if remove_col:
                 specs["type"] = 'delete_columns_select_remove'
                 specs["input_explicit_col"] = remove_col
                 specs["operation_rule"] = 'Delete ' + ','.join(remove_col)
+                var2table[output_tbl] = specs["output_table_file"]
             elif len(keep_col) < len(col_states[var2num(specs["input_table_name"])]):
                 specs["type"] = 'delete_columns_select_keep'
                 specs["input_explicit_col"] = keep_col
                 # specs["operation_rule"] = 'Keep Columns: ' + ','.join(keep_col)
                 specs["operation_rule"] = 'Keep ' + ','.join(specs["input_explicit_col"])
+                var2table[output_tbl] = specs["output_table_file"]
 
                 rename_cols = []
                 for pk, pv in params.items():
@@ -519,6 +521,7 @@ def generate_transform_specs(script_content):
                 specs["type"] = 'transform_tables_rearrange'
                 specs["input_explicit_col"] = keep_col
                 specs["operation_rule"] = 'Rearrange Columns'
+                var2table[output_tbl] = specs["output_table_file"]
                 
         
         elif func in ("summarise", "summarize"):

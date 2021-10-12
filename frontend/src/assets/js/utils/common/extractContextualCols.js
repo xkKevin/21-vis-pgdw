@@ -27,6 +27,7 @@ export function extractCols(inputCols, inExpOrImpCols, outExpOrImpCols) {
         return [inputCols[0]]
     }
 
+    inExpOrImpCols.sort()
     while (inStart <= inEnd && inEnd < inputCols.length) {
         if (inEnd === inExpOrImpCols[inPos]) {
             if (inStart !== inEnd) inGroups.push(inputCols.slice(inStart, inEnd))
