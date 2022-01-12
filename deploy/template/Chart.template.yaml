@@ -1,6 +1,6 @@
 ${doNotModifyComment}
 apiVersion: v2
-name: ${softwareName}
+name: ${name}
 description: ${description}
 
 # A chart can be either an 'application' or a 'library' chart.

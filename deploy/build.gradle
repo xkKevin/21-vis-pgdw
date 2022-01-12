@@ -13,10 +13,10 @@ buildscript {
 version = project.rootProject.ext.constructVersion()
 task downloadBinary() {
     doLast {
-        String kubectlBaseUrl = project.ext.kubectlBaseUrl
-        String helmBaseUrl = project.ext.helmBaseUrl
-        String kubectlBinary = project.ext.kubectlBinary
-        String helmBinary = project.ext.helmBinary
+        String kubectlBaseUrl = project.rootProject.ext.kubectlBaseUrl
+        String helmBaseUrl = project.rootProject.ext.helmBaseUrl
+        String kubectlBinary = project.rootProject.ext.kubectlBinary
+        String helmBinary = project.rootProject.ext.helmBinary
         if (project.file(kubectlBinary).exists()) {
             println("skip downloading ${kubectlBinary} as file exists")
         } else {
@@ -107,4 +107,14 @@ private makeExecutable(String os, File targetFile) {
             )
         }
     }
+}
+
+private static Pair<String, String> kubectlUrl(String baseUrl, String os, String arch) {
+    String fileName = "kubectl${os == "windows" ? ".exe" : ""}"
+    return Pair.of(fileName, "${baseUrl}/v1.21.2/bin/${os}/${arch}/${fileName}")
+}
+
+private static Pair<String, String> helmUrl(String baseUrl, String os, String arch) {
+    String fileName = "helm-v3.6.2-${os}-${arch}.${os == "windows" ? "zip" : "tar.gz"}"
+    return Pair.of(fileName, "${baseUrl}/${fileName}")
 }
