@@ -67,6 +67,8 @@ ext {
     namespace = "somnus"
     softwareName = "somnus"
     imageBaseUrl = systemEnv.getOrDefault("IMAGE_BASE_URL", "https://resource.static.zjvis.net/docker-images/app")
+    dockerRegistry = systemEnv.getOrDefault("DOCKER_REGISTRY", "docker.registry.local:443")
+    dockerRegistryInCluster = systemEnv.getOrDefault("DOCKER_REGISTRY_IN_CLUSTER", "insecure.docker.registry.local:80")
     loadImageIfNotExists = { String imageIdentify, String imageUrl ->
         loadImageIfNotExists(imageIdentify, imageUrl)
     }

@@ -52,7 +52,7 @@ task buildHelmPackage(type: Exec) {
 }
 task pushDockerImage() {
     doLast {
-        ["backend", "frontend", "morpheus"].forEach(module -> {
+        ["backend", "frontend", "morpheus"].each { module ->
             String imageNameWithTag = "${softwareName}-${module}:${softwareVersion}"
             String dockerImageToUse = "${dockerRegistry}/${imageNameWithTag}"
             exec {
@@ -67,7 +67,7 @@ task pushDockerImage() {
                 )
                 println("running command: ${String.join(" ", execSpec.getCommandLine())}")
             }
-        })
+        }
     }
     dependsOn(":backend:buildDockerImage")
     dependsOn(":frontend:buildDockerImage")
