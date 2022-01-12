@@ -1,0 +1,17 @@
+# ${doNotModifyComment}
+image:
+  pullPolicy: IfNotPresent
+  frontend:
+    repository: ${dockerRegistryInCluster}/${softwareName}-frontend
+    tag: "${softwareVersion}"
+  backend:
+    repository: ${dockerRegistryInCluster}/${softwareName}-backend
+    tag: "${softwareVersion}"
+  morpheus:
+    repository: ${dockerRegistryInCluster}/${softwareName}-morpheus
+    tag: "${softwareVersion}"
+service:
+  type: ClusterIP
+deploy:
+  version: "${deployVersion}"
+  timestamp: "${deployTimestamp}"

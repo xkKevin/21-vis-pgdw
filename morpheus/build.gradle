@@ -7,6 +7,15 @@ buildscript {
 }
 version = project.rootProject.ext.constructVersion()
 
+task prepareBaseImage() {
+    doLast {
+        String imageBaseUrl = project.rootProject.ext.imageBaseUrl
+        project.rootProject.ext.loadImageIfNotExists(
+                "docker.io/xkkevin/morpheus:v1",
+                "${imageBaseUrl}/docker.io_xkkevin_morpheus_v1.dim"
+        )
+    }
+}
 def imageNameWithTag = "${project.rootProject.ext.appName}-${project.getName()}:${project.getVersion()}"
 task buildDockerImage(type: Exec) {
     def dockerBuildDirectory = project.file("${project.buildDir}/runtime/docker")
@@ -40,6 +49,7 @@ task buildDockerImage(type: Exec) {
             "-f", project.file("${dockerBuildDirectory}/Dockerfile").getAbsolutePath(),
             "-t", imageNameWithTag,
     )
+    dependsOn(prepareBaseImage)
 }
 
 task killDockerContainer(type: Exec) {

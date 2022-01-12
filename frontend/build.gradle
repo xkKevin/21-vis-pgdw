@@ -21,6 +21,15 @@ node {
 
 version = project.rootProject.ext.constructVersion()
 
+task prepareBaseImage() {
+    doLast {
+        String imageBaseUrl = project.rootProject.ext.imageBaseUrl
+        project.rootProject.ext.loadImageIfNotExists(
+                "docker.io/nginx:1.17.10-alpine",
+                "${imageBaseUrl}/docker.io_nginx_1.17.10-alpine.dim"
+        )
+    }
+}
 def imageNameWithTag = "${project.rootProject.ext.appName}-${project.getName()}:${project.getVersion()}"
 task buildDockerImage(type: Exec) {
     def dockerBuildDirectory = project.file("${project.buildDir}/runtime/docker")
@@ -43,6 +52,7 @@ task buildDockerImage(type: Exec) {
             "-t", imageNameWithTag,
     )
     dependsOn(npm_run_build)
+    dependsOn(prepareBaseImage)
 }
 
 task killDockerContainer(type: Exec) {
