@@ -30,7 +30,7 @@ task prepareBaseImage() {
         )
     }
 }
-def imageNameWithTag = "${project.rootProject.ext.appName}-${project.getName()}:${project.getVersion()}"
+def imageNameWithTag = "${project.rootProject.ext.softwareName}-${project.getName()}:${project.getVersion()}"
 task buildDockerImage(type: Exec) {
     def dockerBuildDirectory = project.file("${project.buildDir}/runtime/docker")
     doFirst {
