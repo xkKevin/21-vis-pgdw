@@ -7,7 +7,16 @@ buildscript {
 }
 version = project.rootProject.ext.constructVersion()
 
-def imageNameWithTag = "${project.rootProject.ext.appName}-${project.getName()}:${project.getVersion()}"
+task prepareBaseImage() {
+    doLast {
+        String imageBaseUrl = project.rootProject.ext.imageBaseUrl
+        project.rootProject.ext.loadImageIfNotExists(
+                "docker.io/grimkirill/r-python:0.0.5",
+                "${imageBaseUrl}/docker.io_grimkirill_r-python_0.0.5.dim"
+        )
+    }
+}
+def imageNameWithTag = "${project.rootProject.ext.softwareName}-${project.getName()}:${project.getVersion()}"
 task buildDockerImage(type: Exec) {
     def dockerBuildDirectory = project.file("${project.buildDir}/runtime/docker")
     doFirst {
@@ -36,6 +45,7 @@ task buildDockerImage(type: Exec) {
             "-f", project.file("${dockerBuildDirectory}/Dockerfile").getAbsolutePath(),
             "-t", imageNameWithTag,
     )
+    dependsOn(prepareBaseImage)
 }
 
 task killDockerContainer(type: Exec) {

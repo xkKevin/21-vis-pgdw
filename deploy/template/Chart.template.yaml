@@ -1,7 +1,7 @@
 ${doNotModifyComment}
 apiVersion: v2
-name: ${softwareName}
-description: A Helm chart for Kubernetes
+name: ${name}
+description: ${description}
 
 # A chart can be either an 'application' or a 'library' chart.
 #

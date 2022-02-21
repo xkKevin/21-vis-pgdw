@@ -1,6 +1,5 @@
 import groovy.text.SimpleTemplateEngine
-import groovyx.net.http.FromServer
-import groovyx.net.http.HttpBuilder
+import org.gradle.internal.os.OperatingSystem
 
 buildscript {
     repositories {
@@ -18,10 +17,11 @@ plugins {
     id "io.github.http-builder-ng.http-plugin" version "0.1.1"
 }
 
-def systemEnv = new HashMap<String, String>(System.getenv())
+String runtimeBinaryDirectory = "${project.buildDir}/runtime/bin"
+HashMap<String, String> systemEnv = new HashMap<String, String>(System.getenv())
+String localOperatingSystem = operatingSystem()
+String localArch = arch()
 ext {
-    mainVersion = "1.0.0"
-    javaVersion = 1.8
     mavenRepositoryUrlList = [
             "https://maven.aliyun.com/repository/public",
             "https://maven.aliyun.com/repository/spring",
@@ -31,6 +31,10 @@ ext {
             "https://maven.aliyun.com/repository/google",
             "https://maven.aliyun.com/repository/jcenter",
     ]
+    os = localOperatingSystem
+    arch = localArch
+    mainVersion = "1.0.0"
+    javaVersion = 1.8
     gitCommitId = { ->
         def headDeafOutputStream = new ByteArrayOutputStream()
         exec {
@@ -39,6 +43,7 @@ ext {
         }
         def headDeaf = headDeafOutputStream.toString().trim()
         def clean = headDeaf.isEmpty()
+
         def commitIdOutputStream = new ByteArrayOutputStream()
         exec {
             commandLine("git", "rev-parse", "--short", "HEAD")
@@ -49,379 +54,110 @@ ext {
     constructVersion = { ->
         return "${ext.mainVersion}-C${ext.gitCommitId()}"
     }
-    render = { File templateFile, Map<String, String> dataMap, File targetFile ->
-        println("templateFile(${templateFile.getAbsolutePath()}) -> targetFile(${targetFile.getAbsolutePath()})")
-        project.file(targetFile).parentFile.mkdirs()
-        project.file(targetFile).text = new SimpleTemplateEngine()
-                .createTemplate(templateFile.text)
-                .make(dataMap)
+    renderText = { File templateFile, Map<String, String> dataMap ->
+        return doRenderText(templateFile, dataMap)
     }
-    helmBinaryForCompilePath = "${project.buildDir}/runtime/bin/helm"
-    // should depends on downloadHelmBinary
-    pullHelmChartPackage = { File targetFile, String repo, String name, String version ->
-        if (targetFile.exists()) {
-            println("${targetFile} exists, skip pulling package")
-            return
-        }
-        println("pulling ${name}:${version} from ${repo} to ${targetFile}")
-        targetFile.parentFile.mkdirs()
-        exec {
-            workingDir(targetFile.parentFile.getAbsolutePath())
-            executable(project.ext.helmBinaryForCompilePath)
-            args(
-                    "pull", name,
-                    "--version", version,
-                    "--repo", repo,
-            )
-        }
+    renderFile = { File templateFile, Map<String, String> dataMap, File targetFile ->
+        doRenderFile(templateFile, dataMap, targetFile)
     }
-    helmChart = [
-            existsPackage: { String chartMuseumBaseUrl, String chartMuseumPrefixPath, String name, String version ->
-                def http = HttpBuilder.configure {
-                    request.uri = chartMuseumBaseUrl
-                }
-                http.get {
-                    request.uri.path = "${chartMuseumPrefixPath}/api/charts/${name}/${version}"
-                    response.success { FromServer fromServer, Object body ->
-                        println("exists(${name}:${version}): ${responseBodyAsString(body)}")
-                        return true
-                    }
-                    response.when(404) { FromServer fs, Object body ->
-                        println("not exists(${name}:${version}): ${responseBodyAsString(body)}")
-                        return false
-                    }
-                    response.failure { FromServer fromServer, Object body ->
-                        throw new RuntimeException("query(${name}:${version}) failed: ${responseBodyAsString(body)}")
-                    }
-                }
-            },
-            deletePackage: { String chartMuseumBaseUrl, String chartMuseumPrefixPath, String name, String version ->
-                def http = HttpBuilder.configure {
-                    request.uri = chartMuseumBaseUrl
-                }
-                http.delete {
-                    request.uri.path = "${chartMuseumPrefixPath}/api/charts/${name}/${version}"
-                    response.success { FromServer fromServer, Object body ->
-                        println("delete(${name}:${version}) succeed: ${responseBodyAsString(body)}")
-                    }
-                    response.failure { FromServer fromServer, Object body ->
-                        throw new RuntimeException("delete(${name}:${version}) failed: ${responseBodyAsString(body)}")
-                    }
-                }
-            },
-            uploadPackage: {
-                String chartMuseumBaseUrl,
-                String chartMuseumPrefixPath,
-                String name,
-                String version,
-                File packageFile ->
-                    def http = HttpBuilder.configure {
-                        request.uri = chartMuseumBaseUrl
-                    }
-                    http.post {
-                        request.uri.path = "${chartMuseumPrefixPath}/api/charts"
-                        request.contentType = "application/x-www-form-urlencoded"
-                        request.body = project.file(packageFile)
-                        response.success { FromServer fromServer, Object body ->
-                            println("upload(${name}:${version}) succeed: ${responseBodyAsString(body)}")
-                        }
-                        response.failure { FromServer fromServer, Object body ->
-                            throw new RuntimeException(
-                                    "upload(${name}:${version}) failed: ${responseBodyAsString(body)}")
-                        }
-                    }
-            },
-    ]
-    pushDockerImage = { List<String> imageNameWithTagList, String dockerRegistryService, String dockerExecutable ->
-        imageNameWithTagList.each { imageNameWithTag ->
-            println("pulling docker image: ${imageNameWithTag}")
-            ExecResult inspectResult = exec {
-                commandLine(dockerExecutable, "inspect", imageNameWithTag)
-                ignoreExitValue(true)
-            }
-            if (0 == inspectResult.exitValue) {
-                // exists
-                println("image(${imageNameWithTag}) already exists, skip pulling image")
-            } else {
-                exec {
-                    commandLine(dockerExecutable, "pull", imageNameWithTag)
-                }
-            }
-            exec {
-                commandLine(
-                        dockerExecutable, "tag",
-                        imageNameWithTag, "${dockerRegistryService}/${imageNameWithTag}"
-                )
-            }
-            println("pushing docker image: ${imageNameWithTag} to ${dockerRegistryService}")
-            exec {
-                commandLine(
-                        dockerExecutable, "push",
-                        "${dockerRegistryService}/${imageNameWithTag}"
-                )
-            }
-        }
+    kubectlBaseUrl = systemEnv.getOrDefault("KUBECTL_BASE_URL", "https://dl.k8s.io/release")
+    helmBaseUrl = systemEnv.getOrDefault("HELM_BASE_URL", "https://get.helm.sh")
+    kubectlBinary = "${runtimeBinaryDirectory}/kubectl${ext.os == "windows" ? ".exe" : ""}"
+    helmBinary = "${runtimeBinaryDirectory}/helm${ext.os == "windows" ? ".exe" : ""}"
+    namespace = "somnus"
+    softwareName = "somnus"
+    imageBaseUrl = systemEnv.getOrDefault("IMAGE_BASE_URL", "https://resource.static.zjvis.net/docker-images/app")
+    dockerRegistry = systemEnv.getOrDefault("DOCKER_REGISTRY", "docker.registry.local:443")
+    dockerRegistryInCluster = systemEnv.getOrDefault("DOCKER_REGISTRY_IN_CLUSTER", "insecure.docker.registry.local:80")
+    loadImageIfNotExists = { String imageIdentify, String imageUrl ->
+        loadImageIfNotExists(imageIdentify, imageUrl)
     }
-    software = [
-            exists: { String flintBaseUrl, String name, String version ->
-                def http = HttpBuilder.configure {
-                    request.uri = flintBaseUrl
-                }
-                http.get {
-                    request.uri.path = "/api/v1/software/${name}/${version}"
-                    response.success { FromServer fromServer, Object body ->
-                        if (body["success"]) {
-                            return body["data"]["id"]
-                        }
-                        return null
-                    }
-                    response.failure { FromServer fromServer, Object body ->
-                        throw new RuntimeException("query(${name}:${version}) failed: ${responseBodyAsString(body)}")
-                    }
-                }
-            },
-            // use update operation to do add
-            update: { String flintBaseUrl, File softwareDefinitionFile ->
-                def http = HttpBuilder.configure {
-                    request.uri = flintBaseUrl
-                }
-                http.post {
-                    request.uri.path = "/api/v1/software/"
-                    request.contentType = "text/plain"
-                    request.charset = "utf-8"
-                    request.body = softwareDefinitionFile.text
-                    response.success { FromServer fromServer, Object body ->
-                        println("update software succeed: ${responseBodyAsString(body)}")
-                    }
-                    response.failure { FromServer fromServer, Object body ->
-                        throw new RuntimeException("update software failed: ${responseBodyAsString(body)}")
-                    }
-                }
-            },
-    ]
-    softwareInstance = [
-            exists   : { String flintBaseUrl, String clusterName, String softwareInstanceName ->
-                def http = HttpBuilder.configure {
-                    request.uri = flintBaseUrl
-                }
-                http.get {
-                    request.uri.path = "/api/v1/software/instance/findByName"
-                    request.uri.query = [
-                            clusterName : clusterName,
-                            instanceName: softwareInstanceName,
-                    ]
-                    response.success { FromServer fromServer, Object body ->
-                        if (body["success"]) {
-                            return body["data"]["id"]
-                        } else {
-                            return null;
-                        }
-                    }
-                    response.failure { FromServer fromServer, Object body ->
-                        throw new RuntimeException(
-                                "query(${clusterName}:${softwareInstanceName}) failed: ${responseBodyAsString(body)}")
-                    }
-                }
-            },
-            install  : {
-                String flintBaseUrl,
-                String clusterName,
-                String softwareInstanceName,
-                String softwareName,
-                String softwareVersion,
-                File valuesYaml,
-                String namespace ->
-                    def http = HttpBuilder.configure {
-                        request.uri = flintBaseUrl
-                    }
-                    http.put {
-                        request.uri.path = "/api/v1/software/instance/"
-                        request.contentType = "text/plain"
-                        request.charset = "utf-8"
-                        request.uri.query = [
-                                clusterName    : clusterName,
-                                softwareName   : softwareName,
-                                softwareVersion: softwareVersion,
-                                instanceName   : softwareInstanceName,
-                                settingsYaml   : valuesYaml.text,
-                                namespace      : namespace,
-
-                        ]
-                        response.success { FromServer fromServer, Object body ->
-                            println("install softwareInstance(${clusterName}:${softwareInstanceName}) succeed: " +
-                                    "${responseBodyAsString(body)}")
-                        }
-                        response.failure { FromServer fromServer, Object body ->
-                            throw new RuntimeException("install softwareInstance(${clusterName}:${softwareInstanceName}) failed: " +
-                                    "${responseBodyAsString(body)}")
-                        }
-                    }
-            },
-            uninstall: { String flintBaseUrl, String clusterName, Long softwareInstanceId ->
-                def http = HttpBuilder.configure {
-                    request.uri = flintBaseUrl
-                }
-                http.delete {
-                    request.uri.path = "/api/v1/software/instance/"
-                    request.uri.query = [
-                            id: softwareInstanceId
-                    ]
-                    response.success { FromServer fromServer, Object body ->
-                        println("uninstall softwareInstance(${softwareInstanceId}) succeed: " +
-                                "${responseBodyAsString(body)}")
-                    }
-                    response.failure { FromServer fromServer, Object body ->
-                        throw new RuntimeException("install softwareInstance(${softwareInstanceId}) failed: " +
-                                "${responseBodyAsString(body)}")
-                    }
-                }
-            },
-            update   : {
-                String flintBaseUrl,
-                String clusterName,
-                String softwareInstanceName,
-                File valuesYaml ->
-                    def http = HttpBuilder.configure {
-                        request.uri = flintBaseUrl
-                    }
-                    http.post {
-                        request.uri.path = "/api/v1/software/instance/"
-                        request.contentType = "text/plain"
-                        request.charset = "utf-8"
-                        request.uri.query = [
-                                clusterName : clusterName,
-                                instanceName: softwareInstanceName,
-                                settingsYaml: valuesYaml.text,
-                        ]
-                        response.success { FromServer fromServer, Object body ->
-                            println("update softwareInstance(${clusterName}:${softwareInstanceName}) succeed: " +
-                                    "${responseBodyAsString(body)}")
-                        }
-                        response.failure { FromServer fromServer, Object body ->
-                            throw new RuntimeException("update softwareInstance(${clusterName}:${softwareInstanceName}) failed: " +
-                                    "${responseBodyAsString(body)}")
-                        }
-                    }
-            },
-    ]
-    kubernetes = [
-            run: { String flintBaseUrl, String... arguments ->
-                def http = HttpBuilder.configure {
-                    request.uri = flintBaseUrl
-                }
-                http.post {
-                    request.uri.path = "/api/v1/kubernetes/kubectl"
-                    // TODO bugfix multi-values with same key
-                    request.uri.query = ["argument": arguments.join(" ")]
-                    response.success { FromServer fromServer, Object body ->
-                        if (body["success"]) {
-                            return body["data"]["std"]
-                        } else {
-                            throw new RuntimeException("run kubernetes command failed: ${body} ")
-                        }
-                    }
-                    response.failure { FromServer fromServer, Object body ->
-                        throw new RuntimeException("run kubernetes command failed: ${responseBodyAsString(body)}")
-                    }
-                }
-            }
-    ]
-    localMode = Boolean.valueOf(systemEnv.get("localMode", "true"))
-    environment = [
-            chartMuseumBaseUrl   : systemEnv.get("chartMuseumBaseUrl", "http://master.k8s.local.geekcity.tech:32080"),
-            chartMuseumPrefixPath: systemEnv.get("chartMuseumPrefixPath", "/chart/museum"),
-            flintBaseUrl         : systemEnv.get("flintBaseUrl", "http://master.k8s.local.geekcity.tech:30080"),
-            // may add
-            // "insecure-registries": ["master.k8s.local.geekcity.tech:32500"]
-            // to docker configuration json
-            dockerRegistryService: systemEnv.get("dockerRegistryService", "master.k8s.local.geekcity.tech:32500"),
-            clusterName          : systemEnv.get("clusterName", "core-cluster"),
-            namespace            : systemEnv.get("namespace", "common-software"),
-            hostSuffix           : systemEnv.get("hostSuffix", "local.geekcity.tech"),
-            valuesFileName       : systemEnv.get("valuesFileName", "local.dev.values.yaml"),
-            softwareInstanceNameSuffix: systemEnv.get("softwareInstanceNameSuffix", "-dev"),
-    ]
-    randomGenerator = { String alphabet, int n ->
-        new Random().with { Random random ->
-            (1..n).collect { alphabet[random.nextInt(alphabet.length())] }.join()
-        }
-    }
-    appName = "somnus-app"
 }
-task downloadHelmBinary() {
-    if (project.file(project.ext.helmBinaryForCompilePath).exists()) {
-        println("skip ${name} as files exists")
-        enabled(false)
+
+private String operatingSystem() {
+    def current = OperatingSystem.current()
+    if (current.isLinux()) {
+        return "linux"
     }
-    doLast {
-        def helmForCompilePackagePath = "${project.buildDir}/runtime/download/helm_for_compile.tar.gz"
+    if (current.isMacOsX()) {
+        return "darwin"
+    }
+    if (current.isWindows()) {
+        return "windows"
+    }
+    throw new RuntimeException("not supported os: ${current}")
+}
+
+private String arch() {
+    String arch = System.getProperty("os.arch")
+    switch (arch) {
+        case "x86":
+            return "i386"
+        case "x86_64":
+            return "amd64"
+        case "amd64":
+        case "aarch64":
+            return arch
+        default:
+            throw new RuntimeException("not supported arch: ${arch}")
+    }
+}
+
+private void doRenderFile(File templateFile, Map<String, String> dataMap, File targetFile) {
+    println("templateFile(${templateFile.getAbsolutePath()}) -> targetFile(${targetFile.getAbsolutePath()})")
+    project.file(targetFile).parentFile.mkdirs()
+    project.file(targetFile).text = doRenderText(templateFile, dataMap)
+}
+
+private String doRenderText(File templateFile, Map<String, String> dataMap) {
+    println("templateFile(${templateFile.getAbsolutePath()})")
+    return new SimpleTemplateEngine()
+            .createTemplate(templateFile.text)
+            .make(dataMap)
+}
+
+private void loadImageIfNotExists(String imageIdentify, String imageUrl) {
+    if (imageExists(imageIdentify)) {
+        println("skip loading image(${imageIdentify}) as image exists")
+        return
+    }
+    File tempImageFile = File.createTempFile("docker.image.", ".dim")
+    tempImageFile.delete()
+    try {
+        downloadImage(imageUrl, tempImageFile)
+        loadImage(tempImageFile)
+    } finally {
+        if (tempImageFile.exists()) {
+            tempImageFile.delete()
+        }
+    }
+}
+
+private void downloadImage(String url, File imageFile) {
+    if (imageFile.exists()) {
+        println("skip downloading ${imageFile.getAbsolutePath()} as file exists")
+    } else {
         download {
-            src constructHelmDownloadAddress()
-            dest helmForCompilePackagePath
+            src url
+            dest imageFile.getAbsolutePath()
             tempAndMove true
             overwrite false
         }
-        def helmForCompilePackageDirectory = project.file(helmForCompilePackagePath).parentFile.getAbsolutePath()
-        def extractDirectoryPath = "${helmForCompilePackageDirectory}/helm_for_compile"
-        project.file(extractDirectoryPath).mkdirs()
-        exec {
-            commandLine(
-                    "tar",
-                    "zxvf",
-                    helmForCompilePackagePath,
-                    "-C",
-                    extractDirectoryPath,
-            )
-        }
-        copy {
-            from "${extractDirectoryPath}/${constructHelmPackageDirectoryName()}/helm"
-            into project.file(project.ext.helmBinaryForCompilePath).parentFile.getAbsolutePath()
-        }
-        exec {
-            commandLine(
-                    "chmod",
-                    "u+x",
-                    project.ext.helmBinaryForCompilePath,
-            )
-        }
     }
 }
 
-private static String constructHelmDownloadAddress() {
-    def operatingSystem = org.gradle.internal.os.OperatingSystem.current();
-    def arch = System.getProperty("os.arch")
-    if (operatingSystem.isMacOsX() && "x86_64" == arch) {
-        // mirror of https://get.helm.sh/helm-v3.6.0-darwin-amd64.tar.gz
-        return "http://proxy.geekcity.tech:30080/helm-v3.6.0-darwin-amd64.tar.gz"
+private void loadImage(File imageFile) {
+    exec {
+        def execSpec = commandLine("docker", "image", "load", "-i", imageFile.getAbsolutePath())
+        println("running command: ${String.join(" ", execSpec.getCommandLine())}")
     }
-    if (operatingSystem.isLinux() && "amd64" == arch) {
-        // mirror of https://get.helm.sh/helm-v3.6.0-linux-amd64.tar.gz
-        return "http://proxy.geekcity.tech:30080/helm-v3.6.0-linux-amd64.tar.gz"
-    }
-    // not fully tested
-    if (operatingSystem.isMacOsX() && "aarch64" == arch) {
-        // mirror of https://get.helm.sh/helm-v3.6.0-darwin-amd64.tar.gz
-        return "http://proxy.geekcity.tech:30080/helm-v3.6.0-darwin-amd64.tar.gz"
-    }
-    throw new RuntimeException("not supported operating system(${operatingSystem.getName()}) or arch(${arch})")
 }
 
-private static String constructHelmPackageDirectoryName() {
-    def operatingSystem = org.gradle.internal.os.OperatingSystem.current();
-    def arch = System.getProperty("os.arch")
-    if (operatingSystem.isMacOsX() && "x86_64" == arch) {
-        return "darwin-amd64"
+private boolean imageExists(String imageIdentify) {
+    ExecResult inspectResult = exec {
+        def execSpec = commandLine("docker", "image", "inspect", imageIdentify)
+        println("running command: ${String.join(" ", execSpec.getCommandLine())}")
+        ignoreExitValue(true)
     }
-    if (operatingSystem.isLinux() && "amd64" == arch) {
-        return "linux-amd64"
-    }
-    // not fully tested
-    if (operatingSystem.isMacOsX() && "aarch64" == arch) {
-        return "darwin-amd64"
-    }
-    throw new RuntimeException("not supported operating system(${operatingSystem.getName()}) or arch(${arch})")
-}
-
-private static String responseBodyAsString(body) {
-    body instanceof byte[] ? new String(body) : String.valueOf(body)
+    return 0 == inspectResult.exitValue
 }

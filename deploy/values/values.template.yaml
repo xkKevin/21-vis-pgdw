@@ -1,0 +1,31 @@
+# ${doNotModifyComment}
+image:
+  pullPolicy: IfNotPresent
+  frontend:
+    repository: ${dockerRegistryInCluster}/${softwareName}-frontend
+    tag: "${softwareVersion}"
+  backend:
+    repository: ${dockerRegistryInCluster}/${softwareName}-backend
+    tag: "${softwareVersion}"
+  morpheus:
+    repository: ${dockerRegistryInCluster}/${softwareName}-morpheus
+    tag: "${softwareVersion}"
+service:
+  type: ClusterIP
+deploy:
+  version: "${deployVersion}"
+  timestamp: "${deployTimestamp}"
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /\$1
+    nginx.ingress.kubernetes.io/proxy-body-size: 2g
+    nginx.org/client-max-body-size: 2g
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+  hosts:
+    - host: somnus.zjvis.net
+      paths:
+        - path: /(.*)
