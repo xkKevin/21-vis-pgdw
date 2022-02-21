@@ -54,6 +54,7 @@ RUN: `python backend/src/app.py`
 + node
 
 RUN:
+  + `cd frontend`
   + `npm install`
   + `npm run serve`
 

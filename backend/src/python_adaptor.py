@@ -22,7 +22,7 @@ def execScript(script_content):
 #     p_out_func_params = re.compile('''\s*(.+?)\s*=\s*([\w\.]+?)\s*[(](.*)[)]''')
 #     p_out_cols = re.compile('''([\w]+)\[+\s*(.*?)\s*\]+''')
     p1 = re.compile('''^(\s*)(\w+)[\[\s\.]*(.*?)[\s\]]*=\s*([\w\.]+?)\s*[(](.*)[)]''') # 这里表示必须经过函数
-    p2 = re.compile('''^(\s*)(\w+)[\[\s\.]*(.*?)[\s\]]*=\s*([\w\.]*)\s*''')  # 而这个匹配表示只需要一个赋值表达式就可以了
+    p2 = re.compile('''^(\s*)(\w+)[\[\s\.]*(.*?)[\s\]]*=\s*([\w\.]*)\s*''')  # 该匹配为赋值表达式，如： a["b"] = 23 能匹配得到 ('a', '"b"', '23')
     # space_index, output_table, columns, function, parameters
     p_pandas = re.compile("^(\s*)import\s*pandas\s*(as\s*(\w+))?\s*")
     
@@ -63,7 +63,7 @@ def execScript(script_content):
             if len(match_r):
                 parser_info[line_num] = match_r[0][1:]  # output_table, columns, function, parameters
             else:
-                parser_info[line_num] = match_r2[0][1:]  # 这是赋值语句的情况（即没有函数）
+                parser_info[line_num] = match_r2[0][1:]  # 这是赋值语句的情况（即没有函数） ('a', '"b"', '23')
             space_index = match_r2[0][0]
             if codes[-1] != '\n':
                 codes += '\n'
@@ -215,7 +215,7 @@ def generate_transform_specs(script_content):
     # output_table, columns, function, parameters
 
     parser_info, col_states, pandas_abbr = execScript(script_content)
-
+    print(col_states)
     transform_specs = []
     var2table = {} # 用来记录变量对应的table file名称
     # p_match_num = re.compile("table(.+)\.csv")  #  L{line_num} ({value})
@@ -226,16 +226,59 @@ def generate_transform_specs(script_content):
     p_brackets = re.compile("\[(.+)\]")
     
     for pi_key, pi_value in parser_info.items():
-
-        if len(pi_value) < 4 and var2table.get(pi_value[0]):
-            var2table[pi_value[0]] = "L%d (%s).csv" % (pi_key, pi_value[0])
-            continue
+    
+        # if len(pi_value) < 4 and var2table.get(pi_value[0]):
+        #     var2table[pi_value[0]] = "L%d (%s).csv" % (pi_key, pi_value[0])
+        #     continue
 
         line_num = pi_key
+
+        if not col_states.get(line_num): # 如果该行输出不是表的话，直接跳过
+            continue
+            
         specs = {}
         output_tbl = pi_value[0]
         specs["output_table_name"] = output_tbl
         specs["output_table_file"] = "L%d (%s).csv" % (line_num, specs["output_table_name"])   # "table%d.csv" % line_num
+
+        if len(pi_value) < 4: # 如果该行是赋值表达式
+            if pi_value[1]: # 表示 有行/列参数
+                # print(pi_value[1])
+                specs["input_table_name"] = pi_value[0]
+                specs["input_table_file"] = var2table[specs["input_table_name"]]
+                if pi_value[1][0] in ['"', "'"]:
+                    cols = pi_value[1].split(",")
+                    specs["output_explicit_col"] = []
+                    col_tmp = ""
+                    for ci in cols:
+                        if col_tmp:
+                            ci = col_tmp + ci
+                            col_tmp = ""
+                        res = remove_quote(ci)
+                        if res[0]:
+                            specs["output_explicit_col"].append(res[1])
+                        else:
+                            col_tmp = ci
+                    specs["type"] = 'create_columns_create'
+                    specs["operation_rule"] = 'Create Columns: ' + ",".join(specs["output_explicit_col"])
+                elif pi_value[1].startswith('loc') or pi_value[1].startswith('iloc'):
+                    res = p_loc.findall(pi_value[1])[0].strip()
+                    if res.startswith("len"):
+                        specs["type"] = 'create_rows_create'
+                        specs["operation_rule"] = "Create Row"
+                    elif res.isdigit():
+                        specs["type"] = 'transform_rows_edit'
+                        specs["input_explicit_row"] = [int(res.isdigit())]
+                        specs["operation_rule"] = "Edit row %s" % specs["input_explicit_row"][0]
+            else: # 没有 行/列参数
+                specs["type"] = 'create_tables'
+                specs["operation_rule"] = 'Create Manually'
+            
+            var2table[output_tbl] = specs["output_table_file"]
+            transform_specs.append(specs)
+            continue
+
+        # 以下代码为函数的情况
         funcs = pi_value[2].split(".")
         params = parseArgs(pi_value[3])
         
