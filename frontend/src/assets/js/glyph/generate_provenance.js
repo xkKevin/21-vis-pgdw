@@ -1664,6 +1664,7 @@ async function preparation(transform_specs, nodePos, table_path) {
                 //   vm.warning_flag = false
                 // }
                 vm.$message({
+                    showClose: true,
                     message: "Detected changes in the script, please run again",
                     type: "warning", // success/warning/info/error
                 });
@@ -1966,7 +1967,9 @@ function generateGlyphs(request_path, table_path) {
             // 生成glyphs的操作
             if (response.data.error_info) {
                 vm.$message({
-                    message: response.data.error_info,
+                    showClose: true,
+                    dangerouslyUseHTMLString: true,
+                    message: response.data.error_info.replaceAll('\n', '<br>'),
                     type: "error", // success/warning/info/error
                 });
             } else {

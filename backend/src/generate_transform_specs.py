@@ -2,11 +2,27 @@
 
 import re, os
 import time
+import subprocess
 
 Rscript_path = "Rscript"  # Rscript执行路径
 
 
-def deleteMatchFiles(directory, starts="", ends="", recursion = False, hour = 0.2):
+def getErrorIndex(error_message, error_array=["Error", "错误"]):
+    '''
+    获取字符串中指定子字符串的起始位置
+    Parameters:
+        error_message: 原始字符串——报错信息
+        error_array: 待检测的子字符串数组（按顺序检测）
+    Return:
+        若成功则返回字符串下标，否则返回0（初始位置）
+    '''
+    for ed in error_array:
+        err_index = error_message.find(ed)
+        if err_index != -1:
+            return err_index
+    return 0
+
+def deleteMatchFiles(directory, starts="", ends="", recursion = False, hour = 0.1):
     '''
     按特定要求删除某路径下的匹配文件，如果starts和ends都不填写，则默认删除该目录下所有文件
     recursion: 表示是否递归删除匹配的文件，默认为否，即值删除当前路径下的匹配文件
@@ -91,9 +107,11 @@ def execScript(script_content):
     with open(script_exec_name, "w", encoding='utf-8') as fp:  # , newline='\r\n'
         fp.write(codes)
         
-    if(os.system(Rscript_path + " " + script_exec_name)):
-        # 0表示执行成功，否则表示执行失败
-        raise Exception("Failed to execute the current script!")  # 如果执行失败，抛出异常
+    # if(os.system(Rscript_path + " " + script_exec_name)):
+    exec_result = subprocess.getstatusoutput(Rscript_path + " " + script_exec_name) # 用以获取命令行输出的信息
+    if exec_result[0]:  # 0表示执行成功，否则表示执行失败
+        err_index = getErrorIndex(exec_result[1])
+        raise Exception("Failed to execute the current script!\n\n" + exec_result[1][err_index:].split("Backtrace")[0])  # 如果执行失败，抛出异常
     
     col_states = {}  # key对应代码的行号，value对应此行代码执行完之后的table中的列
     group_states = {} # key为行号，value为分组的列
@@ -159,7 +177,7 @@ def parseArgs(param_str):
 def parseCondition(con_str):
     '''
     con_str: 原始条件字符串
-    return：返回解析出包含各个名称的set
+    return: 返回解析出包含各个名称的set
             如 "mass > mean(mass, na.rm = TRUE)" 解析成 ("mass", "mean", "na.rm", "TRUE")
     '''
     con_names = set()

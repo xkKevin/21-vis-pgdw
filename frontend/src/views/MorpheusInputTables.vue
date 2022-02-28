@@ -172,6 +172,7 @@ export default {
             // this.fullscreenLoading = true
             if(this.$refs.inputfiles.$children[0].fileList.length===0){  //  && this.$refs.outputfiles.$children[0].fileList.length===0
                 this.$message({
+                    showClose: true,
                     type:'error',
                     // showClose:true,
                     // duration:3000,
@@ -264,6 +265,7 @@ export default {
                     }
                     else{
                         this.$message({
+                            showClose: true,
                             message: "File(s) upload failed",
                             type: "error", // success/warning/info/error
                         });

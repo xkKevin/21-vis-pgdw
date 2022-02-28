@@ -2,6 +2,7 @@
 
 import os,re
 import json,time
+import subprocess
 
 Python_path = 'python'
 
@@ -84,9 +85,13 @@ def execScript(script_content):
 {space_index}    json.dump(col_states,fp,indent=2)'''.format(space_index=space_index, str_time=str_time)
         fp.write(codes)
         
-    if(os.system(Python_path + " " + script_exec_name)):
-        # 0表示执行成功，否则表示执行失败
-        raise Exception("Failed to execute the current script!")  # 如果执行失败，抛出异常
+    # if(os.system(Python_path + " " + script_exec_name)):
+    exec_result = subprocess.getstatusoutput(Python_path + " " + script_exec_name) # 用以获取命令行输出的信息
+    if exec_result[0]:  # 0表示执行成功，否则表示执行失败
+        err_index = exec_result[1].find("Error")
+        if err_index == -1:
+            err_index = 0
+        raise Exception("Failed to execute the current script!\n\n" + exec_result[1][err_index:])  # 如果执行失败，抛出异常
     
     with open(str_time+"_colnames.txt","r",encoding='utf-8') as fp:
         col_states = json.load(fp)
@@ -215,7 +220,6 @@ def generate_transform_specs(script_content):
     # output_table, columns, function, parameters
 
     parser_info, col_states, pandas_abbr = execScript(script_content)
-    print(col_states)
     transform_specs = []
     var2table = {} # 用来记录变量对应的table file名称
     # p_match_num = re.compile("table(.+)\.csv")  #  L{line_num} ({value})
@@ -243,7 +247,6 @@ def generate_transform_specs(script_content):
 
         if len(pi_value) < 4: # 如果该行是赋值表达式
             if pi_value[1]: # 表示 有行/列参数
-                # print(pi_value[1])
                 specs["input_table_name"] = pi_value[0]
                 specs["input_table_file"] = var2table[specs["input_table_name"]]
                 if pi_value[1][0] in ['"', "'"]:

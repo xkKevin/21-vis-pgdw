@@ -144,7 +144,7 @@ export default {
             if(this.$refs.inputfiles.$children[0].fileList.length===0){  //  && this.$refs.outputfiles.$children[0].fileList.length===0
                 this.$message({
                     type:'error',
-                    // showClose:true,
+                    showClose:true,
                     // duration:3000,
                     message:'Please select at least one file to upload'
                 });
@@ -190,6 +190,7 @@ export default {
                 Promise.all([p1,p2]).then(()=>{
                     if(flag1 && flag2){
                         this.$message({
+                            showClose: true,
                             message: "File(s) upload succeeded",
                             type: "success", // success/warning/info/error
                         });
@@ -197,6 +198,7 @@ export default {
                     }
                     else{
                         this.$message({
+                            showClose: true,
                             message: "File(s) upload failed",
                             type: "error", // success/warning/info/error
                         });

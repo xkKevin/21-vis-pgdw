@@ -17,7 +17,24 @@
                 line-height: 65px;
               "
             >
-              Somnus
+              <el-popover
+                placement="bottom-start"
+                width="410"
+                trigger="hover"
+                >
+                <div class="tips-content"> 
+                  <!-- popover通过slot传入内容链接：https://www.jianshu.com/p/d4f36ee0598d -->
+                  <h3 style="margin-top:5px;">Introduction</h3>
+                  We develop Somnus to visualize the semantics of wrangling scripts.
+                  Somnus accepts a script and data tables as input and results in a glyph-based provenance graph where nodes are tables while edges are data transformations.
+                  <h3 style="margin-bottom:10px;">Reference</h3>
+                  Kai Xiong, Siwei Fu, Guoming Ding, Zhongsu Luo, Rong Yu, Wei Chen, Hujun Bao, and Yingcai Wu. Visualizing the Scripts of Data Wrangling with SOMNUS. IEEE Transactions on Visualization and Computer Graphics, 2022.<br>
+                  <a href="https://ieeexplore.ieee.org/document/9693232/" target="_blank">Somnus Paper</a><br>
+                  <a href="/#/morpheus" target="_blank">MORPHEUS Revisited System</a><br>
+                  <a href="https://www.youtube.com/watch?v=fQ-eN_4vhso" target="_blank">Demo Video</a>
+                </div>
+                <span slot="reference">Somnus</span>
+              </el-popover>
             </div>
           </el-header>
           <div
@@ -339,7 +356,7 @@ export default {
       // this.getScriptData();
       this.selectCase();
       sendVue_gp(this);
-      record_log("somnus", returnCitySN);
+      // record_log("somnus", returnCitySN);
     },
     initEditor() {
       // 初始化编辑器，确保dom已经渲染
@@ -542,6 +559,10 @@ export default {
 #showGlyphs {
   border: 2px solid #e3e6f0;
   background-color: #e3e6f0;
+}
+
+.el-popover, .el-popover__title {
+	word-break: normal; /* 让单词完整显示，而不拆分换行 */
 }
 
 tr {
