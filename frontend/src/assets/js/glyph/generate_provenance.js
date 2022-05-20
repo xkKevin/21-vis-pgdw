@@ -416,57 +416,59 @@ async function preparation(transform_specs, nodePos, table_path) {
                     (res.length - row_diff) / (dataOut1_csv.length - row_diff)
                 );
                 break;
-            case "create_columns_merge":
-                res = generateDataForCreateColumns(
-                    dataIn1_csv,
-                    dataOut1_csv,
-                    input_explicit_col,
-                    output_explicit_col
-                );
-                create_column(
-                    res.m1,
-                    res.m2,
-                    rule,
-                    input_table_name,
-                    output_table_name,
-                    input_explicit_col,
-                    i,
-                    vm.show_table_name,
-                    pos, [
-                        res.m1[0].length / dataIn1_csv[0].length,
-                        res.m2[0].length / dataOut1_csv[0].length,
-                    ], [
-                        (res.m1.length - row_diff) / (dataIn1_csv.length - row_diff),
-                        (res.m2.length - row_diff) / (dataOut1_csv.length - row_diff),
-                    ]
-                );
-                break;
-            case "create_columns_extract":
-                res = generateDataForCreateColumns_extract(
-                    dataIn1_csv,
-                    dataOut1_csv,
-                    input_explicit_col,
-                    output_explicit_col
-                );
-                create_column(
-                    res.m1,
-                    res.m2,
-                    rule,
-                    input_table_name,
-                    output_table_name,
-                    input_explicit_col,
-                    i,
-                    vm.show_table_name,
-                    pos, [
-                        res.m1[0].length / dataIn1_csv[0].length,
-                        res.m2[0].length / dataOut1_csv[0].length,
-                    ], [
-                        (res.m1.length - row_diff) / (dataIn1_csv.length - row_diff),
-                        (res.m2.length - row_diff) / (dataOut1_csv.length - row_diff),
-                    ]
-                );
-                break;
+                // case "create_columns_merge":
+                //     res = generateDataForCreateColumns(
+                //         dataIn1_csv,
+                //         dataOut1_csv,
+                //         input_explicit_col,
+                //         output_explicit_col
+                //     );
+                //     create_column(
+                //         res.m1,
+                //         res.m2,
+                //         rule,
+                //         input_table_name,
+                //         output_table_name,
+                //         input_explicit_col,
+                //         i,
+                //         vm.show_table_name,
+                //         pos, [
+                //             res.m1[0].length / dataIn1_csv[0].length,
+                //             res.m2[0].length / dataOut1_csv[0].length,
+                //         ], [
+                //             (res.m1.length - row_diff) / (dataIn1_csv.length - row_diff),
+                //             (res.m2.length - row_diff) / (dataOut1_csv.length - row_diff),
+                //         ]
+                //     );
+                //     break;
+                // case "create_columns_extract":
+                //     res = generateDataForCreateColumns_extract(
+                //         dataIn1_csv,
+                //         dataOut1_csv,
+                //         input_explicit_col,
+                //         output_explicit_col
+                //     );
+                //     create_column(
+                //         res.m1,
+                //         res.m2,
+                //         rule,
+                //         input_table_name,
+                //         output_table_name,
+                //         input_explicit_col,
+                //         i,
+                //         vm.show_table_name,
+                //         pos, [
+                //             res.m1[0].length / dataIn1_csv[0].length,
+                //             res.m2[0].length / dataOut1_csv[0].length,
+                //         ], [
+                //             (res.m1.length - row_diff) / (dataIn1_csv.length - row_diff),
+                //             (res.m2.length - row_diff) / (dataOut1_csv.length - row_diff),
+                //         ]
+                //     );
+                //     break;
             case "create_columns_mutate":
+            case "create_columns_extract":
+            case "create_columns_merge":
                 res = generateData(
                     dataIn1_csv,
                     dataOut1_csv,
@@ -624,6 +626,7 @@ async function preparation(transform_specs, nodePos, table_path) {
                     dataOut1_csv,
                     input_explicit_col
                 );
+                console.log(res);
                 delete_column(
                     res.m1,
                     res.m2,
@@ -895,8 +898,8 @@ async function preparation(transform_specs, nodePos, table_path) {
                     rule,
                     input_table_name,
                     output_table_name,
-                    input_explicit_col,
-                    output_explicit_col,
+                    res.inExp,
+                    res.outExp,
                     i,
                     vm.show_table_name,
                     pos, [
@@ -909,31 +912,6 @@ async function preparation(transform_specs, nodePos, table_path) {
                 );
                 break;
             case "transform_columns_extract":
-                res = generateDataForMutate_cover(
-                    dataIn1_csv,
-                    dataOut1_csv,
-                    input_explicit_col,
-                    input_explicit_col
-                );
-                transform_columns_mutate(
-                    res.m1,
-                    res.m2,
-                    rule,
-                    input_table_name,
-                    output_table_name,
-                    input_explicit_col,
-                    input_explicit_col,
-                    i,
-                    vm.show_table_name,
-                    pos, [
-                        res.m1[0].length / dataIn1_csv[0].length,
-                        res.m2[0].length / dataOut1_csv[0].length,
-                    ], [
-                        (res.m1.length - row_diff) / (dataIn1_csv.length - row_diff),
-                        (res.m2.length - row_diff) / (dataOut1_csv.length - row_diff),
-                    ]
-                );
-                break;
             case "transform_columns_merge":
                 res = generateDataForMutate_cover(
                     dataIn1_csv,
@@ -947,8 +925,8 @@ async function preparation(transform_specs, nodePos, table_path) {
                     rule,
                     input_table_name,
                     output_table_name,
-                    input_explicit_col,
-                    output_explicit_col,
+                    res.inExp,
+                    res.outExp,
                     i,
                     vm.show_table_name,
                     pos, [
@@ -960,6 +938,32 @@ async function preparation(transform_specs, nodePos, table_path) {
                     ]
                 );
                 break;
+                // case "transform_columns_merge":
+                //     res = generateDataForMutate_cover(
+                //         dataIn1_csv,
+                //         dataOut1_csv,
+                //         input_explicit_col,
+                //         output_explicit_col
+                //     );
+                //     transform_columns_mutate(
+                //         res.m1,
+                //         res.m2,
+                //         rule,
+                //         input_table_name,
+                //         output_table_name,
+                //         input_explicit_col,
+                //         output_explicit_col,
+                //         i,
+                //         vm.show_table_name,
+                //         pos, [
+                //             res.m1[0].length / dataIn1_csv[0].length,
+                //             res.m2[0].length / dataOut1_csv[0].length,
+                //         ], [
+                //             (res.m1.length - row_diff) / (dataIn1_csv.length - row_diff),
+                //             (res.m2.length - row_diff) / (dataOut1_csv.length - row_diff),
+                //         ]
+                //     );
+                //     break;
             case "transform_columns_rename":
                 res = generateDataForColumnRename(
                     dataIn1_csv,
@@ -1956,8 +1960,9 @@ function generateGlyphs(request_path, table_path) {
     axios
         .get(path, {
             params: {
-                script_content: vm.editor.getValue(),
-                language: vm.language,
+                // script_content: vm.editor.getValue(),
+                // language: vm.language,
+                case: vm.changevis[vm.one_case]
             },
         })
         .then((response) => {
