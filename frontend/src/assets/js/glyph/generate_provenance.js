@@ -1960,9 +1960,9 @@ function generateGlyphs(request_path, table_path) {
     axios
         .get(path, {
             params: {
-                // script_content: vm.editor.getValue(),
-                // language: vm.language,
-                case: vm.changevis[vm.one_case]
+                script_content: vm.editor.getValue(),
+                language: vm.language,
+                // case: vm.changevis[vm.one_case]
             },
         })
         .then((response) => {

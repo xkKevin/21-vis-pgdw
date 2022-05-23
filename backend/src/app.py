@@ -137,6 +137,15 @@ def getMorpheusData():
 
 original_cwd = os.getcwd() # 查看当前工作目录
 
+# @app.route('/generate_transform_specs2', methods=['GET'])
+# def generate_transform_specs2():
+#     case_name = request.args.get("case", "") 
+#     # 改当前工作目录  os.path.join(os.getcwd(),scri
+#     with open('C:/Users/Luo Zhongsu/Desktop/difference/%s.json' % case_name ,"r",encoding='utf-8') as fp:
+#         transform_specs = json.load(fp)
+
+#     return jsonify({'transform_specs': transform_specs})
+
 @app.route('/generate_transform_specs', methods=['GET'])
 def generate_transform_specs():
     transform_specs = {}
@@ -167,7 +176,6 @@ def generate_transform_specs():
             os.chdir(os.path.join(os.getcwd(), data_path_lan)) # 修改当前工作目录  os.path.join(os.getcwd(),script_name)
             transform_specs = adaptor(script_content)  # 判断是否有异常发生
             return jsonify({'transform_specs': transform_specs})
-            # return jsonify({'transform_specs': {}})
         except Exception as e:
             return jsonify({'error_info': str(e)})   # 如果有异常的话，将异常信息返回给前端
         finally:
